@@ -1,0 +1,28 @@
+plugins {
+    id 'java'
+    id 'application' // Necessario per il comando ./gradlew run
+}
+
+group = 'it.unicam.cs.mpgc.rpg'
+version = '1.0-SNAPSHOT'
+
+java {
+    // Imposta la versione di Java (usa 25 o 21 in base al tuo JDK)
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+application {
+    // IMPORTANTE: Sostituisci <TUA_MATRICOLA> con la tua matricola reale
+    mainClass = 'it.unicam.cs.mpgc.rpg.m131177.Main'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Aggiungi qui eventuali dipendenze (es. per la GUI o per il salvataggio XML/JSON)
+    // implementation 'com.google.code.gson:gson:2.10.1'
+}
