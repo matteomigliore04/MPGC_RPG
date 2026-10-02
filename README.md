@@ -30,15 +30,10 @@ chi ha raggiunto i risultati migliori e quali strategie hanno adottato.
 ```bash
    ./gradlew run
 ```
----
 
 ## 🤖 Uso di strumenti di AI
 
----
-
 ## ⚠️ Nota
-
----
 
 ## Funzionalità Presenti
 
