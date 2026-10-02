@@ -1,6 +1,5 @@
 # 📌 Archery adventure
 
----
 Impugna il tuo arco e difenditi da schiere di mostri in questo RPG con
 difficoltà selezionabile, progettato per offrire sfide sempre diverse e
 calibrate sulle tue capacità. Ogni partita contribuisce al tuo storico
@@ -12,7 +11,6 @@ chi ha raggiunto i risultati migliori e quali strategie hanno adottato.
 
 ## 🚀 Come eseguire il progetto
 
----
 ### Prerequisiti
 - Java 25 (LTS)
 - Gradle
@@ -44,15 +42,9 @@ chi ha raggiunto i risultati migliori e quali strategie hanno adottato.
 
 ## Funzionalità Presenti
 
----
-
 ## Note Tecniche
 
----
-
 ## TODO
-
----
 
 ### In Sviluppo
 
