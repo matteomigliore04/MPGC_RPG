@@ -1,20 +1,24 @@
 plugins {
     id 'java'
-    id 'application' // Necessario per il comando ./gradlew run
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
 group = 'it.unicam.cs.mpgc.rpg'
 version = '1.0-SNAPSHOT'
 
 java {
-    // Imposta la versione di Java (usa 25 o 21 in base al tuo JDK)
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
+javafx {
+    version = "21.0.2"
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
+
 application {
-    // IMPORTANTE: Sostituisci <TUA_MATRICOLA> con la tua matricola reale
     mainClass = 'it.unicam.cs.mpgc.rpg.m131177.Main'
 }
 
@@ -23,6 +27,6 @@ repositories {
 }
 
 dependencies {
-    // Aggiungi qui eventuali dipendenze (es. per la GUI o per il salvataggio XML/JSON)
-    // implementation 'com.google.code.gson:gson:2.10.1'
+    // MySQL Connector per il database
+    implementation 'com.mysql:mysql-connector-j:8.3.0'
 }
