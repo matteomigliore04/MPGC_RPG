@@ -1,16 +1,61 @@
-# 📌 [Nome del tuo Gioco di Ruolo]
+# 📌 Archery adventure
 
-Breve descrizione del progetto (2-3 righe):
-[Spiega cosa fa il programma, la trama o le meccaniche base del tuo RPG e a cosa serve.]
+---
+Impugna il tuo arco e difenditi da schiere di mostri in questo RPG con
+difficoltà selezionabile, progettato per offrire sfide sempre diverse e
+calibrate sulle tue capacità. Ogni partita contribuisce al tuo storico
+personale, tracciando progressi, punteggi e performance nel tempo. Grazie
+al database integrato, puoi consultare non solo le tue statistiche, ma
+anche confrontarti con gli altri giocatori della community, scoprendo
+chi ha raggiunto i risultati migliori e quali strategie hanno adottato.
+---
 
 ## 🚀 Come eseguire il progetto
 
+---
 ### Prerequisiti
 - Java 25 (LTS)
-- Gradle (incluso nel wrapper del progetto)
+- Gradle
 
 ### Istruzioni
-1. Clona il repository:
-   ```bash
-   git clone [URL-DEL-TUO-REPOSITORY]
-   cd [NOME-CARTELLA]
+```bash
+   git clone [https://github.com/matteomigliore04/MPGC_RPG.git]
+   cd ArcheryAdventure
+```
+
+### Build del progetto
+```bash
+   ./gradlew build
+```
+
+### Esecuzione
+```bash
+   ./gradlew run
+```
+---
+
+## 🤖 Uso di strumenti di AI
+
+---
+
+## ⚠️ Nota
+
+---
+
+## Funzionalità Presenti
+
+---
+
+## Note Tecniche
+
+---
+
+## TODO
+
+---
+
+### In Sviluppo
+
+### Pianificati
+
+### Possibili Miglioramenti Futuri
