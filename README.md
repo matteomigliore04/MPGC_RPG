@@ -7,6 +7,7 @@ personale, tracciando progressi, punteggi e performance nel tempo. Grazie
 al database integrato, puoi consultare non solo le tue statistiche, ma
 anche confrontarti con gli altri giocatori della community, scoprendo
 chi ha raggiunto i risultati migliori e quali strategie hanno adottato.
+
 ---
 
 ## 🚀 Come eseguire il progetto
