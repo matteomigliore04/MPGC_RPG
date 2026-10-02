@@ -31,6 +31,8 @@ chi ha raggiunto i risultati migliori e quali strategie hanno adottato.
    ./gradlew run
 ```
 
+---
+
 ## 🤖 Uso di strumenti di AI
 
 ## ⚠️ Nota
