@@ -18,7 +18,7 @@
     <VBox alignment="CENTER" spacing="30">
 
         <!-- Titolo del gioco -->
-        <Label text="Archery adventure" styleClass="title-label"/>
+        <Label text="ARCHERY ADVENTURE" styleClass="title-label"/>
 
         <!-- Spazio vuoto per separare titolo e bottoni -->
         <VBox prefHeight="40"/>
