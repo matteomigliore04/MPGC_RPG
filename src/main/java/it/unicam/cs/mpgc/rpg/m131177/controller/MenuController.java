@@ -1,5 +1,10 @@
 package it.unicam.cs.mpgc.rpg.m131177.controller;
 
+import it.unicam.cs.mpgc.rpg.m131177.model.GameContext;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -35,9 +40,28 @@ public class MenuController {
      */
     @FXML
     private void handleIniziaPartita() {
-        System.out.println("Avvio nuova partita...");
-        showAlert(AlertType.INFORMATION, "Inizia Partita",
-                "La schermata di gioco verrà implementata in futuro.");
+        try {
+            // Crea il contesto condiviso per la nuova partita
+            GameContext context = new GameContext();
+
+            // Carica la schermata della difficoltà
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/difficulty.fxml"));
+            Parent root = loader.load();
+
+            // Passa il contesto e lo stage al controller
+            DifficultyController controller = loader.getController();
+            Stage stage = (Stage) btnIniziaPartita.getScene().getWindow();
+            controller.setContext(context, stage);
+
+            // Cambia la scena
+            Scene scene = new Scene(root, 800, 600);
+            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+
+            stage.setScene(scene);
+            stage.setTitle("🏹 Scegli la Difficoltà");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
