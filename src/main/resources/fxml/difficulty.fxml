@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.HBox?>
+
+<StackPane xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="it.unicam.cs.mpgc.rpg.m131177.controller.DifficultyController"
+           styleClass="root-pane">
+
+    <padding>
+        <Insets top="40" right="40" bottom="40" left="40"/>
+    </padding>
+
+    <VBox alignment="TOP_CENTER" spacing="20" maxWidth="600">
+
+        <!-- Titolo -->
+        <Label text="⚔️ Scegli la Difficoltà" styleClass="title-label">
+            <VBox.margin>
+                <Insets top="30"/>
+            </VBox.margin>
+        </Label>
+
+        <Label text="Ogni difficoltà cambierà la forza e l'astuzia dei nemici"
+               styleClass="subtitle-label"/>
+
+        <!-- Spazio -->
+        <VBox prefHeight="20"/>
+
+        <!-- Griglia 2x2 dei bottoni difficoltà -->
+        <VBox spacing="15" alignment="CENTER">
+
+            <!-- Riga 1: Facile e Media -->
+            <HBox spacing="20" alignment="CENTER">
+                <Button fx:id="btnFacile"
+                        text="🌿 Facile&#10;Per chi inizia l'avventura"
+                        onAction="#handleFacile"
+                        styleClass="difficulty-button"
+                        prefWidth="250" prefHeight="80"
+                        wrapText="true"/>
+                <Button fx:id="btnMedia"
+                        text="🍂 Media&#10;Sfida bilanciata"
+                        onAction="#handleMedia"
+                        styleClass="difficulty-button"
+                        prefWidth="250" prefHeight="80"
+                        wrapText="true"/>
+            </HBox>
+
+            <!-- Riga 2: Alta e Superiore -->
+            <HBox spacing="20" alignment="CENTER">
+                <Button fx:id="btnAlta"
+                        text="🔥 Alta&#10;Solo per veterani"
+                        onAction="#handleAlta"
+                        styleClass="difficulty-button"
+                        prefWidth="250" prefHeight="80"
+                        wrapText="true"/>
+                <Button fx:id="btnSuperiore"
+                        text="💀 Superiore&#10;Per i più coraggiosi"
+                        onAction="#handleSuperiore"
+                        styleClass="difficulty-button difficulty-extreme"
+                        prefWidth="250" prefHeight="80"
+                        wrapText="true"/>
+            </HBox>
+        </VBox>
+
+        <!-- Spazio -->
+        <VBox prefHeight="30"/>
+
+        <!-- Bottone Indietro -->
+        <Button fx:id="btnIndietro"
+                text="← Torna al Menu"
+                onAction="#handleIndietro"
+                styleClass="back-button"
+                prefWidth="200" prefHeight="40"/>
+
+    </VBox>
+
+</StackPane>
