@@ -49,7 +49,7 @@
 
         <!-- Footer -->
         <VBox prefHeight="30"/>
-        <Label text="v1.2.1 - Progetto MPGC" styleClass="footer-label"/>
+        <Label text="v1.2.2 - Progetto MPGC" styleClass="footer-label"/>
 
     </VBox>
 

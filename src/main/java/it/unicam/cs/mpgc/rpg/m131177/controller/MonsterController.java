@@ -68,7 +68,6 @@ public class MonsterController {
             scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
             stage.setScene(scene);
-            stage.setTitle("🏹 Scegli la Difficoltà");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -80,7 +79,7 @@ public class MonsterController {
     private void selectMonster(String monster) {
         context.setMonster(monster);
         showAlert(
-                "🏹 Partita Pronta!",
+                "Partita Pronta!",
                 "Stai per affrontare un " + monster + " in difficoltà " + context.getDifficulty() + "!\n\n" +
                         "La schermata di gioco verrà implementata nella prossima release."
         );
