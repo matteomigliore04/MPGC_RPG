@@ -13,12 +13,15 @@
     -fx-border-width: 2;
     -fx-cursor: hand;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0, 0, 4);
+    -fx-alignment: CENTER;
+    -fx-text-alignment: CENTER;
 }
 
 .difficulty-button:hover {
     -fx-background-color: linear-gradient(to bottom, #5a8032, #3d5c22);
     -fx-border-color: #e0c078;
     -fx-effect: dropshadow(gaussian, rgba(201, 169, 97, 0.7), 15, 0, 0, 5);
+
 }
 
 /* Bottone difficoltà "Superiore" - colore più minaccioso */
@@ -48,6 +51,8 @@
     -fx-border-width: 2;
     -fx-cursor: hand;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0, 0, 4);
+    -fx-alignment: CENTER;
+    -fx-text-alignment: CENTER;
 }
 
 .monster-button:hover {

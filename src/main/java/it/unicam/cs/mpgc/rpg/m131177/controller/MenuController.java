@@ -58,7 +58,6 @@ public class MenuController {
             scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
             stage.setScene(scene);
-            stage.setTitle("🏹 Scegli la Difficoltà");
         } catch (Exception e) {
             e.printStackTrace();
         }

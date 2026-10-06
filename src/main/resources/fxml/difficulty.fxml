@@ -13,13 +13,13 @@
            styleClass="root-pane">
 
     <padding>
-        <Insets top="40" right="40" bottom="40" left="40"/>
+        <Insets top="20" right="30" bottom="20" left="30"/>
     </padding>
 
-    <VBox alignment="TOP_CENTER" spacing="20" maxWidth="600">
+    <VBox alignment="TOP_CENTER" spacing="20">
 
         <!-- Titolo -->
-        <Label text="⚔️ Scegli la Difficoltà" styleClass="title-label">
+        <Label text="SCEGLI LA DIFFICOLTA" styleClass="title-label">
             <VBox.margin>
                 <Insets top="30"/>
             </VBox.margin>
@@ -37,13 +37,13 @@
             <!-- Riga 1: Facile e Media -->
             <HBox spacing="20" alignment="CENTER">
                 <Button fx:id="btnFacile"
-                        text="🌿 Facile&#10;Per chi inizia l'avventura"
+                        text="FACILE&#10;Per chi inizia l'avventura"
                         onAction="#handleFacile"
                         styleClass="difficulty-button"
                         prefWidth="250" prefHeight="80"
                         wrapText="true"/>
                 <Button fx:id="btnMedia"
-                        text="🍂 Media&#10;Sfida bilanciata"
+                        text="MEDIA&#10;Sfida bilanciata"
                         onAction="#handleMedia"
                         styleClass="difficulty-button"
                         prefWidth="250" prefHeight="80"
@@ -53,15 +53,15 @@
             <!-- Riga 2: Alta e Superiore -->
             <HBox spacing="20" alignment="CENTER">
                 <Button fx:id="btnAlta"
-                        text="🔥 Alta&#10;Solo per veterani"
+                        text="ALTA&#10;Solo per veterani"
                         onAction="#handleAlta"
                         styleClass="difficulty-button"
                         prefWidth="250" prefHeight="80"
                         wrapText="true"/>
                 <Button fx:id="btnSuperiore"
-                        text="💀 Superiore&#10;Per i più coraggiosi"
+                        text="SUPERIORE&#10;Per i più coraggiosi"
                         onAction="#handleSuperiore"
-                        styleClass="difficulty-button difficulty-extreme"
+                        styleClass="difficulty-button, difficulty-extreme"
                         prefWidth="250" prefHeight="80"
                         wrapText="true"/>
             </HBox>
@@ -76,7 +76,6 @@
                 onAction="#handleIndietro"
                 styleClass="back-button"
                 prefWidth="200" prefHeight="40"/>
-
     </VBox>
 
 </StackPane>

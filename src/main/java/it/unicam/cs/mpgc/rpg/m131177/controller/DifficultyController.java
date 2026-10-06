@@ -83,7 +83,6 @@ public class DifficultyController {
             scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
             stage.setScene(scene);
-            stage.setTitle("🏹 Scegli il Mostro");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -105,6 +104,5 @@ public class DifficultyController {
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
         stage.setScene(scene);
-        stage.setTitle("🏹 " + title);
     }
 }
