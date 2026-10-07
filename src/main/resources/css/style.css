@@ -6,14 +6,13 @@
     -fx-background-color: linear-gradient(to bottom, #4a6b2a, #2d4a1a);
     -fx-text-fill: #f4e8c8;
     -fx-font-size: 12px;
-    -fx-font-weight: bold;
-    -fx-font-family: "Serif";
     -fx-background-radius: 10;
     -fx-border-radius: 10;
     -fx-border-color: #c9a961;
     -fx-border-width: 2;
     -fx-cursor: hand;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0, 0, 4);
+    /* Centrano il testo su più righe (necessario con wrapText=true) */
     -fx-alignment: CENTER;
     -fx-text-alignment: CENTER;
 }
@@ -21,7 +20,6 @@
     -fx-background-color: linear-gradient(to bottom, #5a8032, #3d5c22);
     -fx-border-color: #e0c078;
     -fx-effect: dropshadow(gaussian, rgba(201, 169, 97, 0.7), 15, 0, 0, 5);
-
 }
 
 .difficulty-extreme {
@@ -38,14 +36,13 @@
     -fx-background-color: linear-gradient(to bottom, #6b4423, #4a2f1a);
     -fx-text-fill: #f4e8c8;
     -fx-font-size: 12px;
-    -fx-font-weight: bold;
-    -fx-font-family: "Serif";
     -fx-background-radius: 10;
     -fx-border-radius: 10;
     -fx-border-color: #c9a961;
     -fx-border-width: 2;
     -fx-cursor: hand;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0, 0, 4);
+    /* Centrano il testo su più righe (necessario con wrapText=true) */
     -fx-alignment: CENTER;
     -fx-text-alignment: CENTER;
 }
@@ -66,15 +63,16 @@
 }
 
 .back-button {
-    -fx-background-color: transparent;
-    -fx-text-fill: #c9a961;
+    -fx-text-fill: #000000;
     -fx-font-size: 10px;
-    -fx-font-family: "Serif";
     -fx-border-color: #c9a961;
     -fx-border-width: 1;
     -fx-border-radius: 5;
     -fx-background-radius: 5;
     -fx-cursor: hand;
+    /* Centra il testo del pulsante "Torna al Menu" */
+    -fx-alignment: CENTER;
+    -fx-text-alignment: CENTER;
 }
 .back-button:hover {
     -fx-background-color: rgba(201, 169, 97, 0.15);
@@ -84,31 +82,30 @@
 
 .title-label {
     -fx-font-size: 24px;
-    -fx-font-weight: bold;
     -fx-text-fill: #c9a961;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 10, 0, 0, 2);
-    -fx-padding: 100 0 0 0; /* top right bottom left */
+    -fx-padding: 100 0 0 0;
 }
 
 .subtitle-label {
     -fx-font-size: 10px;
     -fx-text-fill: #d4c5a0;
     -fx-font-style: italic;
-    -fx-font-family: "Serif";
 }
 
 .menu-button {
     -fx-background-color: linear-gradient(to bottom, #6b4423, #4a2f1a);
     -fx-text-fill: #f4e8c8;
     -fx-font-size: 12px;
-    -fx-font-weight: bold;
-    -fx-font-family: "Serif";
     -fx-background-radius: 8;
     -fx-border-radius: 8;
     -fx-border-color: #c9a961;
     -fx-border-width: 2;
     -fx-cursor: hand;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0, 0, 4);
+    /* Centra il testo del pulsante del menu */
+    -fx-alignment: CENTER;
+    -fx-text-alignment: CENTER;
 }
 .menu-button:hover {
     -fx-background-color: linear-gradient(to bottom, #4a6b2a, #2d4a1a);
@@ -119,5 +116,4 @@
 .footer-label {
     -fx-font-size: 9px;
     -fx-text-fill: #8a7a5a;
-    -fx-font-family: "Serif";
 }
