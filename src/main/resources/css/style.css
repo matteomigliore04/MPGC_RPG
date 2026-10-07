@@ -93,17 +93,12 @@
     -fx-border-color: #e0c078;
 }
 
-/* Sfondo principale con gradiente foresta notturna (verde scuro + marrone) */
-.root-pane {
-    -fx-background-color: linear-gradient(to bottom right, #1a2e1a, #2d3e1f, #3d2817);
-}
-
 /* Titolo principale del gioco - colore oro/verde chiaro */
 .title-label {
-    -fx-font-size: 48px;
+    -fx-font-size: 24px;
     -fx-font-weight: bold;
     -fx-text-fill: #c9a961;
-    -fx-font-family: "Serif";
+    -fx-font-family: "Press Start 2P";
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 10, 0, 0, 2);
     -fx-padding: 100 0 0 0; /* top right bottom left */
 }

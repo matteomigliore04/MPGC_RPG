@@ -53,7 +53,7 @@
             <!-- Riga 2: Cavaliere e Dragone -->
             <HBox spacing="20" alignment="CENTER">
                 <Button fx:id="btnCavaliere"
-                        text="🛡Cavaliere Nero&#10;Armato e pericoloso"
+                        text="Cavaliere Nero&#10;Armato e pericoloso"
                         onAction="#handleCavaliere"
                         styleClass="monster-button"
                         prefWidth="250" prefHeight="80"
