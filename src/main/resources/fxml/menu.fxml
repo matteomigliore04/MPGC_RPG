@@ -14,7 +14,7 @@
            styleClass="root-pane">
 
     <!-- SFONDO: ImageView come primo figlio (sta sotto tutto) -->
-    <ImageView fitWidth="800" fitHeight="600" preserveRatio="false">
+    <ImageView fitWidth="900" fitHeight="700" preserveRatio="false">
         <image>
             <Image url="@/images/Puppet King.png"/>
         </image>

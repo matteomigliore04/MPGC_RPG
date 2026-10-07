@@ -25,7 +25,7 @@ public class Main extends Application {
 
         applyBackground((Region) root);
 
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = new Scene(root, 900, 700);
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
         primaryStage.setScene(scene);

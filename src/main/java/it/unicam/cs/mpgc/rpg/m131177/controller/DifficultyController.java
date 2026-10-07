@@ -79,7 +79,7 @@ public class DifficultyController {
             MonsterController controller = loader.getController();
             controller.setContext(context, stage);
 
-            Scene scene = new Scene(root, 800, 600);
+            Scene scene = new Scene(root, 900, 700);
             scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
             stage.setScene(scene);
@@ -100,7 +100,7 @@ public class DifficultyController {
             context.reset();
         }
 
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = new Scene(root, 900, 700);
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
         stage.setScene(scene);

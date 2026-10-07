@@ -6,11 +6,20 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 
 <StackPane xmlns="http://javafx.com/javafx/21"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="it.unicam.cs.mpgc.rpg.m131177.controller.DifficultyController"
            styleClass="root-pane">
+
+    <!-- SFONDO: ImageView come primo figlio (sta sotto tutto) -->
+    <ImageView fitWidth="900" fitHeight="700" preserveRatio="false">
+        <image>
+            <Image url="@/images/Puppet King.png"/>
+        </image>
+    </ImageView>
 
     <padding>
         <Insets top="20" right="30" bottom="20" left="30"/>
@@ -75,7 +84,7 @@
                 text="← Torna al Menu"
                 onAction="#handleIndietro"
                 styleClass="back-button"
-                prefWidth="200" prefHeight="40"/>
+                prefWidth="320" prefHeight="40"/>
     </VBox>
 
 </StackPane>

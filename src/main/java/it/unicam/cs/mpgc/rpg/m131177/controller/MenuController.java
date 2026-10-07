@@ -55,7 +55,7 @@ public class MenuController {
             Stage stage = (Stage) btnIniziaPartita.getScene().getWindow();
             controller.setContext(context, stage);
 
-            Scene scene = new Scene(root, 800, 600);
+            Scene scene = new Scene(root, 900, 700);
             scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
             stage.setScene(scene);
