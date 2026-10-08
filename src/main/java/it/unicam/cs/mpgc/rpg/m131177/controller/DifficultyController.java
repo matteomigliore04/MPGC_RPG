@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.control.Alert;
 
 // Controller della schermata di scelta difficoltà.
 // Mantiene il riferimento al GameContext (stato della partita)
@@ -15,7 +16,7 @@ import java.util.logging.Logger;
 public class DifficultyController {
 
     // Logger dedicato alla classe: registra messaggi al posto delle println
-    // e degli stack trace, permettendo una gestione più robusta degli errori
+    // e degli stack trace, per una gestione più robusta degli errori
     private static final Logger LOGGER = Logger.getLogger(DifficultyController.class.getName());
 
     // Riferimenti condivisi con le altre schermate:
@@ -25,7 +26,7 @@ public class DifficultyController {
     private Stage stage;
 
     // Metodo invocato dal MenuController dopo il caricamento della schermata:
-    // serve a iniettare il contesto e lo stage, che non sono forniti da FXML
+    // inietta il contesto e lo stage, che non sono forniti da FXML
     public void setContext(GameContext context, Stage stage) {
         this.context = context;
         this.stage = stage;
@@ -33,7 +34,7 @@ public class DifficultyController {
 
     // --- GESTORI DEI PULSANTI DI DIFFICOLTÀ ---
     // Ogni metodo è collegato a un pulsante FXML e chiama selectDifficulty()
-    // passando la stringa corrispondente al livello scelto.
+    // passando la stringa corrispondente al livello scelto
     @FXML private void handleFacile() {
         selectDifficulty("Facile");
     }
@@ -50,7 +51,7 @@ public class DifficultyController {
     // --- GESTIONE PULSANTE "INDIETRO" ---
     // Riporta l'utente al menu principale tramite navigateTo().
     // In caso di errore nel caricamento, logghiamo l'eccezione
-    // a livello SEVERE invece di stampare lo stack trace su console.
+    // a livello SEVERE invece di stampare lo stack trace su console
     @FXML
     private void handleIndietro() {
         try {
@@ -60,34 +61,37 @@ public class DifficultyController {
         }
     }
 
-    // --- SELEZIONE DIFFICOLTÀ E PASSAGGIO ALLA SCHERMATA MOSTRI ---
-    // Salva la difficoltà nel GameContext, poi carica la schermata monster.fxml
-    // e vi passa il contesto e lo stage, così la partita può proseguire.
-    // Infine crea la nuova scena, applica il CSS e la imposta sullo stage.
-    // In caso di errore, logghiamo l'eccezione con il livello di difficoltà scelto.
+    // --- SELEZIONE DELLA DIFFICOLTÀ E AVVIO DELLA PARTITA ---
+    // Salva la difficoltà scelta nel GameContext, poi (per ora) mostra un alert
+    // riepilogativo. In futuro, al posto dell'alert, verrà caricata la schermata
+    // di gioco vera e propria (game.fxml), passando contesto e stage al suo controller
     private void selectDifficulty(String difficulty) {
+
+        // Registriamo la difficoltà scelta nello stato condiviso della partita,
+        // così le schermate successive potranno leggerla dal GameContext
         context.setDifficulty(difficulty);
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/monster.fxml"));
-            Parent root = loader.load();
 
-            MonsterController controller = loader.getController();
-            controller.setContext(context, stage);
+        // Placeholder: in futuro qui si caricherà game.fxml
+        // (con FXMLLoader + setContext(context, stage) + stage.setScene(...)).
+        // Per ora mostriamo solo un avviso informativo all'utente
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("🌿 Partita Iniziata!");
+        alert.setHeaderText(null);   // niente intestazione, solo titolo + contenuto
+        alert.setContentText(
+                "Difficoltà: " + difficulty + "\n\n" +
+                        "Stai per affrontare un'ondata di mostri!\n" +
+                        "La schermata di gioco verrà implementata nella prossima release."
+        );
 
-            Scene scene = new Scene(root, 900, 700);
-            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-
-            stage.setScene(scene);
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE,
-                    "Errore nel caricamento della schermata mostri (difficoltà: " + difficulty + ")", e);
-        }
+        // showAndWait(): blocca l'esecuzione finché l'utente non chiude l'alert,
+        // così il flusso resta lineare e non si apre altro prima della chiusura
+        alert.showAndWait();
     }
 
     // --- NAVIGAZIONE GENERICA TRA SCHERMATE ---
     // Carica l'FXML indicato, applica il CSS e lo imposta sullo stage.
     // Caso particolare: se si torna al menu, resetta il GameContext
-    // per iniziare una nuova partita pulita.
+    // per iniziare una nuova partita pulita
     private void navigateTo(String fxmlPath, String title) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
         Parent root = loader.load();
@@ -97,6 +101,8 @@ public class DifficultyController {
             context.reset();
         }
 
+        // Creiamo la nuova scena con dimensioni fisse, applichiamo il CSS
+        // e la impostiamo sullo stage per effettuare il cambio schermata
         Scene scene = new Scene(root, 900, 700);
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 

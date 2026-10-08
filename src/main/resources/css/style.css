@@ -32,36 +32,6 @@
     -fx-effect: dropshadow(gaussian, rgba(233, 69, 96, 0.7), 15, 0, 0, 5);
 }
 
-.monster-button {
-    -fx-background-color: linear-gradient(to bottom, #6b4423, #4a2f1a);
-    -fx-text-fill: #f4e8c8;
-    -fx-font-size: 12px;
-    -fx-background-radius: 10;
-    -fx-border-radius: 10;
-    -fx-border-color: #c9a961;
-    -fx-border-width: 2;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0, 0, 4);
-    /* Centrano il testo su più righe (necessario con wrapText=true) */
-    -fx-alignment: CENTER;
-    -fx-text-alignment: CENTER;
-}
-.monster-button:hover {
-    -fx-background-color: linear-gradient(to bottom, #855530, #5c3a20);
-    -fx-border-color: #e0c078;
-    -fx-effect: dropshadow(gaussian, rgba(201, 169, 97, 0.7), 15, 0, 0, 5);
-}
-
-.monster-legendary {
-    -fx-background-color: linear-gradient(to bottom, #8a6b1a, #5c4510);
-    -fx-border-color: #ffd700;
-}
-.monster-legendary:hover {
-    -fx-background-color: linear-gradient(to bottom, #a88320, #7a5a18);
-    -fx-border-color: #ffe55c;
-    -fx-effect: dropshadow(gaussian, rgba(255, 215, 0, 0.7), 15, 0, 0, 5);
-}
-
 .back-button {
     -fx-text-fill: #000000;
     -fx-font-size: 10px;
@@ -76,20 +46,20 @@
 }
 .back-button:hover {
     -fx-background-color: rgba(201, 169, 97, 0.15);
-    -fx-text-fill: #e0c078;
+    -fx-text-fill: #ffffff;
     -fx-border-color: #e0c078;
 }
 
 .title-label {
     -fx-font-size: 24px;
-    -fx-text-fill: #c9a961;
+    -fx-text-fill: #e1c579;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 10, 0, 0, 2);
     -fx-padding: 100 0 0 0;
 }
 
 .subtitle-label {
     -fx-font-size: 10px;
-    -fx-text-fill: #d4c5a0;
+    -fx-text-fill: #e1c579;
     -fx-font-style: italic;
 }
 
@@ -115,5 +85,5 @@
 
 .footer-label {
     -fx-font-size: 9px;
-    -fx-text-fill: #8a7a5a;
+    -fx-text-fill: #000000;
 }

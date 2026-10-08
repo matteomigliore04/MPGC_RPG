@@ -15,7 +15,7 @@
     <!-- Immagine di sfondo a tutto schermo (900x700),
          caricata dalla cartella resources/images -->
     <ImageView fitWidth="900" fitHeight="700">
-        <Image url="@/images/Puppet King.png"/>
+        <Image url="@/images/45908.jpg"/>
     </ImageView>
 
     <!-- VBox centrale: impila verticalmente titolo, spaziatori e pulsanti,
@@ -23,7 +23,7 @@
     <VBox alignment="CENTER" spacing="30">
 
         <!-- Titolo del gioco, stilizzato tramite la classe CSS "title-label" -->
-        <Label text="ARCHERY ADVENTURE" styleClass="title-label"/>
+        <Label text="WEED ADVENTURE" styleClass="title-label"/>
 
         <!-- Spaziatore verticale di 40px per distanziare il titolo dai pulsanti -->
         <VBox prefHeight="40"/>

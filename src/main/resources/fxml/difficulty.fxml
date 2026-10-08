@@ -17,7 +17,7 @@
     <!-- Immagine di sfondo a tutto schermo (900x700),
          caricata dalla cartella resources/images -->
     <ImageView fitWidth="900" fitHeight="700">
-        <Image url="@/images/Puppet King.png"/>
+        <Image url="@/images/45908.jpg"/>
     </ImageView>
 
     <!-- VBox principale: dispone verticalmente titolo, sottotitolo,
