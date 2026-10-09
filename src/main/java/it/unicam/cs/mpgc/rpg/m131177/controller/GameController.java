@@ -43,6 +43,12 @@ public class GameController {
             if (key == KeyCode.S || key == KeyCode.DOWN) gameLoop.setDownPressed(true);
             if (key == KeyCode.A || key == KeyCode.LEFT) gameLoop.setLeftPressed(true);
             if (key == KeyCode.D || key == KeyCode.RIGHT) gameLoop.setRightPressed(true);
+
+            // Sparo con SPAZIO
+            if (key == KeyCode.SPACE) {
+                gameLoop.shoot();
+                event.consume(); // Evita che lo spazio faccia scroll o altre azioni
+            }
         });
 
         gameCanvas.getScene().setOnKeyReleased(event -> {

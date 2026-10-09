@@ -8,8 +8,10 @@
     -fx-border-color: #c9a961;                       /* Bordo dorato */
     -fx-border-width: 2;
     -fx-border-radius: 15;
-    -fx-padding: 10 10 10 10;                              /* Padding verticale e orizzontale */
+    -fx-padding: 15;                              /* Padding verticale e orizzontale */
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.9), 15, 0, 0, 5);
+    -fx-max-height: 50;
+    -fx-max-width: 850;
 }
 
 /* Label vita - rosso acceso */

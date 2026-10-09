@@ -4,6 +4,9 @@ import it.unicam.cs.mpgc.rpg.m131177.controller.GameController;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Game Loop principale.
@@ -19,6 +22,7 @@ public class GameLoop extends AnimationTimer {
     private static final double NANOS_PER_SECOND = 1_000_000_000.0;
 
     private Player player;
+    private List<Projectile> projectiles; // Lista di frecce attive
 
     // Stato dei tasti
     private boolean upPressed = false;
@@ -32,6 +36,7 @@ public class GameLoop extends AnimationTimer {
     public GameLoop(GraphicsContext gc, GameController controller) {
         this.gc = gc;
         this.controller = controller;
+        this.projectiles = new ArrayList<>();
 
         // Inizializza il player al centro, con limite HUD
         double canvasWidth = gc.getCanvas().getWidth();
@@ -41,7 +46,6 @@ public class GameLoop extends AnimationTimer {
 
     @Override
     public void handle(long now) {
-        // Calcolo Delta Time
         if (lastTime == 0) {
             lastTime = now;
             return;
@@ -50,28 +54,43 @@ public class GameLoop extends AnimationTimer {
         deltaTime = (now - lastTime) / NANOS_PER_SECOND;
         lastTime = now;
 
-        // Aggiorna logica
         update(deltaTime);
-
-        // Renderizza
         render();
     }
 
     private void update(double dt) {
-        // Aggiorna il player in base ai tasti premuti
+        // Aggiorna il player
         player.update(dt, upPressed, downPressed, leftPressed, rightPressed);
+
+        // Aggiorna tutti i proiettili e rimuovi quelli inattivi
+        Iterator<Projectile> iterator = projectiles.iterator();
+        while (iterator.hasNext()) {
+            Projectile p = iterator.next();
+            if (!p.update(dt, gc.getCanvas().getWidth(), gc.getCanvas().getHeight())) {
+                iterator.remove(); // Rimuovi se uscito dallo schermo
+            }
+        }
     }
 
     private void render() {
-        // Pulisci il canvas
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
+
+        // Disegna i proiettili (sotto il player)
+        for (Projectile p : projectiles) {
+            p.render(gc);
+        }
 
         // Disegna il player
         player.render(gc);
+    }
 
-        // Debug: mostra coordinate (opzionale, rimuovi in produzione)
-        gc.setFill(Color.WHITE);
-        gc.fillText(String.format("Pos: (%.0f, %.0f)", player.getX(), player.getY()), 10, gc.getCanvas().getHeight() - 10);
+    /**
+     * Metodo chiamato dal controller quando il giocatore preme SPAZIO.
+     * Crea una nuova freccia e la aggiunge alla lista.
+     */
+    public void shoot() {
+        Projectile arrow = player.shoot();
+        projectiles.add(arrow);
     }
 
     // Metodi per gestire gli input (chiamati dal GameController)
