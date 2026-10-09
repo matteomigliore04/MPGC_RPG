@@ -1,69 +1,87 @@
 package it.unicam.cs.mpgc.rpg.m131177.game;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
-/**
- * Rappresenta il giocatore (la cima d'erba) nel gioco.
- * Gestisce posizione, movimento e rendering del personaggio.
- */
 public class Player {
 
     private double x;
     private double y;
-    private double width = 40;
-    private double height = 40;
-    private double speed = 200; // pixel al secondo
+    private double width = 70;
+    private double height = 70;
+    private double speed = 200;
 
-    // Limiti di movimento
-    private double minX;
-    private double maxX;
-    private double minY; // Limite superiore (sotto l'HUD)
-    private double maxY;
+    private double minX, maxX, minY, maxY;
 
-    /**
-     * Costruisce il player posizionato al centro della schermata.
-     *
-     * @param canvasWidth  larghezza del canvas
-     * @param canvasHeight altezza del canvas
-     * @param hudHeight    altezza dell'HUD (zona proibita in alto)
-     */
+    // Immagini per le 4 direzioni
+    private Image imgUp, imgDown, imgLeft, imgRight;
+    private Image currentImg;
+
+    // Direzione attuale (di default guarda in basso)
+    private Direction currentDirection = Direction.DOWN;
+
+    public enum Direction {
+        UP, DOWN, LEFT, RIGHT
+    }
+
     public Player(double canvasWidth, double canvasHeight, double hudHeight) {
         this.x = canvasWidth / 2 - width / 2;
         this.y = canvasHeight / 2 - height / 2;
 
         this.minX = 0;
         this.maxX = canvasWidth - width;
-        this.minY = hudHeight; // Non può salire oltre l'HUD
+        this.minY = hudHeight;
         this.maxY = canvasHeight - height;
+
+        // Carica le immagini
+        loadImages();
+        this.currentImg = imgDown; // Sprite iniziale
     }
 
     /**
-     * Aggiorna la posizione del player in base ai tasti premuti.
-     * Usa il delta time per movimento fluido indipendente dai FPS.
-     *
-     * @param dt          tempo trascorso dall'ultimo frame (in secondi)
-     * @param upPressed   true se il tasto su è premuto
-     * @param downPressed true se il tasto giù è premuto
-     * @param leftPressed true se il tasto sinistro è premuto
-     * @param rightPressed true se il tasto destro è premuto
+     * Carica le immagini in modo sicuro.
+     * Se un'immagine non viene trovata, resta null (useremo il cerchio verde di fallback).
      */
+    private void loadImages() {
+        imgUp = loadImage("/images/weed_up.png");
+        imgDown = loadImage("/images/weed_down.png");
+        imgLeft = loadImage("/images/weed_left.png");
+        imgRight = loadImage("/images/weed_right.png");
+    }
+
+    private Image loadImage(String path) {
+        try {
+            return new Image(getClass().getResourceAsStream(path));
+        } catch (Exception e) {
+            System.out.println("⚠️ Immagine non trovata: " + path + ". Verrà usato il cerchio verde.");
+            return null;
+        }
+    }
+
     public void update(double dt, boolean upPressed, boolean downPressed,
                        boolean leftPressed, boolean rightPressed) {
 
         double movement = speed * dt;
 
+        // Aggiorna la direzione e lo sprite in base ai tasti premuti
+        // (Priorità: Verticale > Orizzontale, per evitare movimenti diagonali confusi)
         if (upPressed) {
             y -= movement;
-        }
-        if (downPressed) {
+            currentDirection = Direction.UP;
+            currentImg = imgUp;
+        } else if (downPressed) {
             y += movement;
-        }
-        if (leftPressed) {
+            currentDirection = Direction.DOWN;
+            currentImg = imgDown;
+        } else if (leftPressed) {
             x -= movement;
-        }
-        if (rightPressed) {
+            currentDirection = Direction.LEFT;
+            currentImg = imgLeft;
+        } else if (rightPressed) {
             x += movement;
+            currentDirection = Direction.RIGHT;
+            currentImg = imgRight;
         }
 
         // Clamp: mantiene il player dentro i limiti
@@ -71,27 +89,26 @@ public class Player {
         y = Math.max(minY, Math.min(y, maxY));
     }
 
-    /**
-     * Disegna il player sul canvas.
-     * Per ora è un cerchio verde (la cima d'erba).
-     */
     public void render(GraphicsContext gc) {
-        // Corpo del player (cerchio verde)
-        gc.setFill(Color.LIMEGREEN);
-        gc.fillOval(x, y, width, height);
+        // Se le immagini sono state caricate correttamente, disegnale
+        if (currentImg != null) {
+            gc.drawImage(currentImg, x, y, width, height);
+        } else {
+            // FALLBACK: Se le immagini mancano, disegna il cerchio verde
+            gc.setFill(Color.LIMEGREEN);
+            gc.fillOval(x, y, width, height);
+            gc.setStroke(Color.DARKGREEN);
+            gc.setLineWidth(2);
+            gc.strokeOval(x, y, width, height);
 
-        // Bordo più scuro per definizione
-        gc.setStroke(Color.DARKGREEN);
-        gc.setLineWidth(2);
-        gc.strokeOval(x, y, width, height);
-
-        // "Occhi" per dare un po' di carattere
-        gc.setFill(Color.BLACK);
-        gc.fillOval(x + 10, y + 12, 6, 6);
-        gc.fillOval(x + 24, y + 12, 6, 6);
+            // Occhi di fallback
+            gc.setFill(Color.BLACK);
+            gc.fillOval(x + 10, y + 12, 6, 6);
+            gc.fillOval(x + 24, y + 12, 6, 6);
+        }
     }
 
-    // Getters per eventuali collisioni future
+    // Getters
     public double getX() { return x; }
     public double getY() { return y; }
     public double getWidth() { return width; }
