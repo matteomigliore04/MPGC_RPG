@@ -17,7 +17,7 @@
     <!-- Immagine di sfondo a tutto schermo (900x700),
          caricata dalla cartella resources/images -->
     <ImageView fitWidth="900" fitHeight="700">
-        <Image url="@/images/45908.jpg"/>
+        <Image url="@/images/wallpaper.jpg"/>
     </ImageView>
 
     <!-- VBox principale: dispone verticalmente titolo, sottotitolo,
@@ -48,13 +48,13 @@
             <HBox spacing="20" alignment="CENTER">
                 <!-- Pulsante FACILE: testo su due righe grazie a \n (&#10;),
                      azione collegata a handleFacile() nel controller -->
-                <Button text="FACILE&#10;&#10;Per chi inizia l'avventura"
+                <Button text="GERMOGLIO&#10;&#10;Appena spuntato, nessun problema"
                         onAction="#handleFacile"
                         styleClass="difficulty-button"
                         prefWidth="250" prefHeight="80"
                         wrapText="true"/>
                 <!-- Pulsante MEDIA: sfida bilanciata, azione handleMedia() -->
-                <Button text="MEDIA&#10;&#10;Sfida bilanciata"
+                <Button text="ERBA SELVATICA&#10;&#10;Inizia a farsi sentire"
                         onAction="#handleMedia"
                         styleClass="difficulty-button"
                         prefWidth="250" prefHeight="80"
@@ -64,7 +64,7 @@
             <!-- Seconda riga: ALTA e SUPERIORE -->
             <HBox spacing="20" alignment="CENTER">
                 <!-- Pulsante ALTA: per veterani, azione handleAlta() -->
-                <Button text="ALTA&#10;&#10;Solo per veterani"
+                <Button text="FUMO DENSO&#10;&#10;Solo per veterani della green"
                         onAction="#handleAlta"
                         styleClass="difficulty-button"
                         prefWidth="250" prefHeight="80"
@@ -72,7 +72,7 @@
                 <!-- Pulsante SUPERIORE: applica due classi CSS
                      ("difficulty-button" + "difficulty-extreme") per
                      evidenziarlo come livello più estremo -->
-                <Button text="SUPERIORE&#10;&#10;Per i più coraggiosi"
+                <Button text="100% THC&#10;&#10;Nebbia totale e mostri implacabili"
                         onAction="#handleSuperiore"
                         styleClass="difficulty-button, difficulty-extreme"
                         prefWidth="250" prefHeight="80"

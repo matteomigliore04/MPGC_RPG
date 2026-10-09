@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+
+<StackPane xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="it.unicam.cs.mpgc.rpg.m131177.controller.GameController">
+
+    <!-- Area di gioco: il Canvas dove disegneremo player e mostri -->
+    <Canvas fx:id="gameCanvas" width="900" height="700" />
+
+    <!-- Immagine di sfondo a tutto schermo (900x700),
+        caricata dalla cartella resources/images -->
+    <ImageView fitWidth="900" fitHeight="700">
+        <Image url="@/images/floor.jpeg"/>
+    </ImageView>
+
+    <!-- HUD Overlay: un AnchorPane trasparente sopra il Canvas -->
+    <AnchorPane prefWidth="900" prefHeight="700" style="-fx-background-color: transparent;">
+
+        <!-- HUD CENTRALE: Vita, Ondata e Punti in un unico pannello -->
+        <HBox fx:id="hudCenter" spacing="30" alignment="CENTER"
+              styleClass="hud-panel"
+              AnchorPane.topAnchor="10"
+              AnchorPane.leftAnchor="10"
+              AnchorPane.rightAnchor="10">
+
+            <Label fx:id="lblHealth" text="❤️ Vita: 100" styleClass="hud-label-health"/>
+            <Label fx:id="lblWave" text="🌊 Ondata: 1" styleClass="hud-label-wave"/>
+            <Label fx:id="lblScore" text="⭐ Punti: 0" styleClass="hud-label-score"/>
+
+        </HBox>
+
+    </AnchorPane>
+
+</StackPane>
+

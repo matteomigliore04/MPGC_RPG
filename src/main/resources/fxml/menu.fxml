@@ -15,7 +15,7 @@
     <!-- Immagine di sfondo a tutto schermo (900x700),
          caricata dalla cartella resources/images -->
     <ImageView fitWidth="900" fitHeight="700">
-        <Image url="@/images/45908.jpg"/>
+        <Image url="@/images/wallpaper.jpg"/>
     </ImageView>
 
     <!-- VBox centrale: impila verticalmente titolo, spaziatori e pulsanti,
@@ -61,6 +61,6 @@
         <VBox prefHeight="30"/>
 
         <!-- Etichetta di footer con versione e nome del progetto -->
-        <Label text="v1.2.2 - Progetto MPGC" styleClass="footer-label"/>
+        <Label text="v1.2.3 - Progetto MPGC" styleClass="footer-label"/>
     </VBox>
 </StackPane>

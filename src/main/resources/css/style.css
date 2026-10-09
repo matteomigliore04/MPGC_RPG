@@ -2,6 +2,40 @@
     -fx-font-family: 'Press Start 2P';
 }
 
+.hud-panel {
+    -fx-background-color: rgba(10, 10, 10, 0.85);  /* Nero quasi opaco */
+    -fx-background-radius: 15;               /* Angoli arrotondati solo in basso */
+    -fx-border-color: #c9a961;                       /* Bordo dorato */
+    -fx-border-width: 2;
+    -fx-border-radius: 15;
+    -fx-padding: 10 10 10 10;                              /* Padding verticale e orizzontale */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.9), 15, 0, 0, 5);
+}
+
+/* Label vita - rosso acceso */
+.hud-label-health {
+    -fx-font-family: 'Press Start 2P';
+    -fx-font-size: 14px;
+    -fx-text-fill: #ff4444;
+    -fx-effect: dropshadow(gaussian, rgba(255, 68, 68, 0.5), 3, 0, 0, 1);
+}
+
+/* Label ondata - azzurro */
+.hud-label-wave {
+    -fx-font-family: 'Press Start 2P';
+    -fx-font-size: 14px;
+    -fx-text-fill: #44aaff;
+    -fx-effect: dropshadow(gaussian, rgba(68, 170, 255, 0.5), 3, 0, 0, 1);
+}
+
+/* Label punti - oro */
+.hud-label-score {
+    -fx-font-family: 'Press Start 2P';
+    -fx-font-size: 14px;
+    -fx-text-fill: #ffd700;
+    -fx-effect: dropshadow(gaussian, rgba(255, 215, 0, 0.5), 3, 0, 0, 1);
+}
+
 .difficulty-button {
     -fx-background-color: linear-gradient(to bottom, #4a6b2a, #2d4a1a);
     -fx-text-fill: #f4e8c8;
@@ -73,7 +107,6 @@
     -fx-border-width: 2;
     -fx-cursor: hand;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0, 0, 4);
-    /* Centra il testo del pulsante del menu */
     -fx-alignment: CENTER;
     -fx-text-alignment: CENTER;
 }

@@ -19,7 +19,7 @@ chi ha raggiunto i risultati migliori e quali strategie hanno adottato.
 ### Istruzioni
 ```bash
    git clone [https://github.com/matteomigliore04/MPGC_RPG.git]
-   cd ArcheryAdventure
+   cd WeedAdventure
 ```
 
 ### Build del progetto

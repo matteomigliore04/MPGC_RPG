@@ -8,7 +8,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 
 // Controller della schermata di scelta difficoltà.
 // Mantiene il riferimento al GameContext (stato della partita)
@@ -32,20 +32,27 @@ public class DifficultyController {
         this.stage = stage;
     }
 
+    // DICHIARAZIONE DEI BOTTONI (necessarie per collegare l'FXML)
+    @FXML private Button btnFacile;
+    @FXML private Button btnMedia;
+    @FXML private Button btnAlta;
+    @FXML private Button btnSuperiore;
+    @FXML private Button btnIndietro;
+
     // --- GESTORI DEI PULSANTI DI DIFFICOLTÀ ---
     // Ogni metodo è collegato a un pulsante FXML e chiama selectDifficulty()
     // passando la stringa corrispondente al livello scelto
-    @FXML private void handleFacile() {
-        selectDifficulty("Facile");
+    @FXML private void handleFacile(javafx.event.ActionEvent event) {
+        selectDifficulty("Germoglio", event);
     }
-    @FXML private void handleMedia() {
-        selectDifficulty("Media");
+    @FXML private void handleMedia(javafx.event.ActionEvent event) {
+        selectDifficulty("Erba Selvatica", event);
     }
-    @FXML private void handleAlta() {
-        selectDifficulty("Alta");
+    @FXML private void handleAlta(javafx.event.ActionEvent event) {
+        selectDifficulty("Fumo Denso", event);
     }
-    @FXML private void handleSuperiore() {
-        selectDifficulty("Superiore");
+    @FXML private void handleSuperiore(javafx.event.ActionEvent event) {
+        selectDifficulty("100% THC", event);
     }
 
     // --- GESTIONE PULSANTE "INDIETRO" ---
@@ -65,27 +72,24 @@ public class DifficultyController {
     // Salva la difficoltà scelta nel GameContext, poi (per ora) mostra un alert
     // riepilogativo. In futuro, al posto dell'alert, verrà caricata la schermata
     // di gioco vera e propria (game.fxml), passando contesto e stage al suo controller
-    private void selectDifficulty(String difficulty) {
-
-        // Registriamo la difficoltà scelta nello stato condiviso della partita,
-        // così le schermate successive potranno leggerla dal GameContext
+    private void selectDifficulty(String difficulty, javafx.event.ActionEvent event) {
         context.setDifficulty(difficulty);
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/game.fxml"));
+            Parent root = loader.load(); // <--- Qui viene chiamato initialize() (context è ancora null, ma non lo usiamo più)
 
-        // Placeholder: in futuro qui si caricherà game.fxml
-        // (con FXMLLoader + setContext(context, stage) + stage.setScene(...)).
-        // Per ora mostriamo solo un avviso informativo all'utente
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("🌿 Partita Iniziata!");
-        alert.setHeaderText(null);   // niente intestazione, solo titolo + contenuto
-        alert.setContentText(
-                "Difficoltà: " + difficulty + "\n\n" +
-                        "Stai per affrontare un'ondata di mostri!\n" +
-                        "La schermata di gioco verrà implementata nella prossima release."
-        );
+            GameController controller = loader.getController();
+            Stage stage = (Stage) ((javafx.scene.control.Button) event.getSource()).getScene().getWindow();
 
-        // showAndWait(): blocca l'esecuzione finché l'utente non chiude l'alert,
-        // così il flusso resta lineare e non si apre altro prima della chiusura
-        alert.showAndWait();
+            controller.setContext(context, stage); // <--- Qui impostiamo il context e aggiorniamo l'HUD
+
+            Scene scene = new Scene(root, 900, 700);
+            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+
+            stage.setScene(scene);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // --- NAVIGAZIONE GENERICA TRA SCHERMATE ---
