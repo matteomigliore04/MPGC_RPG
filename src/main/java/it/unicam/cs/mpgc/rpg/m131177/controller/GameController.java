@@ -1,14 +1,15 @@
 package it.unicam.cs.mpgc.rpg.m131177.controller;
 
-import it.unicam.cs.mpgc.rpg.m131177.Main;
 import it.unicam.cs.mpgc.rpg.m131177.game.GameLoop;
 import it.unicam.cs.mpgc.rpg.m131177.model.GameContext;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+import it.unicam.cs.mpgc.rpg.m131177.Main;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Region;
 
 public class GameController {
 
@@ -32,6 +33,28 @@ public class GameController {
         GraphicsContext gc = gameCanvas.getGraphicsContext2D();
         gameLoop = new GameLoop(gc, this);
         gameLoop.start();
+    }
+
+    public void setupKeyboardInput() {
+        gameCanvas.getScene().setOnKeyPressed(event -> {
+            KeyCode key = event.getCode();
+
+            if (key == KeyCode.W || key == KeyCode.UP) gameLoop.setUpPressed(true);
+            if (key == KeyCode.S || key == KeyCode.DOWN) gameLoop.setDownPressed(true);
+            if (key == KeyCode.A || key == KeyCode.LEFT) gameLoop.setLeftPressed(true);
+            if (key == KeyCode.D || key == KeyCode.RIGHT) gameLoop.setRightPressed(true);
+        });
+
+        gameCanvas.getScene().setOnKeyReleased(event -> {
+            KeyCode key = event.getCode();
+
+            if (key == KeyCode.W || key == KeyCode.UP) gameLoop.setUpPressed(false);
+            if (key == KeyCode.S || key == KeyCode.DOWN) gameLoop.setDownPressed(false);
+            if (key == KeyCode.A || key == KeyCode.LEFT) gameLoop.setLeftPressed(false);
+            if (key == KeyCode.D || key == KeyCode.RIGHT) gameLoop.setRightPressed(false);
+        });
+
+        gameCanvas.requestFocus();
     }
 
     /**

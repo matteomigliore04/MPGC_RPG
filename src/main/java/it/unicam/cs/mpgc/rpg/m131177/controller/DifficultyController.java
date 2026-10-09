@@ -87,6 +87,8 @@ public class DifficultyController {
             scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
             stage.setScene(scene);
+
+            controller.setupKeyboardInput();
         } catch (Exception e) {
             e.printStackTrace();
         }
