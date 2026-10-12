@@ -8,7 +8,7 @@ public class Player {
 
     private double x;
     private double y;
-    private double width = 70;
+    private double width = 80;
     private double height = 70;
     private double speed = 200;
 

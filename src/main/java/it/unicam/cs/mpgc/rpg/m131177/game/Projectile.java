@@ -12,8 +12,8 @@ public class Projectile {
 
     private double x;
     private double y;
-    private double width = 20;
-    private double height = 8;
+    private double width = 24;
+    private double height = 12;
     private double speed = 500; // pixel al secondo (più veloce del player)
 
     private double directionX; // -1, 0, 1
@@ -63,9 +63,26 @@ public class Projectile {
      */
     public void render(GraphicsContext gc) {
         if (arrowImage != null) {
-            gc.drawImage(arrowImage, x, y, width, height);
+            // Calcola l'angolo in radianti e convertilo in gradi
+            // Math.atan2(y, x) calcola l'angolo del vettore direzione
+            double angle = Math.toDegrees(Math.atan2(directionY, directionX));
+
+            // Salva lo stato attuale del canvas
+            gc.save();
+
+            // Sposta il punto di origine al centro della freccia
+            gc.translate(x + width / 2, y + height / 2);
+
+            // Ruota il canvas dell'angolo calcolato
+            gc.rotate(angle);
+
+            // Disegna l'immagine centrata sul nuovo punto di origine
+            gc.drawImage(arrowImage, -width / 2, -height / 2, width, height);
+
+            // Ripristina lo stato del canvas (annulla rotazione e traslazione)
+            gc.restore();
         } else {
-            // Fallback: rettangolo giallo (freccia stilizzata)
+            // FALLBACK: Rettangolo giallo se l'immagine non viene trovata
             gc.setFill(Color.GOLD);
             gc.fillRect(x, y, width, height);
         }
