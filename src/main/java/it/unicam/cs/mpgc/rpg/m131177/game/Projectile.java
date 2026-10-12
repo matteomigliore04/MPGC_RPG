@@ -22,6 +22,8 @@ public class Projectile {
     private boolean active = true;
     private Image arrowImage;
 
+    private static final double DIAGONAL_FACTOR = 0.70710678118;
+
     /**
      * Crea un proiettile alla posizione del player, nella direzione specificata.
      */
@@ -39,15 +41,16 @@ public class Projectile {
         }
     }
 
-    /**
-     * Aggiorna la posizione del proiettile.
-     * @return true se il proiettile è ancora attivo (dentro lo schermo)
-     */
     public boolean update(double dt, double canvasWidth, double canvasHeight) {
-        x += directionX * speed * dt;
-        y += directionY * speed * dt;
+        // Normalizza la velocità per movimento diagonale
+        double speedMultiplier = 1.0;
+        if (directionX != 0 && directionY != 0) {
+            speedMultiplier = DIAGONAL_FACTOR; // ≈ 0.707
+        }
 
-        // Disattiva se esce dallo schermo
+        x += directionX * speed * dt * speedMultiplier;
+        y += directionY * speed * dt * speedMultiplier;
+
         if (x < -width || x > canvasWidth || y < -height || y > canvasHeight) {
             active = false;
         }

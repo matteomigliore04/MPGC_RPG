@@ -8,27 +8,32 @@ public class Player {
 
     private double x;
     private double y;
-    private double width = 80;
-    private double height = 80;
+    private double width = 70;
+    private double height = 70;
     private double speed = 200;
 
     private double minX, maxX, minY, maxY;
 
-    // Immagini per le 4 direzioni
+    // Fattore di normalizzazione per movimento diagonale (1/√2)
+    private static final double DIAGONAL_FACTOR = 0.70710678118; // ≈ 1/√2
+
+    // Immagini movimento (4 cardinali + 4 diagonali)
     private Image imgUp, imgDown, imgLeft, imgRight;
-    private Image currentImg;
+    private Image imgUpLeft, imgUpRight, imgDownLeft, imgDownRight;
 
-    // Direzione attuale (di default guarda in basso)
-    private Direction currentDirection = Direction.DOWN;
-    // Immagini sparo (NUOVE)
+    // Immagini sparo (4 cardinali + 4 diagonali)
     private Image imgShootUp, imgShootDown, imgShootLeft, imgShootRight;
+    private Image imgShootUpLeft, imgShootUpRight, imgShootDownLeft, imgShootDownRight;
 
-    // Timer per l'animazione di sparo
+    private Image currentImg;
+    private Direction currentDirection = Direction.DOWN;
+
     private double shootingTimer = 0;
-    private static final double SHOOTING_DURATION = 0.15; // Durata in secondi della posa di sparo
+    private static final double SHOOTING_DURATION = 0.15;
 
     public enum Direction {
-        UP, DOWN, LEFT, RIGHT
+        UP, DOWN, LEFT, RIGHT,
+        UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT
     }
 
     public Player(double canvasWidth, double canvasHeight, double hudHeight) {
@@ -40,33 +45,41 @@ public class Player {
         this.minY = hudHeight;
         this.maxY = canvasHeight - height;
 
-        // Carica le immagini
         loadImages();
-        this.currentImg = imgDown; // Sprite iniziale
+        this.currentImg = imgDown;
     }
 
-    /**
-     * Carica le immagini in modo sicuro.
-     * Se un'immagine non viene trovata, resta null (useremo il cerchio verde di fallback).
-     */
     private void loadImages() {
+        // Cardinali
         imgUp = loadImage("/images/weed_up.png");
         imgDown = loadImage("/images/weed_down.png");
         imgLeft = loadImage("/images/weed_left.png");
         imgRight = loadImage("/images/weed_right.png");
 
-        // Sparo
+        // Diagonali
+        imgUpLeft = loadImage("/images/weed_up_left.png");
+        imgUpRight = loadImage("/images/weed_up_right.png");
+        imgDownLeft = loadImage("/images/weed_down_left.png");
+        imgDownRight = loadImage("/images/weed_down_right.png");
+
+        // Sparo cardinali
         imgShootUp = loadImage("/images/weed_up_shoot.png");
         imgShootDown = loadImage("/images/weed_down_shoot.png");
         imgShootLeft = loadImage("/images/weed_left_shoot.png");
         imgShootRight = loadImage("/images/weed_right_shoot.png");
+
+        // Sparo diagonali
+        imgShootUpLeft = loadImage("/images/weed_shoot_up_left.png");
+        imgShootUpRight = loadImage("/images/weed_shoot_up_right.png");
+        imgShootDownLeft = loadImage("/images/weed_shoot_down_left.png");
+        imgShootDownRight = loadImage("/images/weed_shoot_down_right.png");
     }
 
     private Image loadImage(String path) {
         try {
             return new Image(getClass().getResourceAsStream(path));
         } catch (Exception e) {
-            System.out.println("⚠️ Immagine non trovata: " + path + ". Verrà usato il cerchio verde.");
+            System.out.println("⚠️ Immagine non trovata: " + path);
             return null;
         }
     }
@@ -74,32 +87,41 @@ public class Player {
     public void update(double dt, boolean upPressed, boolean downPressed,
                        boolean leftPressed, boolean rightPressed) {
 
-        double movement = speed * dt;
-// Se il timer di sparo è attivo, non cambiare l'immagine di movimento
+        // Calcola il fattore di velocità (normalizzazione diagonale)
+        // Se si muove in diagonale (2 tasti premuti), riduci la velocità di √2
+        double speedMultiplier = 1.0;
+        int axesPressed = 0;
+        if ((upPressed || downPressed)) axesPressed++;
+        if ((leftPressed || rightPressed)) axesPressed++;
+        if (axesPressed == 2) {
+            speedMultiplier = DIAGONAL_FACTOR;
+        }
+
+        double movement = speed * dt * speedMultiplier;
+
         if (shootingTimer > 0) {
-            shootingTimer -= dt; // Decrementa il timer
+            // Durante l'animazione di sparo,允许 il movimento ma non cambiare sprite
+            if (upPressed) y -= movement;
+            if (downPressed) y += movement;
+            if (leftPressed) x -= movement;
+            if (rightPressed) x += movement;
+
+            shootingTimer -= dt;
             if (shootingTimer <= 0) {
-                // Tempo scaduto: torna alla posa normale
                 revertToNormalSprite();
             }
         } else {
-            // Logica di movimento normale
-            if (upPressed) {
-                y -= movement;
-                currentDirection = Direction.UP;
-                currentImg = imgUp;
-            } else if (downPressed) {
-                y += movement;
-                currentDirection = Direction.DOWN;
-                currentImg = imgDown;
-            } else if (leftPressed) {
-                x -= movement;
-                currentDirection = Direction.LEFT;
-                currentImg = imgLeft;
-            } else if (rightPressed) {
-                x += movement;
-                currentDirection = Direction.RIGHT;
-                currentImg = imgRight;
+            // Movimento normale con sprite che cambia
+            boolean moved = false;
+
+            if (upPressed) { y -= movement; moved = true; }
+            if (downPressed) { y += movement; moved = true; }
+            if (leftPressed) { x -= movement; moved = true; }
+            if (rightPressed) { x += movement; moved = true; }
+
+            // Aggiorna la direzione e lo sprite in base alla combinazione di tasti
+            if (moved) {
+                updateDirection(upPressed, downPressed, leftPressed, rightPressed);
             }
         }
 
@@ -109,22 +131,51 @@ public class Player {
     }
 
     /**
-     * Ripristina l'immagine di movimento in base alla direzione attuale.
+     * Determina la direzione in base alla combinazione di tasti premuti.
      */
+    private void updateDirection(boolean up, boolean down, boolean left, boolean right) {
+        if (up && left) {
+            currentDirection = Direction.UP_LEFT;
+            currentImg = imgUpLeft;
+        } else if (up && right) {
+            currentDirection = Direction.UP_RIGHT;
+            currentImg = imgUpRight;
+        } else if (down && left) {
+            currentDirection = Direction.DOWN_LEFT;
+            currentImg = imgDownLeft;
+        } else if (down && right) {
+            currentDirection = Direction.DOWN_RIGHT;
+            currentImg = imgDownRight;
+        } else if (up) {
+            currentDirection = Direction.UP;
+            currentImg = imgUp;
+        } else if (down) {
+            currentDirection = Direction.DOWN;
+            currentImg = imgDown;
+        } else if (left) {
+            currentDirection = Direction.LEFT;
+            currentImg = imgLeft;
+        } else if (right) {
+            currentDirection = Direction.RIGHT;
+            currentImg = imgRight;
+        }
+    }
+
     private void revertToNormalSprite() {
         switch (currentDirection) {
             case UP: currentImg = imgUp; break;
             case DOWN: currentImg = imgDown; break;
             case LEFT: currentImg = imgLeft; break;
             case RIGHT: currentImg = imgRight; break;
+            case UP_LEFT: currentImg = imgUpLeft; break;
+            case UP_RIGHT: currentImg = imgUpRight; break;
+            case DOWN_LEFT: currentImg = imgDownLeft; break;
+            case DOWN_RIGHT: currentImg = imgDownRight; break;
         }
     }
 
-    // Aggiungi questo metodo alla classe Player
-
     /**
-     * Crea e restituisce un proiettile (freccia) nella direzione corrente del player.
-     * La freccia parte dal centro del player.
+     * Crea e restituisce un proiettile nella direzione corrente.
      */
     public Projectile shoot() {
         double startX = x + width / 2 - 10;
@@ -133,14 +184,13 @@ public class Player {
         double dirX = 0;
         double dirY = 0;
 
-        // Attiva il timer di sparo e cambia l'immagine
         shootingTimer = SHOOTING_DURATION;
 
         switch (currentDirection) {
             case UP:
                 dirY = -1;
                 startY = y - 10;
-                currentImg = imgShootUp; // Cambia sprite
+                currentImg = imgShootUp;
                 break;
             case DOWN:
                 dirY = 1;
@@ -157,6 +207,26 @@ public class Player {
                 startX = x + width;
                 currentImg = imgShootRight;
                 break;
+            case UP_LEFT:
+                dirX = -1; dirY = -1;
+                startX = x - 15; startY = y - 10;
+                currentImg = imgShootUpLeft;
+                break;
+            case UP_RIGHT:
+                dirX = 1; dirY = -1;
+                startX = x + width; startY = y - 10;
+                currentImg = imgShootUpRight;
+                break;
+            case DOWN_LEFT:
+                dirX = -1; dirY = 1;
+                startX = x - 15; startY = y + height;
+                currentImg = imgShootDownLeft;
+                break;
+            case DOWN_RIGHT:
+                dirX = 1; dirY = 1;
+                startX = x + width; startY = y + height;
+                currentImg = imgShootDownRight;
+                break;
         }
 
         return new Projectile(startX, startY, dirX, dirY);
@@ -166,7 +236,6 @@ public class Player {
         if (currentImg != null) {
             gc.drawImage(currentImg, x, y, width, height);
         } else {
-            // Fallback cerchio verde
             gc.setFill(Color.LIMEGREEN);
             gc.fillOval(x, y, width, height);
             gc.setStroke(Color.DARKGREEN);
@@ -178,7 +247,6 @@ public class Player {
         }
     }
 
-    // Getters
     public double getX() { return x; }
     public double getY() { return y; }
     public double getWidth() { return width; }
