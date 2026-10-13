@@ -59,17 +59,19 @@ public class GameLoop extends AnimationTimer {
     }
 
     private void update(double dt) {
-        // Aggiorna il player
         player.update(dt, upPressed, downPressed, leftPressed, rightPressed);
 
-        // Aggiorna tutti i proiettili e rimuovi quelli inattivi
+        // Aggiorna proiettili...
         Iterator<Projectile> iterator = projectiles.iterator();
         while (iterator.hasNext()) {
             Projectile p = iterator.next();
             if (!p.update(dt, gc.getCanvas().getWidth(), gc.getCanvas().getHeight())) {
-                iterator.remove(); // Rimuovi se uscito dallo schermo
+                iterator.remove();
             }
         }
+
+        // ✅ AGGIORNAMENTO HUD CON LE FRECCE
+        controller.updateHUD(100, 1, 0, player.getCurrentArrows());
     }
 
     private void render() {
@@ -90,7 +92,9 @@ public class GameLoop extends AnimationTimer {
      */
     public void shoot() {
         Projectile arrow = player.shoot();
-        projectiles.add(arrow);
+        if (arrow != null) { // ✅ Aggiunge la freccia solo se il player ne aveva una
+            projectiles.add(arrow);
+        }
     }
 
     // Metodi per gestire gli input (chiamati dal GameController)

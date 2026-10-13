@@ -17,6 +17,7 @@ public class GameController {
     @FXML private Label lblHealth;
     @FXML private Label lblWave;
     @FXML private Label lblScore;
+    @FXML private Label lblArrows; // ✅ NUOVA
 
     private GameContext context;
     private Stage stage;
@@ -66,10 +67,11 @@ public class GameController {
     /**
      * Metodo chiamato dal GameLoop per aggiornare i testi dell'HUD.
      */
-    public void updateHUD(int health, int wave, int score) {
+    public void updateHUD(int health, int wave, int score, int arrows) {
         lblHealth.setText("❤️ Vita: " + health);
         lblWave.setText("🌊 Ondata: " + wave);
         lblScore.setText("⭐ Punti: " + score);
+        lblArrows.setText("🏹 Frecce: " + arrows + " / 100"); // ✅ Nuovo formato
     }
 
     /**

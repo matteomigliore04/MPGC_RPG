@@ -29,15 +29,16 @@
 
         <HBox fx:id="hudCenter" spacing="10" alignment="CENTER"
               styleClass="hud-panel"
-              StackPane.alignment="TOP_CENTER">
+              StackPane.alignment="BOTTOM_CENTER">
 
             <!-- ✅ MARGINE CORRETTO -->
             <StackPane.margin>
-                <Insets top="20"/>
+                <Insets bottom="20"/>
             </StackPane.margin>
 
             <!-- Vita a sinistra -->
             <Label fx:id="lblHealth" text="❤️ Vita: 100" styleClass="hud-label-health"/>
+            <Label fx:id="lblArrows" text="🏹 Frecce: 100" styleClass="hud-label"/> <!-- ✅ NUOVA -->
 
             <!-- Spacer -->
             <Region HBox.hgrow="ALWAYS" />

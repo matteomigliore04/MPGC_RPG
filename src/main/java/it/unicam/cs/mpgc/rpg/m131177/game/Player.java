@@ -14,6 +14,10 @@ public class Player {
 
     private double minX, maxX, minY, maxY;
 
+    // --- CAMPI PER LE FRECCE ---
+    private int maxArrows = 100;        // ✅ Cambiato da 10 a 100
+    private int currentArrows = 100;    // ✅ Cambiato da 10 a 100
+
     // Fattore di normalizzazione per movimento diagonale (1/√2)
     private static final double DIAGONAL_FACTOR = 0.70710678118; // ≈ 1/√2
 
@@ -42,8 +46,8 @@ public class Player {
 
         this.minX = 0;
         this.maxX = canvasWidth - width;
-        this.minY = hudHeight;
-        this.maxY = canvasHeight - height;
+        this.minY = 0;                                    // Può andare fino al bordo superiore
+        this.maxY = canvasHeight - height - hudHeight;
 
         loadImages();
         this.currentImg = imgDown;
@@ -175,9 +179,41 @@ public class Player {
     }
 
     /**
+     * Metodo per raccogliere frecce (da usare quando i nemici verranno uccisi).
+     * @param amount Numero di frecce da aggiungere
+     * @return Numero effettivo di frecce aggiunte (potrebbe essere meno se si supera il massimo)
+     */
+    public int collectArrows(int amount) {
+        int spaceLeft = maxArrows - currentArrows;
+        int arrowsAdded = Math.min(amount, spaceLeft);
+        currentArrows += arrowsAdded;
+        return arrowsAdded;
+    }
+
+    /**
+     * Getter per il numero attuale di frecce.
+     */
+    public int getCurrentArrows() {
+        return currentArrows;
+    }
+
+    /**
+     * Getter per il numero massimo di frecce.
+     */
+    public int getMaxArrows() {
+        return maxArrows;
+    }
+
+    /**
      * Crea e restituisce un proiettile nella direzione corrente.
      */
     public Projectile shoot() {
+        // ✅ Controllo munizioni
+        if (currentArrows <= 0) {
+            return null; // Non spara se non ha frecce
+        }
+        currentArrows--; // Consuma una freccia
+
         double startX = x + width / 2 - 10;
         double startY = y + height / 2 - 4;
 

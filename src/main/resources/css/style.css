@@ -38,6 +38,10 @@
     -fx-effect: dropshadow(gaussian, rgba(255, 215, 0, 0.5), 3, 0, 0, 1);
 }
 
+#lblArrows {
+    -fx-text-fill: #e6a817;
+}
+
 .difficulty-button {
     -fx-background-color: linear-gradient(to bottom, #4a6b2a, #2d4a1a);
     -fx-text-fill: #f4e8c8;
