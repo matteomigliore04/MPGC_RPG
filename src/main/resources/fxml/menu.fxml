@@ -56,11 +56,5 @@
                 styleClass="menu-button"
                 prefWidth="300"
                 prefHeight="75"/>
-
-        <!-- Spaziatore verticale di 30px prima del footer -->
-        <VBox prefHeight="30"/>
-
-        <!-- Etichetta di footer con versione e nome del progetto -->
-        <Label text="v1.2.3 - Progetto MPGC" styleClass="footer-label"/>
     </VBox>
 </StackPane>

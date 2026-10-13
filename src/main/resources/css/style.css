@@ -2,44 +2,82 @@
     -fx-font-family: 'Press Start 2P';
 }
 
+/* ========== MENU DI PAUSA ========== */
+
+.pause-menu-container {
+    -fx-background-color: rgba(10, 10, 10, 0.9); /* Nero quasi opaco */
+    -fx-padding: 40 60;
+    -fx-background-radius: 15;
+    -fx-border-color: #c9a961; /* Bordo dorato */
+    -fx-border-width: 3;
+    -fx-border-radius: 15;
+    -fx-max-height: 140;
+    -fx-max-width: 600;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 1), 20, 0, 0, 10);
+}
+
+.pause-title {
+    -fx-font-family: 'Press Start 2P';
+    -fx-font-size: 32px;
+    -fx-text-fill: #c9a961;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 1), 5, 0, 0, 2);
+}
+
+.pause-button {
+    -fx-background-color: #2d3e1f; /* Verde scuro */
+    -fx-text-fill: #f4e8c8;
+    -fx-font-family: 'Press Start 2P';
+    -fx-font-size: 14px;
+    -fx-padding: 15 30;
+    -fx-border-color: #c9a961;
+    -fx-border-width: 2;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-cursor: hand;
+    -fx-min-width: 250;
+}
+
+.pause-button:hover {
+    -fx-background-color: #4a6b2a; /* Verde più chiaro all'hover */
+    -fx-text-fill: #ffffff;
+}
+
 .hud-panel {
-    -fx-background-color: rgba(10, 10, 10, 0.85);  /* Nero quasi opaco */
-    -fx-background-radius: 15;               /* Angoli arrotondati solo in basso */
-    -fx-border-color: #c9a961;                       /* Bordo dorato */
+    -fx-background-color: rgba(10, 10, 10, 0.85);
+    -fx-background-radius: 15;
+    -fx-border-color: #c9a961;
     -fx-border-width: 2;
     -fx-border-radius: 15;
-    -fx-padding: 15;                              /* Padding verticale e orizzontale */
+    -fx-padding: 12 16 12 16;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.9), 15, 0, 0, 5);
-    -fx-max-height: 50;
-    -fx-max-width: 850;
+    -fx-max-height: 140;
+    -fx-max-width: 240;
+    -fx-alignment: TOP_LEFT;
 }
 
-/* Label vita - rosso acceso */
+.hud-label{
+    -fx-font-family: 'Press Start 2P';
+    -fx-font-size: 11px;
+}
+
 .hud-label-health {
-    -fx-font-family: 'Press Start 2P';
-    -fx-font-size: 14px;
-    -fx-text-fill: #ff4444;
-    -fx-effect: dropshadow(gaussian, rgba(255, 68, 68, 0.5), 3, 0, 0, 1);
+    -fx-text-fill: #ff7b7b;
+    -fx-effect: dropshadow(gaussian, rgba(255, 123, 123, 0.5), 3, 0, 0, 1);
 }
 
-/* Label ondata - azzurro */
 .hud-label-wave {
-    -fx-font-family: 'Press Start 2P';
-    -fx-font-size: 14px;
-    -fx-text-fill: #44aaff;
-    -fx-effect: dropshadow(gaussian, rgba(68, 170, 255, 0.5), 3, 0, 0, 1);
+    -fx-text-fill: #7ec8ff;
+    -fx-effect: dropshadow(gaussian, rgba(126, 200, 255, 0.5), 3, 0, 0, 1);
 }
 
-/* Label punti - oro */
 .hud-label-score {
-    -fx-font-family: 'Press Start 2P';
-    -fx-font-size: 14px;
-    -fx-text-fill: #ffd700;
-    -fx-effect: dropshadow(gaussian, rgba(255, 215, 0, 0.5), 3, 0, 0, 1);
+    -fx-text-fill: #8fe3a9;
+    -fx-effect: dropshadow(gaussian, rgba(143, 227, 169, 0.5), 3, 0, 0, 1);
 }
 
-#lblArrows {
-    -fx-text-fill: #e6a817;
+.hud-label-arrow {
+    -fx-text-fill: #f7b267;
+    -fx-effect: dropshadow(gaussian, rgba(247, 178, 103, 0.5), 3, 0, 0, 1);
 }
 
 .difficulty-button {

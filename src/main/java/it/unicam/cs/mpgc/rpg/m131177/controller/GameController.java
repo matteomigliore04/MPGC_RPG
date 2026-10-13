@@ -7,9 +7,12 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
-import it.unicam.cs.mpgc.rpg.m131177.Main;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.Region;
+import javafx.scene.control.Button;
+import javafx.fxml.FXMLLoader;          // ✅ AGGIUNGI QUESTO
+import javafx.scene.Parent;             // ✅ AGGIUNGI QUESTO
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;        // ✅ AGGIUNGI QUESTO (Risolve l'errore principale)
 
 public class GameController {
 
@@ -17,8 +20,12 @@ public class GameController {
     @FXML private Label lblHealth;
     @FXML private Label lblWave;
     @FXML private Label lblScore;
-    @FXML private Label lblArrows; // ✅ NUOVA
+    @FXML private Label lblArrows;
+    @FXML private VBox pauseMenu;
+    @FXML private Button btnResume;
+    @FXML private Button btnQuit;
 
+    private boolean isPaused = false;
     private GameContext context;
     private Stage stage;
     private GameLoop gameLoop;
@@ -37,49 +44,110 @@ public class GameController {
     }
 
     public void setupKeyboardInput() {
-        gameCanvas.getScene().setOnKeyPressed(event -> {
-            KeyCode key = event.getCode();
+            gameCanvas.getScene().setOnKeyPressed(event -> {
+                // ✅ Se il gioco è in pausa, ignora tutti i tasti tranne ESC
+                if (isPaused) {
+                    if (event.getCode() == KeyCode.ESCAPE) {
+                        togglePause();
+                    }
+                    return;
+                }
 
-            if (key == KeyCode.W || key == KeyCode.UP) gameLoop.setUpPressed(true);
-            if (key == KeyCode.S || key == KeyCode.DOWN) gameLoop.setDownPressed(true);
-            if (key == KeyCode.A || key == KeyCode.LEFT) gameLoop.setLeftPressed(true);
-            if (key == KeyCode.D || key == KeyCode.RIGHT) gameLoop.setRightPressed(true);
+                KeyCode key = event.getCode();
 
-            // Sparo con SPAZIO
-            if (key == KeyCode.SPACE) {
-                gameLoop.shoot();
-                event.consume(); // Evita che lo spazio faccia scroll o altre azioni
-            }
-        });
+                // Movimento
+                if (key == KeyCode.W || key == KeyCode.UP) gameLoop.setUpPressed(true);
+                if (key == KeyCode.S || key == KeyCode.DOWN) gameLoop.setDownPressed(true);
+                if (key == KeyCode.A || key == KeyCode.LEFT) gameLoop.setLeftPressed(true);
+                if (key == KeyCode.D || key == KeyCode.RIGHT) gameLoop.setRightPressed(true);
 
-        gameCanvas.getScene().setOnKeyReleased(event -> {
-            KeyCode key = event.getCode();
+                // Sparo
+                if (key == KeyCode.SPACE) {
+                    gameLoop.shoot();
+                    event.consume();
+                }
 
-            if (key == KeyCode.W || key == KeyCode.UP) gameLoop.setUpPressed(false);
-            if (key == KeyCode.S || key == KeyCode.DOWN) gameLoop.setDownPressed(false);
-            if (key == KeyCode.A || key == KeyCode.LEFT) gameLoop.setLeftPressed(false);
-            if (key == KeyCode.D || key == KeyCode.RIGHT) gameLoop.setRightPressed(false);
-        });
+                // ✅ Tasto Pausa
+                if (key == KeyCode.ESCAPE) {
+                    togglePause();
+                }
+            });
 
-        gameCanvas.requestFocus();
+            gameCanvas.getScene().setOnKeyReleased(event -> {
+                if (isPaused) return; // Ignora rilascio tasti se in pausa
+
+                KeyCode key = event.getCode();
+                if (key == KeyCode.W || key == KeyCode.UP) gameLoop.setUpPressed(false);
+                if (key == KeyCode.S || key == KeyCode.DOWN) gameLoop.setDownPressed(false);
+                if (key == KeyCode.A || key == KeyCode.LEFT) gameLoop.setLeftPressed(false);
+                if (key == KeyCode.D || key == KeyCode.RIGHT) gameLoop.setRightPressed(false);
+            });
+
+            gameCanvas.requestFocus();
     }
 
     /**
      * Metodo chiamato dal GameLoop per aggiornare i testi dell'HUD.
      */
     public void updateHUD(int health, int wave, int score, int arrows) {
-        lblHealth.setText("❤️ Vita: " + health);
-        lblWave.setText("🌊 Ondata: " + wave);
-        lblScore.setText("⭐ Punti: " + score);
-        lblArrows.setText("🏹 Frecce: " + arrows + " / 100"); // ✅ Nuovo formato
+        lblHealth.setText("Vita: " + health);
+        lblArrows.setText("Frecce: " + arrows + " / 100"); // ✅ Nuovo formato
+        lblScore.setText("Punti: " + score);
+        lblWave.setText("Ondata: " + wave);
     }
 
-    /**
-     * Ferma il game loop quando si esce dalla schermata.
-     */
     public void stopGame() {
         if (gameLoop != null) {
             gameLoop.stop();
+        }
+    }
+
+    /**
+     * Alterna lo stato di pausa.
+     */
+    private void togglePause() {
+        if (isPaused) {
+            resumeGame();
+        } else {
+            pauseGame();
+        }
+    }
+
+    public void pauseGame() {
+        isPaused = true;
+        gameLoop.stop(); // Ferma il motore di gioco
+        pauseMenu.setVisible(true);
+        pauseMenu.setManaged(true); // Lo rende cliccabile
+    }
+
+    @FXML
+    private void handleResume() {
+        resumeGame();
+    }
+
+    public void resumeGame() {
+        isPaused = false;
+        pauseMenu.setVisible(false);
+        pauseMenu.setManaged(false);
+        gameLoop.start(); // Riavvia il motore di gioco
+        gameCanvas.requestFocus(); // Ridà il focus al canvas per la tastiera
+    }
+
+    @FXML
+    private void handleQuit() {
+        gameLoop.stop(); // Ferma definitivamente il loop
+        try {
+            // Torna al menu principale
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/menu.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) btnQuit.getScene().getWindow();
+            Scene scene = new Scene(root, 900, 700); // Ripristina la dimensione del menu
+            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+
+            stage.setScene(scene);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

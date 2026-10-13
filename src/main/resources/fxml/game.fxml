@@ -4,10 +4,11 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 
 <StackPane xmlns="http://javafx.com/javafx/21"
            xmlns:fx="http://javafx.com/fxml/1"
@@ -27,29 +28,40 @@
                style="-fx-background-color: transparent;"
                mouseTransparent="true" pickOnBounds="false">
 
-        <HBox fx:id="hudCenter" spacing="10" alignment="CENTER"
+        <HBox fx:id="hudCenter" spacing="0" alignment="TOP_LEFT"
               styleClass="hud-panel"
-              StackPane.alignment="BOTTOM_CENTER">
+              StackPane.alignment="TOP_LEFT">
 
-            <!-- ✅ MARGINE CORRETTO -->
             <StackPane.margin>
-                <Insets bottom="20"/>
+                <Insets top="20" left="20"/>
             </StackPane.margin>
 
-            <!-- Vita a sinistra -->
-            <Label fx:id="lblHealth" text="❤️ Vita: 100" styleClass="hud-label-health"/>
-            <Label fx:id="lblArrows" text="🏹 Frecce: 100" styleClass="hud-label"/> <!-- ✅ NUOVA -->
-
-            <!-- Spacer -->
-            <Region HBox.hgrow="ALWAYS" />
-
-            <!-- Ondata e Punti a destra -->
-            <Label fx:id="lblWave" text="🌊 Ondata: 1" styleClass="hud-label-wave"/>
-            <Label fx:id="lblScore" text="⭐ Punti: 0" styleClass="hud-label-score"/>
+            <VBox spacing="2" alignment="TOP_LEFT">
+                <Label fx:id="lblHealth" text="Vita: 100" styleClass="hud-label, hud-label-health"/>
+                <Label fx:id="lblArrows" text="Frecce: 100" styleClass="hud-label, hud-label-arrow"/>
+                <Label fx:id="lblScore" text="Punti: 0" styleClass="hud-label, hud-label-score"/>
+                <Label fx:id="lblWave" text="Ondata: 1" styleClass="hud-label, hud-label-wave"/>
+            </VBox>
 
         </HBox>
 
     </StackPane>
 
-</StackPane>
+    <!-- ... (SFONDO, CANVAS, HUD) ... -->
 
+    <!-- MENU DI PAUSA (Overlay) -->
+    <VBox fx:id="pauseMenu" alignment="CENTER" spacing="25"
+          styleClass="pause-menu-container"
+          visible="false" managed="false"
+          StackPane.alignment="CENTER">
+
+        <Label text="PAUSA" styleClass="pause-title"/>
+
+        <Button fx:id="btnResume" text="Riprendi Partita"
+                onAction="#handleResume" styleClass="pause-button"/>
+
+        <Button fx:id="btnQuit" text="Termina Partita"
+                onAction="#handleQuit" styleClass="pause-button"/>
+    </VBox>
+
+</StackPane>

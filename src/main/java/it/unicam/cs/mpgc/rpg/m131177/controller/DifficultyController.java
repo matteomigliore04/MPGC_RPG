@@ -90,7 +90,7 @@ public class DifficultyController {
 
             controller.setupKeyboardInput();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Errore nel caricamento della schermata di gioco (difficoltà: " + difficulty + ")", e);
         }
     }
 
