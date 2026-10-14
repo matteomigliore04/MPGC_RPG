@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="it.unicam.cs.mpgc.rpg.m131177.controller.GameOverController"
+      alignment="CENTER" spacing="20"
+      styleClass="gameover-container">
+
+    <Label text="💀 GAME OVER 💀" styleClass="gameover-title"/>
+
+    <VBox spacing="10" alignment="CENTER" styleClass="stats-box">
+        <Label fx:id="lblFinalScore" text="⭐ Punti: 0" styleClass="gameover-stat"/>
+        <Label fx:id="lblFinalWave" text="🌊 Ondata raggiunta: 1" styleClass="gameover-stat"/>
+        <Label fx:id="lblFinalEnemies" text="👹 Nemici uccisi: 0" styleClass="gameover-stat"/>
+    </VBox>
+
+    <HBox spacing="20" alignment="CENTER">
+        <Button fx:id="btnRetry" text=" Riprova"
+                onAction="#handleRetry" styleClass="gameover-button"/>
+        <Button fx:id="btnMenu" text=" Menu Principale"
+                onAction="#handleMenu" styleClass="gameover-button"/>
+    </HBox>
+
+</VBox>

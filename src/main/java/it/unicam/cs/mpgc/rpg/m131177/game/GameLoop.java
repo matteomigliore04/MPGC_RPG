@@ -37,6 +37,8 @@ public class GameLoop extends AnimationTimer {
 
     private static final double HUD_HEIGHT = 70;
 
+    private Runnable onGameOver;
+
     public GameLoop(GraphicsContext gc, GameController controller) {
         this.gc = gc;
         this.controller = controller;
@@ -133,6 +135,10 @@ public class GameLoop extends AnimationTimer {
         }
     }
 
+    public void setOnGameOver(Runnable onGameOver) {
+        this.onGameOver = onGameOver;
+    }
+
     /**
      * Gestisce le collisioni tra nemici e player.
      * Se un nemico tocca il player: il player prende danno e il nemico viene rimosso.
@@ -149,9 +155,11 @@ public class GameLoop extends AnimationTimer {
                 enemyIterator.remove(); // Rimuovi il nemico (si "sacrifica" colpendo il player)
 
                 if (playerDied) {
-                    // TODO: Gestire Game Over (per ora fermiamo il loop)
-                    System.out.println("💀 GAME OVER! Punti finali: " + player.getScore());
                     this.stop(); // Ferma il game loop
+                    if (onGameOver != null) {
+                        onGameOver.run(); // Chiama il callback
+                    }
+                    return;
                 }
                 break; // Un nemico alla volta
             }
@@ -206,4 +214,8 @@ public class GameLoop extends AnimationTimer {
     public void setDownPressed(boolean pressed) { this.downPressed = pressed; }
     public void setLeftPressed(boolean pressed) { this.leftPressed = pressed; }
     public void setRightPressed(boolean pressed) { this.rightPressed = pressed; }
+
+    public int getScore() { return player.getScore(); }
+    public int getCurrentWave() { return currentWave; } // Lo aggiungeremo nella Parte 2
+    public int getEnemiesKilled() { return enemiesKilled; } // Lo aggiungeremo nella Parte 2
 }
