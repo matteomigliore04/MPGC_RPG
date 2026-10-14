@@ -2,165 +2,73 @@
     -fx-font-family: 'Press Start 2P';
 }
 
-/* ========== MENU DI PAUSA ========== */
-
+/* Pause Menu Container */
 .pause-menu-container {
     -fx-background-color: rgba(10, 10, 10, 0.9); /* Nero quasi opaco */
     -fx-padding: 40 60;
     -fx-background-radius: 15;
-    -fx-border-color: #c9a961; /* Bordo dorato */
+    -fx-border-color: #C1E1C1;
     -fx-border-width: 3;
     -fx-border-radius: 15;
-    -fx-max-height: 140;
-    -fx-max-width: 600;
+    -fx-max-height: 100px;
+    -fx-max-width: 100px;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 1), 20, 0, 0, 10);
 }
-
 .pause-title {
     -fx-font-family: 'Press Start 2P';
-    -fx-font-size: 32px;
-    -fx-text-fill: #c9a961;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 1), 5, 0, 0, 2);
+    -fx-font-size: 24px;
+    -fx-text-fill: #AEEEEE;
 }
 
-.pause-button {
-    -fx-background-color: #2d3e1f; /* Verde scuro */
-    -fx-text-fill: #f4e8c8;
+/* HUD Labels */
+.hud-label {
+    -fx-font-family: 'Press Start 2P';
+    -fx-font-size: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 1), 4, 0, 0, 2);
+}
+#lblHealth {-fx-text-fill: #ff8e8e;}
+#lblShield {-fx-text-fill: #a0d5ff;}
+#lblArrows {-fx-text-fill: #c9ff99;}
+#lblWave {-fx-text-fill: #ffffff;}
+#lblScore {-fx-text-fill: #ffffff;}
+
+/* Pause Menu Buttons */
+.button{
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: #AEEEEE;
     -fx-font-family: 'Press Start 2P';
     -fx-font-size: 14px;
-    -fx-padding: 15 30;
-    -fx-border-color: #c9a961;
-    -fx-border-width: 2;
-    -fx-background-radius: 5;
-    -fx-border-radius: 5;
+    -fx-padding: 5 10 8 10;
     -fx-cursor: hand;
-    -fx-min-width: 250;
+    -fx-min-width: 400;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-effect: null;
 }
-
-.pause-button:hover {
-    -fx-background-color: #4a6b2a; /* Verde più chiaro all'hover */
+.button:hover{
     -fx-text-fill: #ffffff;
+    -fx-border-color: transparent transparent #AEEEEE transparent;
+    -fx-border-width: 0 0 3 0;
 }
 
-.hud-panel {
-    -fx-background-color: rgba(10, 10, 10, 0.85);
-    -fx-background-radius: 15;
-    -fx-border-color: #c9a961;
-    -fx-border-width: 2;
-    -fx-border-radius: 15;
-    -fx-padding: 12 16 12 16;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.9), 15, 0, 0, 5);
-    -fx-max-height: 140;
-    -fx-max-width: 240;
-    -fx-alignment: TOP_LEFT;
-}
-
-.hud-label{
-    -fx-font-family: 'Press Start 2P';
-    -fx-font-size: 11px;
-}
-
-.hud-label-health {
-    -fx-text-fill: #ff7b7b;
-    -fx-effect: dropshadow(gaussian, rgba(255, 123, 123, 0.5), 3, 0, 0, 1);
-}
-
-.hud-label-wave {
-    -fx-text-fill: #7ec8ff;
-    -fx-effect: dropshadow(gaussian, rgba(126, 200, 255, 0.5), 3, 0, 0, 1);
-}
-
-.hud-label-score {
-    -fx-text-fill: #8fe3a9;
-    -fx-effect: dropshadow(gaussian, rgba(143, 227, 169, 0.5), 3, 0, 0, 1);
-}
-
-.hud-label-arrow {
-    -fx-text-fill: #f7b267;
-    -fx-effect: dropshadow(gaussian, rgba(247, 178, 103, 0.5), 3, 0, 0, 1);
-}
-
-.difficulty-button {
-    -fx-background-color: linear-gradient(to bottom, #4a6b2a, #2d4a1a);
-    -fx-text-fill: #f4e8c8;
-    -fx-font-size: 12px;
-    -fx-background-radius: 10;
-    -fx-border-radius: 10;
-    -fx-border-color: #c9a961;
-    -fx-border-width: 2;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0, 0, 4);
-    /* Centrano il testo su più righe (necessario con wrapText=true) */
-    -fx-alignment: CENTER;
-    -fx-text-alignment: CENTER;
-}
-.difficulty-button:hover {
-    -fx-background-color: linear-gradient(to bottom, #5a8032, #3d5c22);
-    -fx-border-color: #e0c078;
-    -fx-effect: dropshadow(gaussian, rgba(201, 169, 97, 0.7), 15, 0, 0, 5);
+.difficulty{
+    -fx-font-size: 10px;
+    -fx-min-width: 300;
 }
 
 .difficulty-extreme {
-    -fx-background-color: linear-gradient(to bottom, #6b2a2a, #4a1a1a);
-    -fx-border-color: #e94560;
-}
-.difficulty-extreme:hover {
-    -fx-background-color: linear-gradient(to bottom, #8a3535, #5c2222);
-    -fx-border-color: #ff6b81;
-    -fx-effect: dropshadow(gaussian, rgba(233, 69, 96, 0.7), 15, 0, 0, 5);
+    -fx-text-fill: #ff6666;
 }
 
-.back-button {
-    -fx-text-fill: #000000;
-    -fx-font-size: 10px;
-    -fx-border-color: #c9a961;
-    -fx-border-width: 1;
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
-    -fx-cursor: hand;
-    /* Centra il testo del pulsante "Torna al Menu" */
-    -fx-alignment: CENTER;
-    -fx-text-alignment: CENTER;
-}
-.back-button:hover {
-    -fx-background-color: rgba(201, 169, 97, 0.15);
-    -fx-text-fill: #ffffff;
-    -fx-border-color: #e0c078;
-}
-
+/* Title and Subtitle Labels */
 .title-label {
     -fx-font-size: 24px;
-    -fx-text-fill: #e1c579;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 10, 0, 0, 2);
+    -fx-text-fill: #AEEEEE;
     -fx-padding: 100 0 0 0;
 }
-
 .subtitle-label {
     -fx-font-size: 10px;
-    -fx-text-fill: #e1c579;
+    -fx-text-fill: #AEEEEE;
     -fx-font-style: italic;
-}
-
-.menu-button {
-    -fx-background-color: linear-gradient(to bottom, #6b4423, #4a2f1a);
-    -fx-text-fill: #f4e8c8;
-    -fx-font-size: 12px;
-    -fx-background-radius: 8;
-    -fx-border-radius: 8;
-    -fx-border-color: #c9a961;
-    -fx-border-width: 2;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0, 0, 4);
-    -fx-alignment: CENTER;
-    -fx-text-alignment: CENTER;
-}
-.menu-button:hover {
-    -fx-background-color: linear-gradient(to bottom, #4a6b2a, #2d4a1a);
-    -fx-border-color: #e0c078;
-    -fx-effect: dropshadow(gaussian, rgba(201, 169, 97, 0.6), 15, 0, 0, 5);
-}
-
-.footer-label {
-    -fx-font-size: 9px;
-    -fx-text-fill: #000000;
 }

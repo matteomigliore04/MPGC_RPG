@@ -3,10 +3,7 @@
 Impugna il tuo arco e difenditi da schiere di mostri in questo RPG con
 difficoltà selezionabile, progettato per offrire sfide sempre diverse e
 calibrate sulle tue capacità. Ogni partita contribuisce al tuo storico
-personale, tracciando progressi, punteggi e performance nel tempo. Grazie
-al database integrato, puoi consultare non solo le tue statistiche, ma
-anche confrontarti con gli altri giocatori della community, scoprendo
-chi ha raggiunto i risultati migliori e quali strategie hanno adottato.
+personale, tracciando progressi, punteggi e performance nel tempo.
 
 ---
 
@@ -19,7 +16,7 @@ chi ha raggiunto i risultati migliori e quali strategie hanno adottato.
 ### Istruzioni
 ```bash
    git clone [https://github.com/matteomigliore04/MPGC_RPG.git]
-   cd WeedAdventure
+   cd MPGC_RPG
 ```
 
 ### Build del progetto

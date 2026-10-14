@@ -1,5 +1,7 @@
 package it.unicam.cs.mpgc.rpg.m131177;
 
+// Import delle classi JavaFX necessarie per avviare l'applicazione,
+// caricare l'FXML, costruire la scena, gestire il font e la finestra
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -8,9 +10,15 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+// Classe principale del gioco: estende Application di JavaFX
+// e rappresenta il punto di ingresso dell'applicazione
 public class Main extends Application {
+
+    // Metodo start(): è il metodo di avvio chiamato automaticamente da JavaFX
+    // quando l'applicazione viene lanciata. Riceve lo Stage principale (la finestra)
     @Override
     public void start(Stage primaryStage) throws Exception {
+
         // --- CARICAMENTO DELL'INTERFACCIA ---
         // Creiamo un FXMLLoader che si occupa di leggere il file menu.fxml,
         // il quale definisce la struttura grafica del menu principale del gioco
@@ -18,7 +26,9 @@ public class Main extends Application {
 
         // --- CARICAMENTO DEL FONT PERSONALIZZATO ---
         // Carichiamo il font "Press Start 2P" (stile retrò/arcade)
-        // dalla cartella resources/fonts, impostando una dimensione base di 10
+        // dalla cartella resources/fonts, impostando una dimensione base di 10.
+        // Nota: la dimensione indicata qui è solo un valore di registrazione,
+        // le dimensioni effettive vengono poi ridefinite nel CSS
         Font.loadFont(Main.class.getResourceAsStream("/fonts/PressStart2P-Regular.ttf"), 10);
 
         // --- CREAZIONE DELLA SCENA ---
@@ -39,5 +49,12 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
+    }
+
+    // Metodo main(): punto di ingresso standard di Java.
+    // La chiamata a launch(args) avvia il ciclo di vita di JavaFX,
+    // che a sua volta chiama il metodo start() qui sopra
+    public static void main(String[] args) {
+        launch(args);
     }
 }

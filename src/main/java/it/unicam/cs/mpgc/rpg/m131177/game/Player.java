@@ -1,58 +1,107 @@
 package it.unicam.cs.mpgc.rpg.m131177.game;
 
+// Import delle classi JavaFX necessarie per disegnare il player
+// sul Canvas (GraphicsContext), caricare le immagini (Image)
+// e disegnare il fallback (Color)
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
+// Import per il logging: usiamo java.util.logging (standard di Java)
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ * Rappresenta il giocatore: posizione, dimensioni, velocità, direzione,
+ * munizioni (frecce) e immagini per le 8 direzioni (4 cardinali + 4 diagonali),
+ * sia in movimento sia in fase di sparo.
+ */
 public class Player {
 
+    // Logger dedicato alla classe: registra messaggi al posto delle println,
+    // permettendo una gestione più robusta e filtrabile degli errori
+    private static final Logger LOGGER = Logger.getLogger(Player.class.getName());
+
+    // --- POSIZIONE, DIMENSIONI E VELOCITÀ ---
+    // x, y: angolo in alto a sinistra del player (in pixel)
+    // width, height: dimensioni del rettangolo/immagine del player
+    // speed: velocità in pixel al secondo
     private double x;
     private double y;
-    private double width = 80;
-    private double height = 70;
-    private double speed = 200;
+    final double width = 80;
+    final double height = 70;
+    final double speed = 200;
 
-    private double minX, maxX, minY, maxY;
+    // --- LIMITI DI MOVIMENTO ---
+    // Valori minimi e massimi per x e y, calcolati in base al canvas,
+    // per evitare che il player esca dallo schermo
+    final double minX, maxX, minY, maxY;
 
-    // --- CAMPI PER LE FRECCE ---
-    private int maxArrows = 100;        // ✅ Cambiato da 10 a 100
-    private int currentArrows = 100;    // ✅ Cambiato da 10 a 100
+    // --- GESTIONE DELLE FRECCE (MUNIZIONI) ---
+    // maxArrows: numero massimo di frecce trasportabili
+    // currentArrows: frecce attualmente disponibili
+    final int maxArrows = 100;
+    private int currentArrows = 100;
 
-    // Fattore di normalizzazione per movimento diagonale (1/√2)
-    private static final double DIAGONAL_FACTOR = 0.70710678118; // ≈ 1/√2
+    // Fattore di normalizzazione per il movimento diagonale (1/√2 ≈ 0.7071):
+    // serve a mantenere la stessa velocità percepita sia in orizzontale/verticale
+    // sia in diagonale (altrimenti la diagonale sarebbe √2 volte più veloce)
+    private static final double DIAGONAL_FACTOR = 0.70710678118;
 
-    // Immagini movimento (4 cardinali + 4 diagonali)
+    // --- IMMAGINI DI MOVIMENTO ---
+    // 4 cardinali + 4 diagonali, caricate da resources/images
     private Image imgUp, imgDown, imgLeft, imgRight;
     private Image imgUpLeft, imgUpRight, imgDownLeft, imgDownRight;
 
-    // Immagini sparo (4 cardinali + 4 diagonali)
+    // --- IMMAGINI DI SPARO ---
+    // 4 cardinali + 4 diagonali, mostrate brevemente dopo lo sparo
     private Image imgShootUp, imgShootDown, imgShootLeft, imgShootRight;
     private Image imgShootUpLeft, imgShootUpRight, imgShootDownLeft, imgShootDownRight;
 
+    // --- STATO CORRENTE ---
+    // currentImg: sprite attualmente disegnato
+    // currentDirection: direzione attuale (per capire quale sprite usare dopo lo sparo)
+    // shootingTimer: tempo rimanente dell'animazione di sparo
     private Image currentImg;
     private Direction currentDirection = Direction.DOWN;
 
     private double shootingTimer = 0;
     private static final double SHOOTING_DURATION = 0.15;
 
+    // Enumerazione delle 8 direzioni possibili
     public enum Direction {
         UP, DOWN, LEFT, RIGHT,
         UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT
     }
 
+    /**
+     * Crea un player al centro del canvas.
+     * @param canvasWidth  larghezza del canvas
+     * @param canvasHeight altezza del canvas
+     * @param hudHeight    altezza dell'HUD (per ora non usata, ma utile in futuro
+     *                     per limitare il movimento sotto l'HUD)
+     */
     public Player(double canvasWidth, double canvasHeight, double hudHeight) {
+        // Posiziona il player al centro del canvas
         this.x = canvasWidth / 2 - width / 2;
         this.y = canvasHeight / 2 - height / 2;
 
+        // Limiti di movimento: il player può arrivare fino ai bordi
         this.minX = 0;
         this.maxX = canvasWidth - width;
         this.minY = 0;                                    // Può andare fino al bordo superiore
-        this.maxY = canvasHeight - height - hudHeight;
+        this.maxY = canvasHeight - height;
 
+        // Carica le immagini e imposta lo sprite iniziale (rivolto verso il basso)
         loadImages();
         this.currentImg = imgDown;
     }
 
+    /**
+     * Carica tutte le immagini del player da resources/images.
+     * Se una risorsa manca, loadImage() logga un warning e restituisce null:
+     * in quel caso, il render() userà un fallback disegnato a mano.
+     */
     private void loadImages() {
         // Cardinali
         imgUp = loadImage("/images/weed_up.png");
@@ -79,20 +128,30 @@ public class Player {
         imgShootDownRight = loadImage("/images/weed_shoot_down_right.png");
     }
 
+    /**
+     * Carica una singola immagine.
+     * Se la risorsa non esiste o non è raggiungibile, logga un warning
+     * (invece di stampare su console con System.out.println) e restituisce null.
+     */
     private Image loadImage(String path) {
         try {
             return new Image(getClass().getResourceAsStream(path));
         } catch (Exception e) {
-            System.out.println("⚠️ Immagine non trovata: " + path);
+            LOGGER.log(Level.WARNING, "Immagine non trovata: " + path, e);
             return null;
         }
     }
 
+    /**
+     * Aggiorna la posizione del player in base ai tasti premuti e al tempo trascorso.
+     * Gestisce anche l'animazione di sparo: durante lo sparo il player può muoversi,
+     * ma lo sprite resta quello di sparo finché il timer non scade.
+     */
     public void update(double dt, boolean upPressed, boolean downPressed,
                        boolean leftPressed, boolean rightPressed) {
 
-        // Calcola il fattore di velocità (normalizzazione diagonale)
-        // Se si muove in diagonale (2 tasti premuti), riduci la velocità di √2
+        // Calcola il fattore di velocità (normalizzazione diagonale):
+        // se si muove su entrambi gli assi, riduce la velocità di √2
         double speedMultiplier = 1.0;
         int axesPressed = 0;
         if ((upPressed || downPressed)) axesPressed++;
@@ -104,7 +163,7 @@ public class Player {
         double movement = speed * dt * speedMultiplier;
 
         if (shootingTimer > 0) {
-            // Durante l'animazione di sparo,允许 il movimento ma non cambiare sprite
+            // Durante l'animazione di sparo, consenti il movimento ma non cambiare sprite
             if (upPressed) y -= movement;
             if (downPressed) y += movement;
             if (leftPressed) x -= movement;
@@ -115,7 +174,7 @@ public class Player {
                 revertToNormalSprite();
             }
         } else {
-            // Movimento normale con sprite che cambia
+            // Movimento normale con sprite che cambia in base alla direzione
             boolean moved = false;
 
             if (upPressed) { y -= movement; moved = true; }
@@ -129,13 +188,14 @@ public class Player {
             }
         }
 
-        // Clamp bordi
+        // Clamp bordi: impedisce al player di uscire dal canvas
         x = Math.max(minX, Math.min(x, maxX));
         y = Math.max(minY, Math.min(y, maxY));
     }
 
     /**
      * Determina la direzione in base alla combinazione di tasti premuti.
+     * La priorità è data alle diagonali, poi ai singoli assi.
      */
     private void updateDirection(boolean up, boolean down, boolean left, boolean right) {
         if (up && left) {
@@ -165,6 +225,10 @@ public class Player {
         }
     }
 
+    /**
+     * Ripristina lo sprite di movimento normale in base alla direzione corrente.
+     * Chiamato quando l'animazione di sparo termina.
+     */
     private void revertToNormalSprite() {
         switch (currentDirection) {
             case UP: currentImg = imgUp; break;
@@ -190,38 +254,43 @@ public class Player {
         return arrowsAdded;
     }
 
-    /**
-     * Getter per il numero attuale di frecce.
-     */
+    /** Getter per il numero attuale di frecce. */
     public int getCurrentArrows() {
         return currentArrows;
     }
 
-    /**
-     * Getter per il numero massimo di frecce.
-     */
+    /** Getter per il numero massimo di frecce. */
     public int getMaxArrows() {
         return maxArrows;
     }
 
     /**
      * Crea e restituisce un proiettile nella direzione corrente.
+     * Se non ci sono frecce disponibili, restituisce null (nessuno sparo).
+     * Consuma una freccia e imposta l'animazione di sparo.
      */
     public Projectile shoot() {
-        // ✅ Controllo munizioni
+        // Controllo munizioni
         if (currentArrows <= 0) {
             return null; // Non spara se non ha frecce
         }
         currentArrows--; // Consuma una freccia
 
+        // Posizione di partenza di default (centro del player, con piccolo offset)
         double startX = x + width / 2 - 10;
         double startY = y + height / 2 - 4;
 
         double dirX = 0;
         double dirY = 0;
 
+        // Attiva l'animazione di sparo
         shootingTimer = SHOOTING_DURATION;
 
+        // In base alla direzione corrente, imposta:
+        // - dirX, dirY: vettore direzione del proiettile
+        // - startX, startY: posizione di partenza ottimale (per evitare che la freccia
+        //   parta dentro il player)
+        // - currentImg: sprite di sparo corrispondente
         switch (currentDirection) {
             case UP:
                 dirY = -1;
@@ -268,10 +337,16 @@ public class Player {
         return new Projectile(startX, startY, dirX, dirY);
     }
 
+    /**
+     * Disegna il player sul canvas.
+     * Se l'immagine corrente è disponibile, la disegna;
+     * altrimenti disegna un fallback stilizzato (cerchio verde con occhi).
+     */
     public void render(GraphicsContext gc) {
         if (currentImg != null) {
             gc.drawImage(currentImg, x, y, width, height);
         } else {
+            // FALLBACK: cerchio verde con occhi neri, se l'immagine non è disponibile
             gc.setFill(Color.LIMEGREEN);
             gc.fillOval(x, y, width, height);
             gc.setStroke(Color.DARKGREEN);
@@ -283,6 +358,8 @@ public class Player {
         }
     }
 
+    // --- GETTER PER POSIZIONE E DIMENSIONI ---
+    // Usati dal GameController per collisioni e logica di gioco
     public double getX() { return x; }
     public double getY() { return y; }
     public double getWidth() { return width; }

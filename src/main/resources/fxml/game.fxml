@@ -1,55 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!-- Import delle classi JavaFX usate nel file:
+     - Canvas: superficie su cui disegnare player, mostri, proiettili
+     - Label: etichette dell'HUD (vita, scudo, frecce, ondata, punti)
+     - StackPane: layout a strati (sfondo → canvas → HUD → pausa)
+     - VBox: layout verticale per HUD e menu di pausa
+     - Image, ImageView: immagine di sfondo della schermata
+     - Button: pulsanti del menu di pausa
+     - AnchorPane: layout per agganciare gli elementi dell'HUD agli angoli -->
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
 
+<!-- StackPane principale: contenitore radice della schermata di gioco.
+     Ordine di sovrapposizione (dal basso verso l'alto):
+     1) ImageView di sfondo
+     2) Canvas di gioco (dove vengono disegnati player e mostri)
+     3) HUD overlay (vita/scudo/frecce a sinistra, ondata/punti a destra)
+     4) Menu di pausa (visibile solo quando il gioco è in pausa) -->
 <StackPane xmlns="http://javafx.com/javafx/21"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="it.unicam.cs.mpgc.rpg.m131177.controller.GameController">
 
+    <!-- LIVELLO 1 — SFONDO -->
     <!-- Immagine di sfondo a tutto schermo (900x700),
          caricata dalla cartella resources/images -->
     <ImageView fitWidth="900" fitHeight="700">
         <Image url="@/images/floor.jpeg"/>
     </ImageView>
 
-    <!-- Area di gioco: il Canvas dove disegneremo player e mostri -->
+    <!-- LIVELLO 2 — AREA DI GIOCO -->
+    <!-- Canvas dove il GameController disegnerà player, mostri, frecce, ecc.
+         Ha le stesse dimensioni dello sfondo (900x700) -->
     <Canvas fx:id="gameCanvas" width="900" height="700" />
 
-    <!-- 3. HUD (Overlay trasparente) -->
+    <!-- LIVELLO 3 — HUD OVERLAY -->
+    <!-- StackPane overlay trasparente, grande quanto la schermata.
+         - mouseTransparent=true: i click passano al Canvas sottostante
+         - pickOnBounds=false: solo gli elementi visibili catturano eventi -->
     <StackPane prefWidth="900" prefHeight="700"
                style="-fx-background-color: transparent;"
                mouseTransparent="true" pickOnBounds="false">
 
-        <HBox fx:id="hudCenter" spacing="0" alignment="TOP_LEFT"
-              styleClass="hud-panel"
-              StackPane.alignment="TOP_LEFT">
+        <!-- AnchorPane interno: permette di agganciare i blocchi dell'HUD
+             agli angoli tramite topAnchor / leftAnchor / rightAnchor -->
+        <AnchorPane prefWidth="900" prefHeight="700"
+                    style="-fx-background-color: transparent;"
+                    mouseTransparent="true" pickOnBounds="false">
 
-            <StackPane.margin>
-                <Insets top="20" left="20"/>
-            </StackPane.margin>
-
-            <VBox spacing="2" alignment="TOP_LEFT">
-                <Label fx:id="lblHealth" text="Vita: 100" styleClass="hud-label, hud-label-health"/>
-                <Label fx:id="lblArrows" text="Frecce: 100" styleClass="hud-label, hud-label-arrow"/>
-                <Label fx:id="lblScore" text="Punti: 0" styleClass="hud-label, hud-label-score"/>
-                <Label fx:id="lblWave" text="Ondata: 1" styleClass="hud-label, hud-label-wave"/>
+            <!-- GRUPPO SINISTRO: Vita, Scudo, Frecce -->
+            <!-- VBox ancorata in alto a sinistra (top=5, left=20).
+                 Contiene tre Label aggiornate dal GameController -->
+            <VBox fx:id="hudLeft" spacing="6" alignment="CENTER"
+                  prefHeight="100"
+                  AnchorPane.topAnchor="5" AnchorPane.leftAnchor="20">
+                <Label fx:id="lblHealth" text="❤️ Vita: 100" styleClass="hud-label"/>
+                <Label fx:id="lblShield" text="️ Scudo: 0" styleClass="hud-label"/>
+                <Label fx:id="lblArrows" text="🏹 Frecce: 100" styleClass="hud-label"/>
             </VBox>
 
-        </HBox>
+            <!-- GRUPPO DESTRO: Ondata e Punti -->
+            <!-- VBox ancorata in alto a destra (top=5, right=20).
+                 Contiene due Label aggiornate dal GameController -->
+            <VBox fx:id="hudRight" spacing="6" alignment="CENTER"
+                  prefHeight="100"
+                  AnchorPane.topAnchor="5" AnchorPane.rightAnchor="20">
+                <Label fx:id="lblWave" text="🌊 Ondata: 1" styleClass="hud-label"/>
+                <Label fx:id="lblScore" text="⭐ Punti: 0" styleClass="hud-label"/>
+            </VBox>
 
+        </AnchorPane>
     </StackPane>
 
     <!-- ... (SFONDO, CANVAS, HUD) ... -->
+    <!-- Commento riassuntivo: i tre livelli precedenti sono già stati descritti sopra -->
 
-    <!-- MENU DI PAUSA (Overlay) -->
+    <!-- LIVELLO 4 — MENU DI PAUSA (Overlay) -->
+    <!-- VBox centrale con i pulsanti di pausa.
+         - visible=false + managed=false: completamente nascosto all'avvio,
+           non occupa spazio né riceve eventi
+         - StackPane.alignment=CENTER: lo centra nella schermata
+         - Il GameController lo rende visibile quando l'utente preme ESC/P -->
     <VBox fx:id="pauseMenu" alignment="CENTER" spacing="25"
           styleClass="pause-menu-container"
           visible="false" managed="false"
@@ -57,10 +93,12 @@
 
         <Label text="PAUSA" styleClass="pause-title"/>
 
-        <Button fx:id="btnResume" text="Riprendi Partita"
+        <!-- Pulsante "Riprendi partita": chiude il menu di pausa e riprende il gioco -->
+        <Button fx:id="btnResume" text="Riprendi partita"
                 onAction="#handleResume" styleClass="pause-button"/>
 
-        <Button fx:id="btnQuit" text="Termina Partita"
+        <!-- Pulsante "Termina partita": chiude la partita e torna al menu principale -->
+        <Button fx:id="btnQuit" text="Termina partita"
                 onAction="#handleQuit" styleClass="pause-button"/>
     </VBox>
 

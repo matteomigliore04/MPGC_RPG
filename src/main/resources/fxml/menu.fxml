@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!-- Import delle classi JavaFX usate nel file:
+     - Button, Label: controlli base per pulsanti ed etichette
+     - Image, ImageView: per mostrare l'immagine di sfondo
+     - VBox: layout verticale per impilare gli elementi
+     - StackPane: layout a strati (sfondo + contenuto sovrapposto) -->
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
@@ -7,6 +12,10 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.StackPane?>
 
+<!-- StackPane principale: contenitore radice della schermata del menu.
+     Sovrappone l'immagine di sfondo (sotto) e il contenuto (sopra).
+     - fx:controller collega il file al MenuController
+     - styleClass="root-pane" applica lo stile CSS definito in style.css -->
 <StackPane xmlns="http://javafx.com/javafx/21"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="it.unicam.cs.mpgc.rpg.m131177.controller.MenuController"
@@ -23,7 +32,7 @@
     <VBox alignment="CENTER" spacing="30">
 
         <!-- Titolo del gioco, stilizzato tramite la classe CSS "title-label" -->
-        <Label text="WEED ADVENTURE" styleClass="title-label"/>
+        <Label text="SOULS ADVENTURE" styleClass="title-label"/>
 
         <!-- Spaziatore verticale di 40px per distanziare il titolo dai pulsanti -->
         <VBox prefHeight="40"/>
@@ -35,7 +44,7 @@
         <Button fx:id="btnIniziaPartita"
                 text="▶ Inizia Partita"
                 onAction="#handleIniziaPartita"
-                styleClass="menu-button"
+                styleClass="button"
                 prefWidth="300"
                 prefHeight="75"/>
 
@@ -44,7 +53,7 @@
         <Button fx:id="btnStatistichePersonali"
                 text="📊 Le mie Statistiche"
                 onAction="#handleStatistichePersonali"
-                styleClass="menu-button"
+                styleClass="button"
                 prefWidth="300"
                 prefHeight="75"/>
 
@@ -53,8 +62,11 @@
         <Button fx:id="btnStatisticheGlobali"
                 text="🏆 Classifica Giocatori"
                 onAction="#handleStatisticheGlobali"
-                styleClass="menu-button"
+                styleClass="button"
                 prefWidth="300"
                 prefHeight="75"/>
+
+        <!-- Spaziatore verticale di 40px per distanziare il titolo dai pulsanti -->
+        <VBox prefHeight="40"/>
     </VBox>
 </StackPane>
