@@ -66,7 +66,7 @@ public class GameLoop extends AnimationTimer {
     private void update(double dt) {
         player.update(dt, upPressed, downPressed, leftPressed, rightPressed);
 
-        // Aggiorna proiettili
+        // 1. Aggiorna proiettili
         Iterator<Projectile> projIterator = projectiles.iterator();
         while (projIterator.hasNext()) {
             Projectile p = projIterator.next();
@@ -75,19 +75,87 @@ public class GameLoop extends AnimationTimer {
             }
         }
 
-        // Spawn nemici
+        // 2. Spawn nemici
         spawnEnemies(dt);
 
-        // Aggiorna nemici
+        // 3. Aggiorna nemici
         for (Enemy enemy : enemies) {
             enemy.update(dt, player);
         }
 
-        // Rimuovi nemici morti
+        // 4. COLLISIONI: Frecce → Nemici
+        handleProjectileEnemyCollisions();
+
+        // 5. COLLISIONI: Nemici → Player
+        handleEnemyPlayerCollisions();
+
+        // 6. Rimuovi nemici morti
         enemies.removeIf(enemy -> !enemy.isAlive());
 
-        // Aggiorna HUD
-        controller.updateHUD(100, 0, 0, 0, player.getCurrentArrows());
+        // 7. Aggiorna HUD con valori REALI
+        controller.updateHUD(
+                player.getCurrentHealth(),
+                player.getScore(),
+                player.getCurrentArrows()
+        );
+    }
+
+    /**
+     * Gestisce le collisioni tra frecce e nemici.
+     * Se una freccia colpisce un nemico: il nemico prende danno, la freccia viene rimossa.
+     * Se il nemico muore: il player guadagna punti e frecce.
+     */
+    private void handleProjectileEnemyCollisions() {
+        Iterator<Projectile> projIterator = projectiles.iterator();
+
+        while (projIterator.hasNext()) {
+            Projectile p = projIterator.next();
+            boolean arrowHit = false;
+
+            for (Enemy enemy : enemies) {
+                if (enemy.isAlive() && CollisionDetector.isProjectileHitEnemy(p, enemy)) {
+                    // La freccia ha colpito il nemico
+                    boolean killed = enemy.takeDamage(25); // 25 danni per freccia (regolabile)
+                    arrowHit = true;
+
+                    if (killed) {
+                        // Nemico ucciso: drop punti e frecce
+                        player.addScore(enemy.getScoreValue());
+                        player.collectArrows(enemy.getArrowDrop());
+                    }
+                    break; // Una freccia colpisce un solo nemico
+                }
+            }
+
+            if (arrowHit) {
+                projIterator.remove(); // Rimuovi la freccia che ha colpito
+            }
+        }
+    }
+
+    /**
+     * Gestisce le collisioni tra nemici e player.
+     * Se un nemico tocca il player: il player prende danno e il nemico viene rimosso.
+     */
+    private void handleEnemyPlayerCollisions() {
+        Iterator<Enemy> enemyIterator = enemies.iterator();
+
+        while (enemyIterator.hasNext()) {
+            Enemy enemy = enemyIterator.next();
+
+            if (enemy.isAlive() && CollisionDetector.isEnemyHitPlayer(enemy, player)) {
+                // Il nemico ha colpito il player
+                boolean playerDied = player.takeDamage(enemy.getDamage());
+                enemyIterator.remove(); // Rimuovi il nemico (si "sacrifica" colpendo il player)
+
+                if (playerDied) {
+                    // TODO: Gestire Game Over (per ora fermiamo il loop)
+                    System.out.println("💀 GAME OVER! Punti finali: " + player.getScore());
+                    this.stop(); // Ferma il game loop
+                }
+                break; // Un nemico alla volta
+            }
+        }
     }
 
     /**

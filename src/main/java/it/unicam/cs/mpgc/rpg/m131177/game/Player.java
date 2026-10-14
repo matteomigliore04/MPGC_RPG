@@ -68,6 +68,11 @@ public class Player {
     private double shootingTimer = 0;
     private static final double SHOOTING_DURATION = 0.15;
 
+    // --- NUOVI CAMPI ---
+    private int maxHealth = 100;
+    private int currentHealth = 100;
+    private int score = 0;
+
     // Enumerazione delle 8 direzioni possibili
     public enum Direction {
         UP, DOWN, LEFT, RIGHT,
@@ -91,6 +96,8 @@ public class Player {
         this.maxX = canvasWidth - width;
         this.minY = 0;                                    // Può andare fino al bordo superiore
         this.maxY = canvasHeight - height;
+
+        this.currentHealth = maxHealth;
 
         // Carica le immagini e imposta lo sprite iniziale (rivolto verso il basso)
         loadImages();
@@ -358,10 +365,34 @@ public class Player {
         }
     }
 
+    /**
+     * Infligge danno al player.
+     * @return true se il player è morto
+     */
+    public boolean takeDamage(int damage) {
+        currentHealth -= damage;
+        if (currentHealth <= 0) {
+            currentHealth = 0;
+            return true; // Player morto
+        }
+        return false;
+    }
+
+    /**
+     * Aggiunge punti al punteggio del player.
+     */
+    public void addScore(int points) {
+        score += points;
+    }
+
     // --- GETTER PER POSIZIONE E DIMENSIONI ---
     // Usati dal GameController per collisioni e logica di gioco
     public double getX() { return x; }
     public double getY() { return y; }
     public double getWidth() { return width; }
     public double getHeight() { return height; }
+
+    public int getCurrentHealth() { return currentHealth; }
+    public int getMaxHealth() { return maxHealth; }
+    public int getScore() { return score; }
 }
