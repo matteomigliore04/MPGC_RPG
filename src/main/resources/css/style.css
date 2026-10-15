@@ -2,18 +2,16 @@
     -fx-font-family: 'Press Start 2P';
 }
 
-/* ========== MENU GAME OVER ========== */
-
-.game-over-title {
+/* HUD Labels */
+.hud-label-score {
     -fx-font-family: 'Press Start 2P';
-    -fx-font-size: 36px;
-    -fx-text-fill: #ff4444; /* Rosso sangue */
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 1), 6, 0, 0, 3);
+    -fx-font-size: 8px;
+    -fx-text-fill: #ffffff;
 }
 
 /* Pause Menu Container */
 .pause-menu-container {
-    -fx-background-color: rgba(10, 10, 10, 0.9); /* Nero quasi opaco */
+    -fx-background-color: rgba(10, 10, 10, 0.9);
     -fx-padding: 40 60;
     -fx-background-radius: 15;
     -fx-border-color: #C1E1C1;
@@ -27,6 +25,11 @@
     -fx-font-family: 'Press Start 2P';
     -fx-font-size: 24px;
     -fx-text-fill: #AEEEEE;
+}
+.game-over-title {
+    -fx-font-family: 'Press Start 2P';
+    -fx-font-size: 24px;
+    -fx-text-fill: #ff4444;
 }
 
 /* HUD Labels */

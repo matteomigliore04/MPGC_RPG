@@ -108,10 +108,10 @@
         <Label text="GAME OVER" styleClass="game-over-title"/>
         <Label fx:id="lblFinalScore" text="Punti Finali: 0" styleClass="hud-label-score"/>
 
-        <Button fx:id="btnRestart" text="🔄 Ricomincia"
+        <Button fx:id="btnRestart" text="Ricomincia"
                 onAction="#handleRestart" styleClass="pause-button"/>
 
-        <Button fx:id="btnMainMenu" text="🏠 Menu Principale"
+        <Button fx:id="btnMainMenu" text="Menu Principale"
                 onAction="#handleMainMenu" styleClass="pause-button"/>
     </VBox>
 

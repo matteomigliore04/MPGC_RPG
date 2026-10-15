@@ -256,7 +256,6 @@ public class GameController {
             scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
             currentStage.setScene(scene);
-            currentStage.setTitle("🌿 Weed Adventure - In Gioco");
 
             // Inizializza il nuovo controller con il context esistente
             newController.setContext(this.context, currentStage);
@@ -274,11 +273,10 @@ public class GameController {
             Parent root = loader.load();
 
             Stage currentStage = (Stage) btnMainMenu.getScene().getWindow();
-            Scene scene = new Scene(root, 800, 600);
+            Scene scene = new Scene(root, 900, 700);
             scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
             currentStage.setScene(scene);
-            currentStage.setTitle("🌿 Weed Adventure");
         } catch (Exception e) {
             e.printStackTrace();
         }
