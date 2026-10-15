@@ -2,6 +2,15 @@
     -fx-font-family: 'Press Start 2P';
 }
 
+/* ========== MENU GAME OVER ========== */
+
+.game-over-title {
+    -fx-font-family: 'Press Start 2P';
+    -fx-font-size: 36px;
+    -fx-text-fill: #ff4444; /* Rosso sangue */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 1), 6, 0, 0, 3);
+}
+
 /* Pause Menu Container */
 .pause-menu-container {
     -fx-background-color: rgba(10, 10, 10, 0.9); /* Nero quasi opaco */

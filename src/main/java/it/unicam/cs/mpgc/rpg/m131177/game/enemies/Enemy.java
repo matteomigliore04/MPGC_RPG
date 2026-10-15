@@ -1,6 +1,7 @@
 package it.unicam.cs.mpgc.rpg.m131177.game.enemies;
 
-import it.unicam.cs.mpgc.rpg.m131177.game.Player;
+import it.unicam.cs.mpgc.rpg.m131177.game.CollisionDetector; // ✅ AGGIUNGI QUESTA RIGA
+import it.unicam.cs.mpgc.rpg.m131177.game.player.Player;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -58,10 +59,24 @@ public abstract class Enemy {
         double dy = (player.getY() + player.getHeight() / 2) - (y + height / 2);
         double distance = Math.sqrt(dx * dx + dy * dy);
 
-        // Normalizza e muovi verso il player
         if (distance > 0) {
-            x += (dx / distance) * speed * dt;
-            y += (dy / distance) * speed * dt;
+            // Calcola di quanto si muoverebbe in questo frame
+            double moveX = (dx / distance) * speed * dt;
+            double moveY = (dy / distance) * speed * dt;
+
+            // Calcola la posizione futura
+            double nextX = x + moveX;
+            double nextY = y + moveY;
+
+            // ✅ CONTROLLO: Se la posizione futura NON collide con il player, muoviti.
+            // Altrimenti, resta fermo (il nemico si "appoggia" al player senza attraversarlo).
+            if (!CollisionDetector.isEnemyAttackingPlayer(this, player)) {
+                x = nextX;
+                y = nextY;
+            }else{
+                // Il nemico è in contatto con il player, quindi infligge danno.
+                player.takeDamage(damage);
+            }
         }
     }
 

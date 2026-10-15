@@ -1,4 +1,4 @@
-package it.unicam.cs.mpgc.rpg.m131177.game;
+package it.unicam.cs.mpgc.rpg.m131177.game.player;
 
 // Import delle classi JavaFX necessarie per disegnare il proiettile
 // sul Canvas (GraphicsContext), caricare l'immagine della freccia (Image)

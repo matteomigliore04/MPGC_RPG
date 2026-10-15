@@ -1,4 +1,4 @@
-package it.unicam.cs.mpgc.rpg.m131177.game;
+package it.unicam.cs.mpgc.rpg.m131177.game.player;
 
 // Import delle classi JavaFX necessarie per disegnare il player
 // sul Canvas (GraphicsContext), caricare le immagini (Image)
@@ -72,6 +72,11 @@ public class Player {
     private int maxHealth = 100;
     private int currentHealth = 100;
     private int score = 0;
+
+    // Timer per l'invincibilità dopo aver subito un danno
+    // ✅ Il timer DEVE partire da 0, altrimenti il giocatore nasce già invincibile!
+    private double invincibilityTimer = 0;
+    private static final double INVINCIBILITY_DURATION = 1.0; // 1 secondo
 
     // Enumerazione delle 8 direzioni possibili
     public enum Direction {
@@ -198,6 +203,16 @@ public class Player {
         // Clamp bordi: impedisce al player di uscire dal canvas
         x = Math.max(minX, Math.min(x, maxX));
         y = Math.max(minY, Math.min(y, maxY));
+
+        // ✅ FONDAMENTALE: Decrementa il timer di invincibilità ALLA FINE del metodo
+        if (invincibilityTimer > 0) {
+            invincibilityTimer -= dt;
+
+            // Protezione: evita che il timer diventi negativo per errori di arrotondamento
+            if (invincibilityTimer < 0) {
+                invincibilityTimer = 0;
+            }
+        }
     }
 
     /**
@@ -370,11 +385,26 @@ public class Player {
      * @return true se il player è morto
      */
     public boolean takeDamage(int damage) {
-        currentHealth -= damage;
-        if (currentHealth <= 0) {
-            currentHealth = 0;
-            return true; // Player morto
+        System.out.println("[DEBUG] takeDamage chiamato. Danno: " + damage + " | Vita prima: " + this.currentHealth + " | Timer: " + this.invincibilityTimer);
+
+        if (this.invincibilityTimer > 0) {
+            System.out.println("[DEBUG] -> Bloccato da invincibilità.");
+            return false;
         }
+
+        this.currentHealth -= damage;
+        System.out.println("[DEBUG] -> Vita dopo sottrazione: " + this.currentHealth);
+
+        this.invincibilityTimer = 1.0;
+
+        if (this.currentHealth <= 0) {
+            this.invincibilityTimer = 0;
+            this.currentHealth = 0;
+            System.out.println("[DEBUG] -> VITA <= 0. RESTITUISCO TRUE (MORTO).");
+            return true;
+        }
+
+        System.out.println("[DEBUG] -> VITA > 0. RESTITUISCO FALSE (VIVO).");
         return false;
     }
 

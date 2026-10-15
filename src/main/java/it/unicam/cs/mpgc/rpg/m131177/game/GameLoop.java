@@ -3,6 +3,8 @@ package it.unicam.cs.mpgc.rpg.m131177.game;
 import it.unicam.cs.mpgc.rpg.m131177.controller.GameController;
 import it.unicam.cs.mpgc.rpg.m131177.game.enemies.Enemy;
 import it.unicam.cs.mpgc.rpg.m131177.game.enemies.EnemyFactory;
+import it.unicam.cs.mpgc.rpg.m131177.game.player.Player;
+import it.unicam.cs.mpgc.rpg.m131177.game.player.Projectile;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -28,7 +30,7 @@ public class GameLoop extends AnimationTimer {
     private double spawnTimer = 0;
     private double spawnInterval = 3.0; // Un nemico ogni 3 secondi
     private int enemiesSpawned = 0;
-    private int maxEnemiesPerWave = 5;
+    private int maxEnemiesPerWave = 10;
 
     private boolean upPressed = false;
     private boolean downPressed = false;
@@ -64,9 +66,10 @@ public class GameLoop extends AnimationTimer {
     }
 
     private void update(double dt) {
+        // 1. Aggiorna player
         player.update(dt, upPressed, downPressed, leftPressed, rightPressed);
 
-        // 1. Aggiorna proiettili
+        // 2. Aggiorna proiettili
         Iterator<Projectile> projIterator = projectiles.iterator();
         while (projIterator.hasNext()) {
             Projectile p = projIterator.next();
@@ -75,29 +78,46 @@ public class GameLoop extends AnimationTimer {
             }
         }
 
-        // 2. Spawn nemici
+        // 3. Spawn nemici
         spawnEnemies(dt);
 
-        // 3. Aggiorna nemici
+        // 4. Aggiorna nemici
         for (Enemy enemy : enemies) {
             enemy.update(dt, player);
         }
 
-        // 4. COLLISIONI: Frecce → Nemici
+        // 5. COLLISIONI
         handleProjectileEnemyCollisions();
-
-        // 5. COLLISIONI: Nemici → Player
-        handleEnemyPlayerCollisions();
+        handleEnemyPlayerCollisions(); // <--- DEVE ESSERCI ESATTAMENTE COSÌ
 
         // 6. Rimuovi nemici morti
         enemies.removeIf(enemy -> !enemy.isAlive());
 
-        // 7. Aggiorna HUD con valori REALI
-        controller.updateHUD(
-                player.getCurrentHealth(),
-                player.getScore(),
-                player.getCurrentArrows()
-        );
+        // 7. Aggiorna HUD
+        controller.updateHUD(player.getCurrentHealth(), player.getScore(), player.getCurrentArrows());
+    }
+
+    private void handleEnemyPlayerCollisions() {
+        for (Enemy enemy : enemies) {
+            if (enemy.isAlive() && CollisionDetector.isEnemyAttackingPlayer(enemy, player)) {
+                System.out.println("[DEBUG GAMELOOP] Collisione rilevata con: " + enemy.getName());
+
+                boolean isDead = player.takeDamage(enemy.getDamage());
+                System.out.println("[DEBUG GAMELOOP] Risultato di takeDamage: " + isDead);
+
+                if (isDead) {
+                    System.out.println("[DEBUG GAMELOOP] ESEGUO showGameOver e stop del loop!");
+                    try {
+                        controller.showGameOver(player.getScore());
+                    } catch (Exception e) {
+                        System.out.println("[DEBUG GAMELOOP] ERRORE CRITICO in showGameOver: " + e.getMessage());
+                        e.printStackTrace();
+                    }
+                    this.stop();
+                }
+                break;
+            }
+        }
     }
 
     /**
@@ -129,31 +149,6 @@ public class GameLoop extends AnimationTimer {
 
             if (arrowHit) {
                 projIterator.remove(); // Rimuovi la freccia che ha colpito
-            }
-        }
-    }
-
-    /**
-     * Gestisce le collisioni tra nemici e player.
-     * Se un nemico tocca il player: il player prende danno e il nemico viene rimosso.
-     */
-    private void handleEnemyPlayerCollisions() {
-        Iterator<Enemy> enemyIterator = enemies.iterator();
-
-        while (enemyIterator.hasNext()) {
-            Enemy enemy = enemyIterator.next();
-
-            if (enemy.isAlive() && CollisionDetector.isEnemyHitPlayer(enemy, player)) {
-                // Il nemico ha colpito il player
-                boolean playerDied = player.takeDamage(enemy.getDamage());
-                enemyIterator.remove(); // Rimuovi il nemico (si "sacrifica" colpendo il player)
-
-                if (playerDied) {
-                    // TODO: Gestire Game Over (per ora fermiamo il loop)
-                    System.out.println("💀 GAME OVER! Punti finali: " + player.getScore());
-                    this.stop(); // Ferma il game loop
-                }
-                break; // Un nemico alla volta
             }
         }
     }

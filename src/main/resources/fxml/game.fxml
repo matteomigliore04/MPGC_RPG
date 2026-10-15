@@ -77,9 +77,6 @@
         </AnchorPane>
     </StackPane>
 
-    <!-- ... (SFONDO, CANVAS, HUD) ... -->
-    <!-- Commento riassuntivo: i tre livelli precedenti sono già stati descritti sopra -->
-
     <!-- LIVELLO 4 — MENU DI PAUSA (Overlay) -->
     <!-- VBox centrale con i pulsanti di pausa.
          - visible=false + managed=false: completamente nascosto all'avvio,
@@ -100,6 +97,22 @@
         <!-- Pulsante "Termina partita": chiude la partita e torna al menu principale -->
         <Button fx:id="btnQuit" text="Termina partita"
                 onAction="#handleQuit" styleClass="pause-button"/>
+    </VBox>
+
+    <!-- MENU GAME OVER (Overlay) -->
+    <VBox fx:id="gameOverMenu" alignment="CENTER" spacing="20"
+          styleClass="pause-menu-container"
+          visible="false" managed="false"
+          StackPane.alignment="CENTER">
+
+        <Label text="GAME OVER" styleClass="game-over-title"/>
+        <Label fx:id="lblFinalScore" text="Punti Finali: 0" styleClass="hud-label-score"/>
+
+        <Button fx:id="btnRestart" text="🔄 Ricomincia"
+                onAction="#handleRestart" styleClass="pause-button"/>
+
+        <Button fx:id="btnMainMenu" text="🏠 Menu Principale"
+                onAction="#handleMainMenu" styleClass="pause-button"/>
     </VBox>
 
 </StackPane>

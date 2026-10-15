@@ -15,6 +15,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.Button;
 
 // Import per il logging: usiamo java.util.logging (standard di Java)
 import java.util.logging.Level;
@@ -43,6 +44,10 @@ public class GameController {
     // funzionano tramite onAction nel FXML e non servono riferimenti Java.
     // Se in futuro dovessi disabilitarli/cambiarne il testo, andranno reinseriti.
     @FXML private VBox pauseMenu;
+    @FXML private VBox gameOverMenu;
+    @FXML private Label lblFinalScore;
+    @FXML private Button btnRestart;
+    @FXML private Button btnMainMenu;
 
     // --- STATO DEL CONTROLLER ---
     // isPaused: true quando il menu di pausa è aperto
@@ -213,6 +218,69 @@ public class GameController {
             // Logging robusto: livello SEVERE, messaggio contestuale,
             // eccezione passata per avere lo stack trace completo nel log
             LOGGER.log(Level.SEVERE, "Errore nel ritorno al menu principale", e);
+        }
+    }
+
+    /**
+     * Mostra la schermata di Game Over fermando il gioco.
+     * @param finalScore Il punteggio finale raggiunto dal giocatore.
+     */
+    public void showGameOver(int finalScore) {
+        // ✅ DEBUG: Se questo messaggio NON appare in console, il GameLoop non sta chiamando questo metodo.
+        System.out.println("🚨 METODO showGameOver CHIAMATO! Vita: 0");
+
+        isPaused = true;
+        gameLoop.stop();
+
+        // Se lblFinalScore fosse null, qui il programma crasherebbe stampando un errore in console
+        lblFinalScore.setText("Punti Finali: " + finalScore);
+
+        gameOverMenu.setVisible(true);
+        gameOverMenu.setManaged(true);
+
+        System.out.println("✅ Menu Game Over reso visibile.");
+    }
+
+    @FXML
+    private void handleRestart() {
+        try {
+            // Ricarica l'FXML di gioco per resettare completamente lo stato
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/game.fxml"));
+            Parent root = loader.load();
+
+            // Ottieni il NUOVO controller
+            GameController newController = loader.getController();
+            Stage currentStage = (Stage) btnMainMenu.getScene().getWindow();
+
+            Scene scene = new Scene(root, 900, 700);
+            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+
+            currentStage.setScene(scene);
+            currentStage.setTitle("🌿 Weed Adventure - In Gioco");
+
+            // Inizializza il nuovo controller con il context esistente
+            newController.setContext(this.context, currentStage);
+            newController.setupKeyboardInput();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleMainMenu() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/menu.fxml"));
+            Parent root = loader.load();
+
+            Stage currentStage = (Stage) btnMainMenu.getScene().getWindow();
+            Scene scene = new Scene(root, 800, 600);
+            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+
+            currentStage.setScene(scene);
+            currentStage.setTitle("🌿 Weed Adventure");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
