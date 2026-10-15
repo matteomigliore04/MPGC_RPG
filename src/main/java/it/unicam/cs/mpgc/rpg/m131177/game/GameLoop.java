@@ -3,8 +3,8 @@ package it.unicam.cs.mpgc.rpg.m131177.game;
 import it.unicam.cs.mpgc.rpg.m131177.controller.GameController;
 import it.unicam.cs.mpgc.rpg.m131177.game.enemies.Enemy;
 import it.unicam.cs.mpgc.rpg.m131177.game.enemies.EnemyFactory;
-import it.unicam.cs.mpgc.rpg.m131177.game.player.Player;
-import it.unicam.cs.mpgc.rpg.m131177.game.player.Projectile;
+import it.unicam.cs.mpgc.rpg.m131177.game.players.Player;
+import it.unicam.cs.mpgc.rpg.m131177.game.players.Projectile;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.GraphicsContext;
 

@@ -1,7 +1,7 @@
 package it.unicam.cs.mpgc.rpg.m131177.game.enemies;
 
 import it.unicam.cs.mpgc.rpg.m131177.game.CollisionDetector; // ✅ AGGIUNGI QUESTA RIGA
-import it.unicam.cs.mpgc.rpg.m131177.game.player.Player;
+import it.unicam.cs.mpgc.rpg.m131177.game.players.Player;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;

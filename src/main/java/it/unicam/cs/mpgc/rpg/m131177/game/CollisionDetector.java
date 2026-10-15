@@ -1,8 +1,8 @@
 package it.unicam.cs.mpgc.rpg.m131177.game;
 
 import it.unicam.cs.mpgc.rpg.m131177.game.enemies.Enemy;
-import it.unicam.cs.mpgc.rpg.m131177.game.player.Projectile;
-import it.unicam.cs.mpgc.rpg.m131177.game.player.Player;
+import it.unicam.cs.mpgc.rpg.m131177.game.players.Projectile;
+import it.unicam.cs.mpgc.rpg.m131177.game.players.Player;
 
 public class CollisionDetector {
 

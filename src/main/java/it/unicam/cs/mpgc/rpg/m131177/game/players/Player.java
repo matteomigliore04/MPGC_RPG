@@ -1,4 +1,4 @@
-package it.unicam.cs.mpgc.rpg.m131177.game.player;
+package it.unicam.cs.mpgc.rpg.m131177.game.players;
 
 // Import delle classi JavaFX necessarie per disegnare il player
 // sul Canvas (GraphicsContext), caricare le immagini (Image)
