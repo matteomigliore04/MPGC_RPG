@@ -59,9 +59,9 @@
             <VBox fx:id="hudLeft" spacing="6" alignment="CENTER"
                   prefHeight="100"
                   AnchorPane.topAnchor="5" AnchorPane.leftAnchor="20">
-                <Label fx:id="lblHealth" text="❤️ Vita: 100" styleClass="hud-label"/>
-                <Label fx:id="lblShield" text="️ Scudo: 0" styleClass="hud-label"/>
-                <Label fx:id="lblArrows" text="🏹 Frecce: 100" styleClass="hud-label"/>
+                <Label fx:id="lblHealth" text="Vita: 100" styleClass="hud-label"/>
+                <Label fx:id="lblShield" text="️Scudo: 0" styleClass="hud-label"/>
+                <Label fx:id="lblArrows" text="Frecce: 100" styleClass="hud-label"/>
             </VBox>
 
             <!-- GRUPPO DESTRO: Ondata e Punti -->
@@ -70,8 +70,8 @@
             <VBox fx:id="hudRight" spacing="6" alignment="CENTER"
                   prefHeight="100"
                   AnchorPane.topAnchor="5" AnchorPane.rightAnchor="20">
-                <Label fx:id="lblWave" text="🌊 Ondata: 1" styleClass="hud-label"/>
-                <Label fx:id="lblScore" text="⭐ Punti: 0" styleClass="hud-label"/>
+                <Label fx:id="lblWave" text="Ondata: 1" styleClass="hud-label"/>
+                <Label fx:id="lblScore" text="Punti: 0" styleClass="hud-label"/>
             </VBox>
 
         </AnchorPane>

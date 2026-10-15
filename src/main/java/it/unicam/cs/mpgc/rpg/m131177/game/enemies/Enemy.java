@@ -144,6 +144,15 @@ public abstract class Enemy {
      */
     protected abstract Color getFallbackColor();
 
+    /**
+     * Scala le statistiche del nemico in base all'ondata.
+     */
+    public void scaleStats(double healthMultiplier, double speedMultiplier) {
+        this.maxHealth = (int) (this.maxHealth * healthMultiplier);
+        this.currentHealth = this.maxHealth;
+        this.speed = this.speed * speedMultiplier;
+    }
+
     // Getters
     public double getX() { return x; }
     public double getY() { return y; }

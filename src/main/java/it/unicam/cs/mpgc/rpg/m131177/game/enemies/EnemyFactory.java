@@ -10,32 +10,30 @@ public class EnemyFactory {
 
     private final Random random = new Random();
 
-    /**
-     * Crea un nemico casuale in base alla difficoltà.
-     * @param difficulty "Germoglio", "Erba Selvatica", "Fumo Denso", "100% THC"
-     */
-    public Enemy createEnemy(double canvasWidth, double canvasHeight, double hudHeight, String difficulty) {
-        int type = random.nextInt(getNumberOfTypes(difficulty));
+    public Enemy createEnemy(double canvasWidth, double canvasHeight, double hudHeight, int wave) {
+        int type = random.nextInt(getNumberOfTypes(wave));
 
-        return switch (type) {
+        Enemy enemy = switch (type) {
             case 0 -> new Goblin(canvasWidth, canvasHeight, hudHeight);
             case 1 -> new Zombie(canvasWidth, canvasHeight, hudHeight);
             case 2 -> new Skeleton(canvasWidth, canvasHeight, hudHeight);
             default -> new Goblin(canvasWidth, canvasHeight, hudHeight);
         };
+
+        // ✅ SCALING: Aumenta vita e velocità in base all'ondata (+10% vita e +5% velocità per ondata)
+        double healthMultiplier = 1.0 + ((wave - 1) * 0.10);
+        double speedMultiplier = 1.0 + ((wave - 1) * 0.05);
+
+        enemy.scaleStats(healthMultiplier, speedMultiplier);
+
+        return enemy;
     }
 
-    /**
-     * Restituisce il numero di tipi di nemici disponibili in base alla difficoltà.
-     * Più alta la difficoltà, più tipi di nemici possono apparire.
-     */
-    private int getNumberOfTypes(String difficulty) {
-        return switch (difficulty) {
-            case "Germoglio" -> 1;          // Solo goblin
-            case "Erba Selvatica" -> 2;     // Goblin + Zombie
-            case "Fumo Denso" -> 3;         // Tutti e 3
-            case "100% THC" -> 3;           // Tutti e 3 (più frequenti)
-            default -> 1;
+    private int getNumberOfTypes(int wave) {
+        return switch (wave) {
+            case 1 -> 1;          // Solo goblin
+            case 2, 3 -> 2;       // Goblin + Zombie
+            default -> 3;         // Tutti e 3 dall'ondata 4 in poi
         };
     }
 }

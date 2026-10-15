@@ -136,11 +136,12 @@ public class GameController {
     // Metodo chiamato dal GameLoop ad ogni frame per aggiornare i testi dell'HUD.
     // I valori arrivano dal GameLoop (che a sua volta li legge dal player
     // o da un model condiviso).
-    public void updateHUD(int health, int score, int arrows) {
-        lblHealth.setText("❤️ Vita: " + health);
-        lblScore.setText("⭐ Punti: " + score);
-        lblArrows.setText("🏹 Frecce: " + arrows + "/100");
-        // lblWave e lblShield per ora restano con valori fissi o li rimuovi temporaneamente
+    public void updateHUD(int health, int wave, int score, int arrows) {
+        lblHealth.setText("Vita: " + health);
+        lblShield.setText("️Scudo: 0");
+        lblWave.setText("Ondata: " + wave);
+        lblScore.setText("Punti: " + score);
+        lblArrows.setText("Frecce: " + arrows);
     }
 
     // --- GESTIONE DEL GIOCO ---

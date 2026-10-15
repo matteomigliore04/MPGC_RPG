@@ -26,11 +26,8 @@ public class GameLoop extends AnimationTimer {
     private List<Enemy> enemies;
     private EnemyFactory enemyFactory;
 
-    // Sistema di spawn
-    private double spawnTimer = 0;
-    private double spawnInterval = 3.0; // Un nemico ogni 3 secondi
-    private int enemiesSpawned = 0;
-    private int maxEnemiesPerWave = 10;
+    // Aggiungi questa:
+    private WaveManager waveManager;
 
     private boolean upPressed = false;
     private boolean downPressed = false;
@@ -45,6 +42,7 @@ public class GameLoop extends AnimationTimer {
         this.projectiles = new ArrayList<>();
         this.enemies = new ArrayList<>();
         this.enemyFactory = new EnemyFactory();
+        this.waveManager = new WaveManager();
 
         double canvasWidth = gc.getCanvas().getWidth();
         double canvasHeight = gc.getCanvas().getHeight();
@@ -66,10 +64,9 @@ public class GameLoop extends AnimationTimer {
     }
 
     private void update(double dt) {
-        // 1. Aggiorna player
         player.update(dt, upPressed, downPressed, leftPressed, rightPressed);
 
-        // 2. Aggiorna proiettili
+        // Aggiorna proiettili
         Iterator<Projectile> projIterator = projectiles.iterator();
         while (projIterator.hasNext()) {
             Projectile p = projIterator.next();
@@ -78,23 +75,44 @@ public class GameLoop extends AnimationTimer {
             }
         }
 
-        // 3. Spawn nemici
-        spawnEnemies(dt);
+        // ✅ NUOVO: Aggiorna il WaveManager
+        if (waveManager.update(dt)) {
+            // Il manager ha segnalato di spawnare un nemico
+            Enemy newEnemy = enemyFactory.createEnemy(
+                    gc.getCanvas().getWidth(),
+                    gc.getCanvas().getHeight(),
+                    HUD_HEIGHT,
+                    waveManager.getCurrentWave()
+            );
+            enemies.add(newEnemy);
+        }
 
-        // 4. Aggiorna nemici
+        // Aggiorna nemici
         for (Enemy enemy : enemies) {
             enemy.update(dt, player);
         }
 
-        // 5. COLLISIONI
+        // Collisioni
         handleProjectileEnemyCollisions();
-        handleEnemyPlayerCollisions(); // <--- DEVE ESSERCI ESATTAMENTE COSÌ
+        handleEnemyPlayerCollisions();
 
-        // 6. Rimuovi nemici morti
-        enemies.removeIf(enemy -> !enemy.isAlive());
+        // Rimuovi nemici morti e aggiorna il WaveManager
+        Iterator<Enemy> enemyIterator = enemies.iterator();
+        while (enemyIterator.hasNext()) {
+            Enemy enemy = enemyIterator.next();
+            if (!enemy.isAlive()) {
+                waveManager.onEnemyKilled(); // ✅ Notifica al manager
+                enemyIterator.remove();
+            }
+        }
 
-        // 7. Aggiorna HUD
-        controller.updateHUD(player.getCurrentHealth(), player.getScore(), player.getCurrentArrows());
+        // Aggiorna HUD con l'ondata corrente
+        controller.updateHUD(
+                player.getCurrentHealth(),
+                waveManager.getCurrentWave(),
+                player.getScore(),
+                player.getCurrentArrows()
+        );
     }
 
     private void handleEnemyPlayerCollisions() {
@@ -150,26 +168,6 @@ public class GameLoop extends AnimationTimer {
             if (arrowHit) {
                 projIterator.remove(); // Rimuovi la freccia che ha colpito
             }
-        }
-    }
-
-    /**
-     * Gestisce lo spawn dei nemici in base al timer.
-     */
-    private void spawnEnemies(double dt) {
-        if (enemiesSpawned >= maxEnemiesPerWave) return;
-
-        spawnTimer += dt;
-        if (spawnTimer >= spawnInterval) {
-            spawnTimer = 0;
-            Enemy newEnemy = enemyFactory.createEnemy(
-                    gc.getCanvas().getWidth(),
-                    gc.getCanvas().getHeight(),
-                    HUD_HEIGHT,
-                    "Germoglio" // Per ora fisso, poi useremo la difficoltà dal context
-            );
-            enemies.add(newEnemy);
-            enemiesSpawned++;
         }
     }
 
