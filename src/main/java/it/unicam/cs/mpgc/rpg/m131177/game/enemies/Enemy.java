@@ -1,4 +1,6 @@
 package it.unicam.cs.mpgc.rpg.m131177.game.enemies;
+import it.unicam.cs.mpgc.rpg.m131177.game.loots.Loot;
+import it.unicam.cs.mpgc.rpg.m131177.game.loots.LootType;
 
 import it.unicam.cs.mpgc.rpg.m131177.game.CollisionDetector; // ✅ AGGIUNGI QUESTA RIGA
 import it.unicam.cs.mpgc.rpg.m131177.game.players.Player;
@@ -81,16 +83,40 @@ public abstract class Enemy {
     }
 
     /**
-     * Infligge danno al nemico. Se la vita arriva a 0, muore.
-     * @return true se il nemico è morto
+     * Infligge danno al nemico. Se muore, genera un loot.
+     * @return Il loot generato, o null se il nemico è ancora vivo.
      */
-    public boolean takeDamage(int damage) {
+    public Loot takeDamage(int damage) {
         currentHealth -= damage;
         if (currentHealth <= 0) {
             alive = false;
-            return true;
+            return generateLoot();
         }
-        return false;
+        return null;
+    }
+
+    /**
+     * Genera un loot casuale basato sul tipo di nemico.
+     */
+    private Loot generateLoot() {
+        double random = Math.random();
+        LootType type;
+        int value;
+
+        // 50% frecce, 30% pozione cura, 20% pozione scudo
+        if (random < 0.5) {
+            type = LootType.ARROWS;
+            value = arrowDrop; // Usa il valore già definito nel nemico
+        } else if (random < 0.8) {
+            type = LootType.HEALTH_POTION;
+            value = 1;
+        } else {
+            type = LootType.SHIELD_POTION;
+            value = 1;
+        }
+
+        // Il loot appare al centro del nemico
+        return new Loot(x + width / 2 - 12, y + height / 2 - 12, type, value);
     }
 
     /**

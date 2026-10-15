@@ -1,4 +1,6 @@
 package it.unicam.cs.mpgc.rpg.m131177.controller;
+import it.unicam.cs.mpgc.rpg.m131177.game.players.Player;
+
 
 // Import del GameLoop (motore di gioco), del modello (GameContext)
 // e delle classi JavaFX necessarie per gestire FXML, Canvas, HUD,
@@ -48,6 +50,8 @@ public class GameController {
     @FXML private Label lblFinalScore;
     @FXML private Button btnRestart;
     @FXML private Button btnMainMenu;
+    @FXML private Label lblHealthPotions;
+    @FXML private Label lblShieldPotions;
 
     // --- STATO DEL CONTROLLER ---
     // isPaused: true quando il menu di pausa è aperto
@@ -98,6 +102,20 @@ public class GameController {
 
             KeyCode key = event.getCode();
 
+            // Usa pozione cura con tasto Q
+            if (key == KeyCode.Q) {
+                if (gameLoop.getPlayer().useHealthPotion()) {
+                    System.out.println("❤️ Poizione cura usata!");
+                }
+            }
+
+            // Usa pozione scudo con tasto E
+            if (key == KeyCode.E) {
+                if (gameLoop.getPlayer().useShieldPotion()) {
+                    System.out.println("🛡️ Poizione scudo usata!");
+                }
+            }
+
             // Movimento
             if (key == KeyCode.W || key == KeyCode.UP)    gameLoop.setUpPressed(true);
             if (key == KeyCode.S || key == KeyCode.DOWN)  gameLoop.setDownPressed(true);
@@ -132,16 +150,15 @@ public class GameController {
         gameCanvas.requestFocus();
     }
 
-    // --- AGGIORNAMENTO HUD ---
-    // Metodo chiamato dal GameLoop ad ogni frame per aggiornare i testi dell'HUD.
-    // I valori arrivano dal GameLoop (che a sua volta li legge dal player
-    // o da un model condiviso).
-    public void updateHUD(int health, int wave, int score, int arrows) {
+    public void updateHUD(int health, int shield, int wave, int score,
+                          int arrows, int healthPotions, int shieldPotions) {
         lblHealth.setText("Vita: " + health);
-        lblShield.setText("️Scudo: 0");
+        lblShield.setText("Scudo: " + shield);
         lblWave.setText("Ondata: " + wave);
         lblScore.setText("Punti: " + score);
-        lblArrows.setText("Frecce: " + arrows);
+        lblArrows.setText("Frecce: " + arrows + "/100");
+        lblHealthPotions.setText("Cure: " + healthPotions);
+        lblShieldPotions.setText("Scudi: " + shieldPotions);
     }
 
     // --- GESTIONE DEL GIOCO ---

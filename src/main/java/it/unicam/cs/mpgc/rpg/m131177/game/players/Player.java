@@ -78,6 +78,12 @@ public class Player {
     private double invincibilityTimer = 0;
     private static final double INVINCIBILITY_DURATION = 1.0; // 1 secondo
 
+    // Aggiungi queste variabili in cima alla classe Player
+    private int healthPotions = 0;
+    private int shieldPotions = 0;
+    private int currentShield = 0;
+    private int maxShield = 50;
+
     // Enumerazione delle 8 direzioni possibili
     public enum Direction {
         UP, DOWN, LEFT, RIGHT,
@@ -385,26 +391,28 @@ public class Player {
      * @return true se il player è morto
      */
     public boolean takeDamage(int damage) {
-        System.out.println("[DEBUG] takeDamage chiamato. Danno: " + damage + " | Vita prima: " + this.currentHealth + " | Timer: " + this.invincibilityTimer);
-
-        if (this.invincibilityTimer > 0) {
-            System.out.println("[DEBUG] -> Bloccato da invincibilità.");
+        if (invincibilityTimer > 0) {
             return false;
         }
 
-        this.currentHealth -= damage;
-        System.out.println("[DEBUG] -> Vita dopo sottrazione: " + this.currentHealth);
-
-        this.invincibilityTimer = 1.0;
-
-        if (this.currentHealth <= 0) {
-            this.invincibilityTimer = 0;
-            this.currentHealth = 0;
-            System.out.println("[DEBUG] -> VITA <= 0. RESTITUISCO TRUE (MORTO).");
-            return true;
+        // Lo scudo assorbe il danno per primo
+        if (currentShield > 0) {
+            int shieldDamage = Math.min(currentShield, damage);
+            currentShield -= shieldDamage;
+            damage -= shieldDamage;
         }
 
-        System.out.println("[DEBUG] -> VITA > 0. RESTITUISCO FALSE (VIVO).");
+        if (damage > 0) {
+            currentHealth -= damage;
+        }
+
+        invincibilityTimer = INVINCIBILITY_DURATION;
+
+        if (currentHealth <= 0) {
+            invincibilityTimer = 0;
+            currentHealth = 0;
+            return true;
+        }
         return false;
     }
 
@@ -413,6 +421,38 @@ public class Player {
      */
     public void addScore(int points) {
         score += points;
+    }
+
+    public void addHealthPotion(int amount) {
+        healthPotions += amount;
+    }
+
+    public void addShieldPotion(int amount) {
+        shieldPotions += amount;
+    }
+
+    /**
+     * Usa una pozione di cura. Restituisce true se usata.
+     */
+    public boolean useHealthPotion() {
+        if (healthPotions > 0 && currentHealth < maxHealth) {
+            healthPotions--;
+            currentHealth = Math.min(maxHealth, currentHealth + 30); // +30 vita
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Usa una pozione di scudo. Restituisce true se usata.
+     */
+    public boolean useShieldPotion() {
+        if (shieldPotions > 0 && currentShield < maxShield) {
+            shieldPotions--;
+            currentShield = Math.min(maxShield, currentShield + 25); // +25 scudo
+            return true;
+        }
+        return false;
     }
 
     // --- GETTER PER POSIZIONE E DIMENSIONI ---
@@ -425,4 +465,8 @@ public class Player {
     public int getCurrentHealth() { return currentHealth; }
     public int getMaxHealth() { return maxHealth; }
     public int getScore() { return score; }
+    // Nuovi getters
+    public int getHealthPotions() { return healthPotions; }
+    public int getShieldPotions() { return shieldPotions; }
+    public int getCurrentShield() { return currentShield; }
 }

@@ -1,4 +1,6 @@
 package it.unicam.cs.mpgc.rpg.m131177.game;
+import it.unicam.cs.mpgc.rpg.m131177.game.loots.Loot;
+
 
 import it.unicam.cs.mpgc.rpg.m131177.controller.GameController;
 import it.unicam.cs.mpgc.rpg.m131177.game.enemies.Enemy;
@@ -13,6 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 
 public class GameLoop extends AnimationTimer {
+
+    private List<Loot> loots;
 
     private final GraphicsContext gc;
     private final GameController controller;
@@ -47,6 +51,9 @@ public class GameLoop extends AnimationTimer {
         double canvasWidth = gc.getCanvas().getWidth();
         double canvasHeight = gc.getCanvas().getHeight();
         this.player = new Player(canvasWidth, canvasHeight, HUD_HEIGHT);
+
+        // Nel costruttore:
+        this.loots = new ArrayList<>();
     }
 
     @Override
@@ -75,6 +82,11 @@ public class GameLoop extends AnimationTimer {
             }
         }
 
+        // Aggiorna loot
+        for (Loot loot : loots) {
+            loot.update(dt);
+        }
+
         // ✅ NUOVO: Aggiorna il WaveManager
         if (waveManager.update(dt)) {
             // Il manager ha segnalato di spawnare un nemico
@@ -95,6 +107,7 @@ public class GameLoop extends AnimationTimer {
         // Collisioni
         handleProjectileEnemyCollisions();
         handleEnemyPlayerCollisions();
+        handleLootCollection(); // ✅ Nuova collisione
 
         // Rimuovi nemici morti e aggiorna il WaveManager
         Iterator<Enemy> enemyIterator = enemies.iterator();
@@ -106,12 +119,15 @@ public class GameLoop extends AnimationTimer {
             }
         }
 
-        // Aggiorna HUD con l'ondata corrente
+        // Aggiorna HUD
         controller.updateHUD(
                 player.getCurrentHealth(),
+                player.getCurrentShield(),
                 waveManager.getCurrentWave(),
                 player.getScore(),
-                player.getCurrentArrows()
+                player.getCurrentArrows(),
+                player.getHealthPotions(),
+                player.getShieldPotions()
         );
     }
 
@@ -152,16 +168,15 @@ public class GameLoop extends AnimationTimer {
 
             for (Enemy enemy : enemies) {
                 if (enemy.isAlive() && CollisionDetector.isProjectileHitEnemy(p, enemy)) {
-                    // La freccia ha colpito il nemico
-                    boolean killed = enemy.takeDamage(25); // 25 danni per freccia (regolabile)
-                    arrowHit = true;
+                    Loot droppedLoot = enemy.takeDamage(25); // 25 danni per freccia
 
-                    if (killed) {
-                        // Nemico ucciso: drop punti e frecce
+                    if (droppedLoot != null) {
+                        loots.add(droppedLoot); // ✅ Aggiungi il loot a terra
                         player.addScore(enemy.getScoreValue());
-                        player.collectArrows(enemy.getArrowDrop());
                     }
-                    break; // Una freccia colpisce un solo nemico
+
+                    arrowHit = true;
+                    break;
                 }
             }
 
@@ -171,8 +186,29 @@ public class GameLoop extends AnimationTimer {
         }
     }
 
+    // Aggiungi questo metodo per la raccolta dei loot:
+    private void handleLootCollection() {
+        Iterator<Loot> lootIterator = loots.iterator();
+        while (lootIterator.hasNext()) {
+            Loot loot = lootIterator.next();
+
+            if (!loot.isCollected() && CollisionDetector.checkCollision(
+                    loot.getX(), loot.getY(), loot.getSize(), loot.getSize(),
+                    player.getX(), player.getY(), player.getWidth(), player.getHeight())) {
+
+                loot.collect(player);
+                lootIterator.remove();
+            }
+        }
+    }
+
     private void render() {
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
+
+        // Disegna loot (sotto i nemici)
+        for (Loot loot : loots) {
+            loot.render(gc);
+        }
 
         // Disegna nemici
         for (Enemy enemy : enemies) {
@@ -193,6 +229,10 @@ public class GameLoop extends AnimationTimer {
         if (arrow != null) {
             projectiles.add(arrow);
         }
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 
     public void setUpPressed(boolean pressed) { this.upPressed = pressed; }

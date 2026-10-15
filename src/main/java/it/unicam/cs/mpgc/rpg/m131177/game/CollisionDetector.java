@@ -41,7 +41,7 @@ public class CollisionDetector {
     /**
      * Metodo helper per il controllo AABB.
      */
-    private static boolean checkCollision(
+    public static boolean checkCollision(
             double x1, double y1, double w1, double h1,
             double x2, double y2, double w2, double h2) {
 

@@ -62,6 +62,8 @@
                 <Label fx:id="lblHealth" text="Vita: 100" styleClass="hud-label"/>
                 <Label fx:id="lblShield" text="️Scudo: 0" styleClass="hud-label"/>
                 <Label fx:id="lblArrows" text="Frecce: 100" styleClass="hud-label"/>
+                <Label fx:id="lblHealthPotions" text="Cure: 0" styleClass="hud-label"/>
+                <Label fx:id="lblShieldPotions" text="Scudi: 0" styleClass="hud-label"/>
             </VBox>
 
             <!-- GRUPPO DESTRO: Ondata e Punti -->
