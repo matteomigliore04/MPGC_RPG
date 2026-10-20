@@ -22,8 +22,8 @@ public class Projectile {
     // speed: velocità in pixel al secondo (più alta del player per renderla visibile)
     private double x;
     private double y;
-    final double width = 24;
-    final double height = 12;
+    final double width = 30;
+    final double height = 15;
     final double speed = 500; // pixel al secondo (più veloce del player)
 
     // --- DIREZIONE DI MOVIMENTO ---

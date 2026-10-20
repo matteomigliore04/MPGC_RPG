@@ -28,8 +28,8 @@ public class Player {
     // speed: velocità in pixel al secondo
     private double x;
     private double y;
-    final double width = 80;
-    final double height = 70;
+    final double width = 60;
+    final double height = 50;
     final double speed = 200;
 
     // --- LIMITI DI MOVIMENTO ---

@@ -19,17 +19,12 @@
     -fx-max-height: 100px;
     -fx-max-width: 100px;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 1), 20, 0, 0, 10);
-}
-.pause-menu-container {
-    -fx-border-color: #FFF4A3;
+    -fx-border-color: #AEEEEE;
 }
 .pause-title {
     -fx-font-family: 'Press Start 2P';
     -fx-font-size: 24px;
     -fx-text-fill: #FFF4A3;
-}
-.game-over-container {
-    -fx-border-color: #ff4444;
 }
 .game-over-title {
     -fx-font-family: 'Press Start 2P';
@@ -37,17 +32,18 @@
     -fx-text-fill: #ff4444;
 }
 
-/* HUD Labels */
+/* =========================================
+   HUD LABELS BASE
+   ========================================= */
 .hud-label {
     -fx-font-family: 'Press Start 2P';
-    -fx-font-size: 12px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 1), 4, 0, 0, 2);
+    -fx-font-size: 9px; /* Leggermente aumentato da 8px per leggibilità, ma resta compatto */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 1), 3, 0, 0, 1); /* Ombra nera per staccare dallo sfondo */
+    -fx-text-fill: #ffffff; /* Colore di default, può essere sovrascritto da ID specifici */
 }
-#lblHealth {-fx-text-fill: #ff8e8e;}
-#lblShield {-fx-text-fill: #a0d5ff;}
-#lblArrows {-fx-text-fill: #c9ff99;}
-#lblWave {-fx-text-fill: #ffffff;}
-#lblScore {-fx-text-fill: #ffffff;}
+
+/* --- 1° GRUPPO: SINISTRA (Statistiche) --- */
+
 
 /* Pause Menu Buttons */
 .button{
