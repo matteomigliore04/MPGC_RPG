@@ -13,7 +13,7 @@ public class Loot {
 
     private double x;
     private double y;
-    private double size = 24;
+    private double size = 50;
     private LootType type;
     private int value;
     private Image sprite;

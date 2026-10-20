@@ -2,13 +2,6 @@
     -fx-font-family: 'Press Start 2P';
 }
 
-/* HUD Labels */
-.hud-label-score {
-    -fx-font-family: 'Press Start 2P';
-    -fx-font-size: 8px;
-    -fx-text-fill: #ffffff;
-}
-
 /* Pause Menu Container */
 .menu-container{
     -fx-background-color: rgba(10, 10, 10, 0.9);
@@ -24,7 +17,7 @@
 .pause-title {
     -fx-font-family: 'Press Start 2P';
     -fx-font-size: 24px;
-    -fx-text-fill: #FFF4A3;
+    -fx-text-fill: #AEEEEE;
 }
 .game-over-title {
     -fx-font-family: 'Press Start 2P';
