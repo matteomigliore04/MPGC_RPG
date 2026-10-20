@@ -40,8 +40,8 @@ public class Player {
     // --- GESTIONE DELLE FRECCE (MUNIZIONI) ---
     // maxArrows: numero massimo di frecce trasportabili
     // currentArrows: frecce attualmente disponibili
-    final int maxArrows = 100;
-    private int currentArrows = 100;
+    final int maxArrows = 150; // Da 100 a 150
+    private int currentArrows = 150;
 
     // Fattore di normalizzazione per il movimento diagonale (1/√2 ≈ 0.7071):
     // serve a mantenere la stessa velocità percepita sia in orizzontale/verticale
@@ -79,6 +79,7 @@ public class Player {
     private static final double INVINCIBILITY_DURATION = 1.0; // 1 secondo
 
     // Aggiungi queste variabili in cima alla classe Player
+    private static final int MAX_POTIONS = 10;
     private int healthPotions = 0;
     private int shieldPotions = 0;
     private int currentShield = 0;
@@ -423,14 +424,20 @@ public class Player {
         score += points;
     }
 
+    /**
+     * Aggiunge pozioni di cura all'inventario, rispettando il limite massimo.
+     */
     public void addHealthPotion(int amount) {
-        healthPotions += amount;
+        // Math.min sceglie il valore più basso tra (somma attuale) e (limite massimo)
+        this.healthPotions = Math.min(this.healthPotions + amount, MAX_POTIONS);
     }
 
+    /**
+     * Aggiunge pozioni di scudo all'inventario, rispettando il limite massimo.
+     */
     public void addShieldPotion(int amount) {
-        shieldPotions += amount;
+        this.shieldPotions = Math.min(this.shieldPotions + amount, MAX_POTIONS);
     }
-
     /**
      * Usa una pozione di cura. Restituisce true se usata.
      */

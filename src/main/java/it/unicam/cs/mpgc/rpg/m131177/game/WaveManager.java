@@ -14,8 +14,10 @@ public class WaveManager {
     private double spawnInterval;      // Secondi tra uno spawn e l'altro
     private boolean waveInProgress = false;
     private boolean waveTransition = false; // True tra un'ondata e l'altra
+    private boolean bonusPending = false;
     private double transitionTimer = 0;
     private static final double TRANSITION_DURATION = 3.0; // 3 secondi di pausa tra ondate
+    private static final int ARROW_BONUS_PER_WAVE = 15; // Frecce bonus per ondata completata
 
     public WaveManager() {
         configureWave(currentWave);
@@ -49,6 +51,7 @@ public class WaveManager {
             transitionTimer -= dt;
             if (transitionTimer <= 0) {
                 currentWave++;
+                bonusPending = true; // ✅ Segnala che c'è un bonus da dare
                 configureWave(currentWave);
             }
             return false;
@@ -91,7 +94,15 @@ public class WaveManager {
         waveInProgress = false;
         waveTransition = true;
         transitionTimer = TRANSITION_DURATION;
-        System.out.println("✅ ONDATA " + currentWave + " COMPLETATA! Prossima tra " + TRANSITION_DURATION + "s");
+        System.out.println("✅ ONDATA " + currentWave + " COMPLETATA! Bonus frecce: +" + ARROW_BONUS_PER_WAVE);
+    }
+
+    public boolean consumeBonusPending() {
+        if (bonusPending) {
+            bonusPending = false;
+            return true;
+        }
+        return false;
     }
 
     // Getters
@@ -101,4 +112,6 @@ public class WaveManager {
     public boolean isWaveInProgress() { return waveInProgress; }
     public boolean isTransition() { return waveTransition; }
     public double getTransitionTimer() { return transitionTimer; }
+    // Aggiungi questo getter (serve al GameLoop per dare il bonus)
+    public int getArrowWaveBonus() {return ARROW_BONUS_PER_WAVE;}
 }

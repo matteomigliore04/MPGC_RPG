@@ -61,7 +61,7 @@
                   AnchorPane.topAnchor="5" AnchorPane.leftAnchor="20">
                 <Label fx:id="lblHealth" text="Vita: 100" styleClass="hud-label"/>
                 <Label fx:id="lblShield" text="️Scudo: 0" styleClass="hud-label"/>
-                <Label fx:id="lblArrows" text="Frecce: 100" styleClass="hud-label"/>
+                <Label fx:id="lblArrows" text="Frecce: 150" styleClass="hud-label"/>
                 <Label fx:id="lblHealthPotions" text="Cure: 0" styleClass="hud-label"/>
                 <Label fx:id="lblShieldPotions" text="Scudi: 0" styleClass="hud-label"/>
             </VBox>
@@ -86,7 +86,7 @@
          - StackPane.alignment=CENTER: lo centra nella schermata
          - Il GameController lo rende visibile quando l'utente preme ESC/P -->
     <VBox fx:id="pauseMenu" alignment="CENTER" spacing="25"
-          styleClass="pause-menu-container"
+          styleClass="menu-container, pause-menu-container"
           visible="false" managed="false"
           StackPane.alignment="CENTER">
 
@@ -103,7 +103,7 @@
 
     <!-- MENU GAME OVER (Overlay) -->
     <VBox fx:id="gameOverMenu" alignment="CENTER" spacing="20"
-          styleClass="pause-menu-container"
+          styleClass="menu-container, game-over-container"
           visible="false" managed="false"
           StackPane.alignment="CENTER">
 

@@ -103,11 +103,12 @@ public abstract class Enemy {
         LootType type;
         int value;
 
-        // 50% frecce, 30% pozione cura, 20% pozione scudo
-        if (random < 0.5) {
+        // 70% frecce, 20% pozione cura, 10% pozione scudo
+        if (random < 0.70) {
             type = LootType.ARROWS;
-            value = arrowDrop; // Usa il valore già definito nel nemico
-        } else if (random < 0.8) {
+            // Base + bonus scalato: più frecce nelle ondate avanzate
+            value = arrowDrop + (int)(Math.random() * 3) + 1; // +1/+2/+3 extra casuali
+        } else if (random < 0.90) {
             type = LootType.HEALTH_POTION;
             value = 1;
         } else {
@@ -115,7 +116,6 @@ public abstract class Enemy {
             value = 1;
         }
 
-        // Il loot appare al centro del nemico
         return new Loot(x + width / 2 - 12, y + height / 2 - 12, type, value);
     }
 

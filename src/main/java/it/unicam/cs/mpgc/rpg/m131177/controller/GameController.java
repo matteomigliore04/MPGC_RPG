@@ -152,13 +152,13 @@ public class GameController {
 
     public void updateHUD(int health, int shield, int wave, int score,
                           int arrows, int healthPotions, int shieldPotions) {
-        lblHealth.setText("Vita: " + health);
-        lblShield.setText("Scudo: " + shield);
+        lblHealth.setText("Vita: " + health + "/100");
+        lblShield.setText("Scudo: " + shield + "/50");
         lblWave.setText("Ondata: " + wave);
         lblScore.setText("Punti: " + score);
-        lblArrows.setText("Frecce: " + arrows + "/100");
-        lblHealthPotions.setText("Cure: " + healthPotions);
-        lblShieldPotions.setText("Scudi: " + shieldPotions);
+        lblArrows.setText("Frecce: " + arrows + "/150");
+        lblHealthPotions.setText("Cure: " + healthPotions + "/10");
+        lblShieldPotions.setText("Scudi: " + shieldPotions + "/10");
     }
 
     // --- GESTIONE DEL GIOCO ---
@@ -204,14 +204,9 @@ public class GameController {
         pauseMenu.setVisible(false);
         pauseMenu.setManaged(false);
 
-        // Reset dello stato dei tasti per evitare movimenti "fantasma"
-        gameLoop.setUpPressed(false);
-        gameLoop.setDownPressed(false);
-        gameLoop.setLeftPressed(false);
-        gameLoop.setRightPressed(false);
-
-        gameLoop.start(); // Riavvia il motore di gioco
-        gameCanvas.requestFocus(); // Ridà il focus al canvas per la tastiera
+        gameLoop.resetDelta();   // ✅ Resetta il timer prima di ripartire
+        gameLoop.start();        // Riavvia il motore di gioco
+        gameCanvas.requestFocus();
     }
 
     // handleQuit(): invocato dal pulsante "Termina partita".

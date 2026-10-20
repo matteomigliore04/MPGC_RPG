@@ -10,21 +10,26 @@
 }
 
 /* Pause Menu Container */
-.pause-menu-container {
+.menu-container{
     -fx-background-color: rgba(10, 10, 10, 0.9);
     -fx-padding: 40 60;
     -fx-background-radius: 15;
-    -fx-border-color: #C1E1C1;
     -fx-border-width: 3;
     -fx-border-radius: 15;
     -fx-max-height: 100px;
     -fx-max-width: 100px;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 1), 20, 0, 0, 10);
 }
+.pause-menu-container {
+    -fx-border-color: #FFF4A3;
+}
 .pause-title {
     -fx-font-family: 'Press Start 2P';
     -fx-font-size: 24px;
-    -fx-text-fill: #AEEEEE;
+    -fx-text-fill: #FFF4A3;
+}
+.game-over-container {
+    -fx-border-color: #ff4444;
 }
 .game-over-title {
     -fx-font-family: 'Press Start 2P';

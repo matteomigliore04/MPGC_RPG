@@ -87,9 +87,8 @@ public class GameLoop extends AnimationTimer {
             loot.update(dt);
         }
 
-        // ✅ NUOVO: Aggiorna il WaveManager
+        // Aggiorna il WaveManager
         if (waveManager.update(dt)) {
-            // Il manager ha segnalato di spawnare un nemico
             Enemy newEnemy = enemyFactory.createEnemy(
                     gc.getCanvas().getWidth(),
                     gc.getCanvas().getHeight(),
@@ -97,6 +96,13 @@ public class GameLoop extends AnimationTimer {
                     waveManager.getCurrentWave()
             );
             enemies.add(newEnemy);
+        }
+
+        // ✅ NUOVO: Se c'è un bonus ondata pendente, eroga le frecce
+        if (waveManager.consumeBonusPending()) {
+            int bonus = waveManager.getArrowWaveBonus();
+            player.collectArrows(bonus);
+            System.out.println("🎁 Bonus ondata: +" + bonus + " frecce!");
         }
 
         // Aggiorna nemici
@@ -229,6 +235,14 @@ public class GameLoop extends AnimationTimer {
         if (arrow != null) {
             projectiles.add(arrow);
         }
+    }
+
+    /**
+     * Resetta il timer interno. Da chiamare prima di riprendere il loop dopo una pausa,
+     * per evitare che il deltaTime calcoli tutto il tempo della pausa.
+     */
+    public void resetDelta() {
+        lastTime = 0;
     }
 
     public Player getPlayer() {
