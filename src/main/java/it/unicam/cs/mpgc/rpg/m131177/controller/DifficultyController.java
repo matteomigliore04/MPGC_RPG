@@ -55,16 +55,16 @@ public class DifficultyController {
     // Ogni metodo chiama selectDifficulty() con la stringa del livello.
     // Ricevono ActionEvent per ricavare lo stage dal pulsante sorgente.
     @FXML private void handleFacile(javafx.event.ActionEvent event) {
-        selectDifficulty("Germoglio", event);
+        selectDifficulty("Easy", event);
     }
     @FXML private void handleMedia(javafx.event.ActionEvent event) {
-        selectDifficulty("Erba Selvatica", event);
+        selectDifficulty("Medium", event);
     }
     @FXML private void handleAlta(javafx.event.ActionEvent event) {
-        selectDifficulty("Fumo Denso", event);
+        selectDifficulty("Hard", event);
     }
     @FXML private void handleSuperiore(javafx.event.ActionEvent event) {
-        selectDifficulty("100% THC", event);
+        selectDifficulty("Extreme", event);
     }
 
     // ============================================================

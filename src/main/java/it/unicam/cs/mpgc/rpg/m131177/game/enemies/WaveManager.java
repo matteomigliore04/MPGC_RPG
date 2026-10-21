@@ -30,6 +30,7 @@ public class WaveManager {
 
     private double spawnTimer = 0;
     private double spawnInterval;      // Secondi tra uno spawn e l'altro
+    private double spawnRateMultiplier;
     private boolean waveInProgress = false;
     private boolean waveTransition = false; // True tra un'ondata e l'altra
     private boolean bonusPending = false;
@@ -38,7 +39,8 @@ public class WaveManager {
     // ============================================================
     // COSTRUTTORE
     // ============================================================
-    public WaveManager() {
+    public WaveManager(double spawnRateMultiplier) {
+        this.spawnRateMultiplier = spawnRateMultiplier;
         configureWave(currentWave);
     }
 
@@ -48,17 +50,19 @@ public class WaveManager {
     // Imposta i parametri dell'ondata corrente.
     // La difficoltà scala progressivamente.
     private void configureWave(int wave) {
-        // Formula: 3 nemici base + 2 per ogni ondata
         this.enemiesToSpawn = 3 + (wave * 2);
         this.enemiesSpawned = 0;
         this.enemiesAlive = 0;
         this.waveInProgress = true;
         this.waveTransition = false;
 
-        // Lo spawn accelera leggermente ogni ondata (minimo 0.8 secondi)
-        this.spawnInterval = Math.max(0.8, 2.5 - (wave * 0.1));
-        this.spawnTimer = 0;
+        // Calcola l'intervallo base in base all'ondata
+        double baseInterval = Math.max(0.8, 2.5 - (wave * 0.1));
 
+        // Più è alto il moltiplicatore, più l'intervallo diminuisce (spawn più veloci)
+        this.spawnInterval = baseInterval / spawnRateMultiplier;
+
+        this.spawnTimer = 0;
         LOGGER.info("🌊 ONDATA " + wave + " INIZIATA - Nemici: " + enemiesToSpawn);
     }
 

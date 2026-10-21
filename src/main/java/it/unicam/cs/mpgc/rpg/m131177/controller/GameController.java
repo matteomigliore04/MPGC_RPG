@@ -73,20 +73,18 @@ public class GameController {
     public void setContext(GameContext context, Stage stage) {
         this.context = context;
         this.stage = stage;
+
+        // Crea e avvia il Game Loop passando il contesto (che contiene la difficoltà)
+        GraphicsContext gc = gameCanvas.getGraphicsContext2D();
+        gameLoop = new GameLoop(gc, this, context);
+        gameLoop.start();
     }
 
     // ============================================================
     // INIZIALIZZAZIONE
     // ============================================================
-    // initialize() è chiamato automaticamente da JavaFX dopo il load FXML:
-    // crea e avvia il GameLoop.
-    // setupKeyboardInput() va chiamato separatamente (dopo setScene).
     @FXML
-    public void initialize() {
-        GraphicsContext gc = gameCanvas.getGraphicsContext2D();
-        gameLoop = new GameLoop(gc, this);
-        gameLoop.start();
-    }
+    public void initialize() {}
 
     // ============================================================
     // INPUT DA TASTIERA

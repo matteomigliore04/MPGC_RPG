@@ -49,6 +49,10 @@ public class GameLoop extends AnimationTimer {
     private final EnemyFactory enemyFactory;
     private final WaveManager waveManager;
 
+    private double enemyHealthMult = 1.0;
+    private double enemySpeedMult = 1.0;
+    private double spawnRateMult = 1.0;
+
     // ============================================================
     // STATO DEL LOOP E INPUT
     // ============================================================
@@ -61,20 +65,58 @@ public class GameLoop extends AnimationTimer {
     // ============================================================
     // COSTRUTTORE
     // ============================================================
-    public GameLoop(GraphicsContext gc, GameController controller) {
+    public GameLoop(GraphicsContext gc, GameController controller, it.unicam.cs.mpgc.rpg.m131177.model.GameContext context) {
         this.gc = gc;
         this.controller = controller;
         this.projectiles = new ArrayList<>();
         this.enemies = new ArrayList<>();
         this.loots = new ArrayList<>();
         this.enemyFactory = new EnemyFactory();
-        this.waveManager = new WaveManager();
 
-        // Inizializza il player con le costanti del canvas
-        this.player = new Player(
-                GameConstants.CANVAS_WIDTH,
-                GameConstants.CANVAS_HEIGHT
-        );
+        // Calcola la difficoltà prima di creare il WaveManager
+        applyDifficulty(context.getDifficulty());
+
+        // Ora passa il moltiplicatore al WaveManager
+        this.waveManager = new WaveManager(spawnRateMult);
+
+        this.player = new Player(GameConstants.CANVAS_WIDTH, GameConstants.CANVAS_HEIGHT);
+    }
+
+    private void applyDifficulty(String difficulty) {
+        if (difficulty == null) return;
+
+        // Log per verificare che arrivi la stringa giusta
+        LOGGER.info("🎮 Difficoltà ricevuta: " + difficulty);
+
+        switch (difficulty) {
+            case "Easy":
+                enemyHealthMult = 0.7;
+                enemySpeedMult = 0.8;
+                spawnRateMult = 0.7;
+                break;
+            case "Medium":
+                enemyHealthMult = 1.3;
+                enemySpeedMult = 1.2;
+                spawnRateMult = 1.3;
+                break;
+            case "Hard":
+                enemyHealthMult = 1.6;
+                enemySpeedMult = 1.5;
+                spawnRateMult = 1.6;
+                break;
+            case "Extreme":
+                enemyHealthMult = 2.5;
+                enemySpeedMult = 2.0;
+                spawnRateMult = 2.5;
+                break;
+            default:
+                // Valori standard (1.0)
+                break;
+        }
+
+        LOGGER.info("📊 Moltiplicatori -> Vita: " + enemyHealthMult +
+                " | Velocità: " + enemySpeedMult +
+                " | Spawn: " + spawnRateMult);
     }
 
     // ============================================================
@@ -111,7 +153,7 @@ public class GameLoop extends AnimationTimer {
 
         // Spawn nemici
         if (waveManager.update(dt)) {
-            Enemy newEnemy = enemyFactory.createEnemy(waveManager.getCurrentWave());
+            Enemy newEnemy = enemyFactory.createEnemy(waveManager.getCurrentWave(), enemyHealthMult, enemySpeedMult);
             enemies.add(newEnemy);
         }
 
