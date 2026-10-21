@@ -3,6 +3,7 @@ package it.unicam.cs.mpgc.rpg.m131177.game.players;
 // Import delle classi JavaFX necessarie per disegnare il player
 // sul Canvas (GraphicsContext), caricare le immagini (Image)
 // e disegnare il fallback (Color)
+import it.unicam.cs.mpgc.rpg.m131177.game.GameConstants;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -95,7 +96,7 @@ public class Player {
      * Crea un player al centro del canvas.
      * @param canvasWidth  larghezza del canvas
      * @param canvasHeight altezza del canvas
-     * @param hudHeight    altezza dell'HUD (per ora non usata, ma utile in futuro
+         * @param hudHeight    altezza dell'HUD (per ora non usata, ma utile in futuro
      *                     per limitare il movimento sotto l'HUD)
      */
     public Player(double canvasWidth, double canvasHeight, double hudHeight) {
@@ -103,11 +104,11 @@ public class Player {
         this.x = canvasWidth / 2 - width / 2;
         this.y = canvasHeight / 2 - height / 2;
 
-        // Limiti di movimento: il player può arrivare fino ai bordi
-        this.minX = 0;
-        this.maxX = canvasWidth - width;
-        this.minY = 0;                                    // Può andare fino al bordo superiore
-        this.maxY = canvasHeight - height;
+        // ✅ NUOVI LIMITI: il player non può attraversare i muri
+        this.minX = GameConstants.PLAYABLE_MIN_X;
+        this.maxX = GameConstants.PLAYABLE_MAX_X;
+        this.minY = GameConstants.PLAYABLE_MIN_Y;
+        this.maxY = GameConstants.PLAYABLE_MAX_Y;
 
         this.currentHealth = maxHealth;
 

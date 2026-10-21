@@ -40,20 +40,32 @@ public class GameLoop extends AnimationTimer {
 
     private static final double HUD_HEIGHT = 70;
 
+    // Confini della mappa (muri)
+    private static final double WALL_THICKNESS = 40;        // Spessore dei muri
+    private static final double OPENING_HEIGHT = 80;         // Altezza delle aperture laterali
+    private static final double OPENING_CENTER_Y = 350;      // Centro delle aperture (metà di 700)
+
+    // Area giocabile (dentro i muri)
+    private static final double PLAYABLE_MIN_X = WALL_THICKNESS;
+    private static final double PLAYABLE_MAX_X = 900 - WALL_THICKNESS - 40; // 40 = larghezza nemico
+    private static final double PLAYABLE_MIN_Y = WALL_THICKNESS;
+    private static final double PLAYABLE_MAX_Y = 700 - WALL_THICKNESS - 40; // 40 = altezza nemico
+
     public GameLoop(GraphicsContext gc, GameController controller) {
         this.gc = gc;
         this.controller = controller;
         this.projectiles = new ArrayList<>();
         this.enemies = new ArrayList<>();
+        this.loots = new ArrayList<>();
         this.enemyFactory = new EnemyFactory();
         this.waveManager = new WaveManager();
 
-        double canvasWidth = gc.getCanvas().getWidth();
-        double canvasHeight = gc.getCanvas().getHeight();
-        this.player = new Player(canvasWidth, canvasHeight, HUD_HEIGHT);
-
-        // Nel costruttore:
-        this.loots = new ArrayList<>();
+        // ✅ Player inizializzato con i nuovi confini
+        this.player = new Player(
+                GameConstants.CANVAS_WIDTH,
+                GameConstants.CANVAS_HEIGHT,
+                HUD_HEIGHT
+        );
     }
 
     @Override
@@ -78,7 +90,7 @@ public class GameLoop extends AnimationTimer {
         while (projIterator.hasNext()) {
             Projectile p = projIterator.next();
             if (!p.update(dt, gc.getCanvas().getWidth(), gc.getCanvas().getHeight())) {
-                projIterator.remove();
+                projIterator.remove(); // ✅ Rimuove la freccia se update() restituisce false
             }
         }
 
@@ -87,14 +99,8 @@ public class GameLoop extends AnimationTimer {
             loot.update(dt);
         }
 
-        // Aggiorna il WaveManager
         if (waveManager.update(dt)) {
-            Enemy newEnemy = enemyFactory.createEnemy(
-                    gc.getCanvas().getWidth(),
-                    gc.getCanvas().getHeight(),
-                    HUD_HEIGHT,
-                    waveManager.getCurrentWave()
-            );
+            Enemy newEnemy = enemyFactory.createEnemy(waveManager.getCurrentWave());
             enemies.add(newEnemy);
         }
 

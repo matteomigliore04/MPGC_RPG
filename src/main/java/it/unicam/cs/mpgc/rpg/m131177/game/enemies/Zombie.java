@@ -5,8 +5,8 @@ import javafx.scene.paint.Color;
 
 public class Zombie extends Enemy {
 
-    public Zombie(double canvasWidth, double canvasHeight, double hudHeight) {
-        super(canvasWidth, canvasHeight, hudHeight);
+    public Zombie(double x, double y) {
+        super(x, y);
         this.maxHealth = 80;
         this.speed = 60;        // Lento
         this.damage = 15;       // Molto danno
