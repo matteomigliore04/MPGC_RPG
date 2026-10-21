@@ -1,5 +1,6 @@
 package it.unicam.cs.mpgc.rpg.m131177.game.enemies;
 
+import it.unicam.cs.mpgc.rpg.m131177.game.GameConstants;
 import java.util.Random;
 
 /**
@@ -10,20 +11,31 @@ public class EnemyFactory {
 
     private final Random random = new Random();
 
-    public Enemy createEnemy(double canvasWidth, double canvasHeight, double hudHeight, int wave) {
+    public Enemy createEnemy(int wave) {
         int type = random.nextInt(getNumberOfTypes(wave));
 
+        // ✅ Spawn dalle aperture laterali (sinistra o destra)
+        double spawnX;
+        double spawnY = GameConstants.SPAWN_OPENING_MIN_Y +
+                (random.nextDouble() * (GameConstants.SPAWN_OPENING_MAX_Y - GameConstants.SPAWN_OPENING_MIN_Y));
+
+        // 50% probabilità di spawnare da sinistra o destra
+        if (random.nextBoolean()) {
+            spawnX = GameConstants.SPAWN_LEFT_X;  // Apertura sinistra
+        } else {
+            spawnX = GameConstants.SPAWN_RIGHT_X; // Apertura destra
+        }
+
         Enemy enemy = switch (type) {
-            case 0 -> new Goblin(canvasWidth, canvasHeight, hudHeight);
-            case 1 -> new Zombie(canvasWidth, canvasHeight, hudHeight);
-            case 2 -> new Skeleton(canvasWidth, canvasHeight, hudHeight);
-            default -> new Goblin(canvasWidth, canvasHeight, hudHeight);
+            case 0 -> new Goblin(spawnX, spawnY);
+            case 1 -> new Zombie(spawnX, spawnY);
+            case 2 -> new Skeleton(spawnX, spawnY);
+            default -> new Goblin(spawnX, spawnY);
         };
 
-        // ✅ SCALING: Aumenta vita e velocità in base all'ondata (+10% vita e +5% velocità per ondata)
+        // Scaling difficoltà
         double healthMultiplier = 1.0 + ((wave - 1) * 0.10);
         double speedMultiplier = 1.0 + ((wave - 1) * 0.05);
-
         enemy.scaleStats(healthMultiplier, speedMultiplier);
 
         return enemy;

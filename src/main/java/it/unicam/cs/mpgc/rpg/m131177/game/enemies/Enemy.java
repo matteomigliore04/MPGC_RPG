@@ -2,11 +2,11 @@ package it.unicam.cs.mpgc.rpg.m131177.game.enemies;
 import it.unicam.cs.mpgc.rpg.m131177.game.loots.Loot;
 import it.unicam.cs.mpgc.rpg.m131177.game.loots.LootType;
 
-import it.unicam.cs.mpgc.rpg.m131177.game.CollisionDetector; // ✅ AGGIUNGI QUESTA RIGA
 import it.unicam.cs.mpgc.rpg.m131177.game.players.Player;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import it.unicam.cs.mpgc.rpg.m131177.game.GameConstants;
 
 /**
  * Classe base astratta per tutti i nemici del gioco.
@@ -32,9 +32,9 @@ public abstract class Enemy {
     /**
      * Costruisce un nemico in una posizione casuale ai bordi del canvas.
      */
-    public Enemy(double canvasWidth, double canvasHeight, double hudHeight) {
-        this.x = randomEdgePosition(canvasWidth, canvasHeight, hudHeight);
-        this.y = randomEdgePosition(canvasWidth, canvasHeight, hudHeight);
+    public Enemy(double x, double y) {
+        this.x = x;
+        this.y = y;
         this.currentHealth = maxHealth;
         loadSprite();
     }
@@ -62,23 +62,19 @@ public abstract class Enemy {
         double distance = Math.sqrt(dx * dx + dy * dy);
 
         if (distance > 0) {
-            // Calcola di quanto si muoverebbe in questo frame
             double moveX = (dx / distance) * speed * dt;
             double moveY = (dy / distance) * speed * dt;
 
-            // Calcola la posizione futura
+            // Calcola posizione futura
             double nextX = x + moveX;
             double nextY = y + moveY;
 
-            // ✅ CONTROLLO: Se la posizione futura NON collide con il player, muoviti.
-            // Altrimenti, resta fermo (il nemico si "appoggia" al player senza attraversarlo).
-            if (!CollisionDetector.isEnemyAttackingPlayer(this, player)) {
-                x = nextX;
-                y = nextY;
-            }else{
-                // Il nemico è in contatto con il player, quindi infligge danno.
-                player.takeDamage(damage);
-            }
+            // ✅ Limita il movimento all'area giocabile
+            nextX = Math.max(GameConstants.PLAYABLE_MIN_X, Math.min(nextX, GameConstants.PLAYABLE_MAX_X));
+            nextY = Math.max(GameConstants.PLAYABLE_MIN_Y, Math.min(nextY, GameConstants.PLAYABLE_MAX_Y));
+
+            x = nextX;
+            y = nextY;
         }
     }
 
