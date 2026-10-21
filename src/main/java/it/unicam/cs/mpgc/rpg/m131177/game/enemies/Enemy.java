@@ -36,6 +36,8 @@ public abstract class Enemy {
     protected int scoreValue;    // Punti dati alla morte
     protected int arrowDrop;     // Frecce droppate alla morte
 
+    protected double lootMultiplier = 1.0;
+
     // ============================================================
     // GRAFICA E STATO
     // ============================================================
@@ -66,35 +68,38 @@ public abstract class Enemy {
     public void update(double dt, Player player, List<Enemy> otherEnemies) {
         if (!alive) return;
 
-        // Calcola la direzione verso il player
+        // 1. Muoviti verso il player
         double dx = (player.getX() + player.getWidth() / 2) - (x + width / 2);
         double dy = (player.getY() + player.getHeight() / 2) - (y + height / 2);
         double distance = Math.sqrt(dx * dx + dy * dy);
         double minDistance = (width / 2) + (player.getWidth() / 2);
 
-        // Muoviti SOLO se la distanza è maggiore della distanza minima (evita sovrapposizione col player)
         if (distance > minDistance) {
             double moveX = (dx / distance) * speed * dt;
             double moveY = (dy / distance) * speed * dt;
-
-            x = Math.clamp(x + moveX, GameConstants.PLAYABLE_MIN_X, GameConstants.PLAYABLE_MAX_X);
-            y = Math.clamp(y + moveY, GameConstants.PLAYABLE_MIN_Y, GameConstants.PLAYABLE_MAX_Y);
+            x += moveX;
+            y += moveY;
         }
 
-        // Separazione dagli altri nemici per non accalcarsi
+        // 2. Separazione dagli altri nemici (evita che si accalchino)
         for (Enemy other : otherEnemies) {
             if (other != this && other.isAlive()) {
                 double distX = (other.x + other.width / 2) - (x + width / 2);
                 double distY = (other.y + other.height / 2) - (y + height / 2);
                 double dist = Math.sqrt(distX * distX + distY * distY);
 
-                // Se sono troppo vicini (es. 35px), spingili via
                 if (dist < 35 && dist > 0) {
                     x -= (distX / dist) * speed * dt * 0.5;
                     y -= (distY / dist) * speed * dt * 0.5;
                 }
             }
         }
+
+        // 3. Riporta il nemico nell'area giocabile
+        x = Math.clamp(x, GameConstants.PLAYABLE_MIN_X, GameConstants.PLAYABLE_MAX_X);
+        y = Math.clamp(y, GameConstants.PLAYABLE_MIN_Y, GameConstants.PLAYABLE_MAX_Y);
+
+        // (Il vecchio punto 4 è stato rimosso!)
     }
 
     // ============================================================
@@ -118,14 +123,17 @@ public abstract class Enemy {
 
         if (random < 0.70) {
             type = LootType.ARROWS;
-            // Base + bonus scalato: più frecce nelle ondate avanzate
-            value = arrowDrop + (int)(Math.random() * 3) + 1; // +1/+2/+3 extra casuali
+            // Base + bonus casuale
+            int baseArrows = arrowDrop + (int)(Math.random() * 3) + 1;
+            // Applica la difficoltà
+            value = Math.max(1, (int)(baseArrows * lootMultiplier));
         } else if (random < 0.90) {
             type = LootType.HEALTH_POTION;
-            value = 1;
+            // Ad Extreme, può droppare 2 pozioni insieme (1 * 2.0 = 2)
+            value = Math.max(1, (int)(1 * lootMultiplier));
         } else {
             type = LootType.SHIELD_POTION;
-            value = 1;
+            value = Math.max(1, (int)(1 * lootMultiplier));
         }
 
         return new Loot(x + width / 2 - 12, y + height / 2 - 12, type, value);
@@ -171,6 +179,18 @@ public abstract class Enemy {
         this.maxHealth = (int) (this.maxHealth * healthMultiplier);
         this.currentHealth = this.maxHealth;
         this.speed = this.speed * speedMultiplier;
+    }
+
+    public void scaleRewards(double multiplier) {
+        // Moltiplica i punti base
+        this.scoreValue = (int) (this.scoreValue * multiplier);
+        // Salva il moltiplicatore per il loot
+        this.lootMultiplier = multiplier;
+    }
+
+    public void setPosition(double x, double y) {
+        this.x = x;
+        this.y = y;
     }
 
     // ============================================================

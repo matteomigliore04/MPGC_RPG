@@ -53,6 +53,8 @@ public class GameLoop extends AnimationTimer {
     private double enemySpeedMult = 1.0;
     private double spawnRateMult = 1.0;
 
+    private double rewardMultiplier = 1.0;
+
     // ============================================================
     // STATO DEL LOOP E INPUT
     // ============================================================
@@ -85,38 +87,30 @@ public class GameLoop extends AnimationTimer {
     private void applyDifficulty(String difficulty) {
         if (difficulty == null) return;
 
-        // Log per verificare che arrivi la stringa giusta
-        LOGGER.info("🎮 Difficoltà ricevuta: " + difficulty);
-
         switch (difficulty) {
             case "Easy":
-                enemyHealthMult = 0.7;
+                enemyHealthMult = 0.8;
                 enemySpeedMult = 0.8;
-                spawnRateMult = 0.7;
+                spawnRateMult = 0.8;
+                rewardMultiplier = 0.8; // Meno punti e loot
                 break;
-            case "Medium":
+            case "Hard":
                 enemyHealthMult = 1.3;
                 enemySpeedMult = 1.2;
                 spawnRateMult = 1.3;
+                rewardMultiplier = 1.5; // +50% punti e loot
                 break;
-            case "Hard":
+            case "Extreme":
                 enemyHealthMult = 1.6;
                 enemySpeedMult = 1.5;
                 spawnRateMult = 1.6;
+                rewardMultiplier = 2.0; // Raddoppia punti e loot
                 break;
-            case "Extreme":
-                enemyHealthMult = 2.5;
-                enemySpeedMult = 2.0;
-                spawnRateMult = 2.5;
-                break;
+            case "Medium":
             default:
-                // Valori standard (1.0)
+                rewardMultiplier = 1.0;
                 break;
         }
-
-        LOGGER.info("📊 Moltiplicatori -> Vita: " + enemyHealthMult +
-                " | Velocità: " + enemySpeedMult +
-                " | Spawn: " + spawnRateMult);
     }
 
     // ============================================================
@@ -141,40 +135,78 @@ public class GameLoop extends AnimationTimer {
     // AGGIORNAMENTO LOGICA
     // ============================================================
     private void update(double dt) {
+        // 1. Muovi il player
         player.update(dt, upPressed, downPressed, leftPressed, rightPressed);
 
-        // Aggiorna proiettili (rimuove se update() restituisce false)
+        // 2. Risolvi le collisioni Player-Nemico spingendo il player fuori (Push-Out)
+        // Risolvi collisioni Player-Nemico spingendo i NEMICI via
+        for (Enemy enemy : enemies) {
+            if (enemy.isAlive() && CollisionDetector.checkCollision(
+                    player.getX(), player.getY(), player.getWidth(), player.getHeight(),
+                    enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight())) {
+
+                // Calcola i centri
+                double pCenterX = player.getX() + player.getWidth() / 2;
+                double pCenterY = player.getY() + player.getHeight() / 2;
+                double eCenterX = enemy.getX() + enemy.getWidth() / 2;
+                double eCenterY = enemy.getY() + enemy.getHeight() / 2;
+
+                // Vettore dal Player verso il Nemico
+                double dx = eCenterX - pCenterX;
+                double dy = eCenterY - pCenterY;
+                double dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist == 0) {
+                    dx = 1; dy = 0; dist = 1; // Direzione di default se perfettamente sovrapposti
+                }
+
+                // Distanza minima + un piccolo margine di 5 pixel per creare il "varco"
+                double minDist = (player.getWidth() / 2) + (enemy.getWidth() / 2) + 5;
+
+                // Calcola la nuova posizione del NEMICO, fuori dal player
+                double newEx = pCenterX + (dx / dist) * minDist - enemy.getWidth() / 2;
+                double newEy = pCenterY + (dy / dist) * minDist - enemy.getHeight() / 2;
+
+                // Applica la spinta al nemico
+                enemy.setPosition(
+                        Math.clamp(newEx, GameConstants.PLAYABLE_MIN_X, GameConstants.PLAYABLE_MAX_X),
+                        Math.clamp(newEy, GameConstants.PLAYABLE_MIN_Y, GameConstants.PLAYABLE_MAX_Y)
+                );
+            }
+        }
+
+        // 2. MUOVI LE FRECCE
         projectiles.removeIf(p -> !p.update(dt, gc.getCanvas().getWidth(), gc.getCanvas().getHeight()));
 
-        // Aggiorna loot
+        // 3. AGGIORNA I LOOT
         for (Loot loot : loots) {
             loot.update(dt);
         }
 
-        // Spawn nemici
+        // 4. SPAWN DEI NEMICI (se mancava, ecco perché non apparivano!)
         if (waveManager.update(dt)) {
-            Enemy newEnemy = enemyFactory.createEnemy(waveManager.getCurrentWave(), enemyHealthMult, enemySpeedMult);
+            Enemy newEnemy = enemyFactory.createEnemy(waveManager.getCurrentWave(), enemyHealthMult, enemySpeedMult, rewardMultiplier);
             enemies.add(newEnemy);
         }
 
-        // Eroga bonus frecce a fine ondata
+        // 5. BONUS FRECCE
         if (waveManager.consumeBonusPending()) {
             int bonus = waveManager.getArrowWaveBonus();
             player.collectArrows(bonus);
             LOGGER.info("Bonus ondata: +" + bonus + " frecce!");
         }
 
-        // Aggiorna nemici
+        // 6. MUOVI I NEMICI (passando la lista per la separazione)
         for (Enemy enemy : enemies) {
             enemy.update(dt, player, enemies);
         }
 
-        // Gestione collisioni
+        // 7. GESTIONE COLLISIONI
         handleProjectileEnemyCollisions();
         handleEnemyPlayerCollisions();
         handleLootCollection();
 
-        // Rimuovi nemici morti e notifica il WaveManager
+        // 8. RIMUOVI NEMICI MORTI
         Iterator<Enemy> enemyIterator = enemies.iterator();
         while (enemyIterator.hasNext()) {
             Enemy enemy = enemyIterator.next();
@@ -184,7 +216,7 @@ public class GameLoop extends AnimationTimer {
             }
         }
 
-        // Aggiorna HUD
+        // 9. AGGIORNA HUD
         controller.updateHUD(
                 player.getCurrentHealth(),
                 player.getCurrentShield(),

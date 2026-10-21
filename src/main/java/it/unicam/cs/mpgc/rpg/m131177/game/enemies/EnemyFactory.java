@@ -24,9 +24,10 @@ public class EnemyFactory {
     // ============================================================
     // Istanzia un nemico casuale, lo posiziona a sinistra o a destra
     // e ne scala le statistiche in base all'ondata corrente.
-    public Enemy createEnemy(int wave, double diffHealthMult, double diffSpeedMult) {
+    public Enemy createEnemy(int wave, double diffHealthMult, double diffSpeedMult, double diffRewardMult) {
         int type = random.nextInt(getNumberOfTypes(wave));
 
+        // Calcolo posizione di spawn
         double spawnX;
         double spawnY = GameConstants.SPAWN_OPENING_MIN_Y +
                 (random.nextDouble() * (GameConstants.SPAWN_OPENING_MAX_Y - GameConstants.SPAWN_OPENING_MIN_Y));
@@ -37,18 +38,22 @@ public class EnemyFactory {
             spawnX = GameConstants.SPAWN_RIGHT_X;
         }
 
+        // Creazione del nemico in base al tipo
         Enemy enemy = switch (type) {
             case 1 -> new Zombie(spawnX, spawnY);
             case 2 -> new Skeleton(spawnX, spawnY);
             default -> new Goblin(spawnX, spawnY);
         };
 
-        // Scaling base per ondata
+        // Scaling per ondata (vita e velocità)
         double waveHealthMult = 1.0 + ((wave - 1) * 0.10);
         double waveSpeedMult = 1.0 + ((wave - 1) * 0.05);
 
-        // Combina lo scaling ondata con quello difficoltà
+        // Applica lo scaling base + quello della difficoltà
         enemy.scaleStats(waveHealthMult * diffHealthMult, waveSpeedMult * diffSpeedMult);
+
+        // Applica lo scaling delle ricompense (punti e loot)
+        enemy.scaleRewards(diffRewardMult);
 
         return enemy;
     }
