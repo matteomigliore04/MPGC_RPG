@@ -5,8 +5,8 @@ import javafx.scene.paint.Color;
 
 public class Goblin extends Enemy {
 
-    public Goblin(double x, double y) {
-        super(x, y);
+    public Goblin(double canvasWidth, double canvasHeight, double hudHeight) {
+        super(canvasWidth, canvasHeight, hudHeight);
         this.maxHealth = 30;
         this.speed = 120;       // Veloce
         this.damage = 5;        // Poco danno

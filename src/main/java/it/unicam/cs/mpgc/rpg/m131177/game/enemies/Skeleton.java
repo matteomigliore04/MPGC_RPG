@@ -5,8 +5,8 @@ import javafx.scene.paint.Color;
 
 public class Skeleton extends Enemy {
 
-    public Skeleton(double x, double y) {
-        super(x, y);
+    public Skeleton(double canvasWidth, double canvasHeight, double hudHeight) {
+        super(canvasWidth, canvasHeight, hudHeight);
         this.maxHealth = 50;
         this.speed = 90;        // Velocità media
         this.damage = 10;       // Danno medio
