@@ -10,6 +10,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import it.unicam.cs.mpgc.rpg.m131177.game.GameConstants;
+import java.util.List;
 
 // ============================================================
 // ENEMY (Classe Astratta Base)
@@ -62,24 +63,37 @@ public abstract class Enemy {
     // AGGIORNAMENTO LOGICA
     // ============================================================
     // Muove il nemico verso il player, limitandolo all'area giocabile.
-    public void update(double dt, Player player) {
+    public void update(double dt, Player player, List<Enemy> otherEnemies) {
         if (!alive) return;
 
-        // Calcola la direzione verso il centro del player
+        // Calcola la direzione verso il player
         double dx = (player.getX() + player.getWidth() / 2) - (x + width / 2);
         double dy = (player.getY() + player.getHeight() / 2) - (y + height / 2);
         double distance = Math.sqrt(dx * dx + dy * dy);
+        double minDistance = (width / 2) + (player.getWidth() / 2);
 
-        if (distance > 0) {
+        // Muoviti SOLO se la distanza è maggiore della distanza minima (evita sovrapposizione col player)
+        if (distance > minDistance) {
             double moveX = (dx / distance) * speed * dt;
             double moveY = (dy / distance) * speed * dt;
 
-            // Calcola posizione futura limitata all'area giocabile (Math.clamp)
-            double nextX = Math.clamp(x + moveX, GameConstants.PLAYABLE_MIN_X, GameConstants.PLAYABLE_MAX_X);
-            double nextY = Math.clamp(y + moveY, GameConstants.PLAYABLE_MIN_Y, GameConstants.PLAYABLE_MAX_Y);
+            x = Math.clamp(x + moveX, GameConstants.PLAYABLE_MIN_X, GameConstants.PLAYABLE_MAX_X);
+            y = Math.clamp(y + moveY, GameConstants.PLAYABLE_MIN_Y, GameConstants.PLAYABLE_MAX_Y);
+        }
 
-            x = nextX;
-            y = nextY;
+        // Separazione dagli altri nemici per non accalcarsi
+        for (Enemy other : otherEnemies) {
+            if (other != this && other.isAlive()) {
+                double distX = (other.x + other.width / 2) - (x + width / 2);
+                double distY = (other.y + other.height / 2) - (y + height / 2);
+                double dist = Math.sqrt(distX * distX + distY * distY);
+
+                // Se sono troppo vicini (es. 35px), spingili via
+                if (dist < 35 && dist > 0) {
+                    x -= (distX / dist) * speed * dt * 0.5;
+                    y -= (distY / dist) * speed * dt * 0.5;
+                }
+            }
         }
     }
 

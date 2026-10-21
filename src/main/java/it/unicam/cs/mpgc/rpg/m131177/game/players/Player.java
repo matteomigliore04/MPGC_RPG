@@ -115,6 +115,9 @@ public class Player {
         this.x = canvasWidth / 2 - width / 2;
         this.y = canvasHeight / 2 - height / 2;
 
+        // Imposta la vita iniziale
+        this.currentHealth = maxHealth;
+
         // Limiti: il player non può attraversare i muri
         this.minX = GameConstants.PLAYABLE_MIN_X;
         this.maxX = GameConstants.PLAYABLE_MAX_X;

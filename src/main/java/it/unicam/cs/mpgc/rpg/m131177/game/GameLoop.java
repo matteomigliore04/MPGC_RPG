@@ -124,7 +124,7 @@ public class GameLoop extends AnimationTimer {
 
         // Aggiorna nemici
         for (Enemy enemy : enemies) {
-            enemy.update(dt, player);
+            enemy.update(dt, player, enemies);
         }
 
         // Gestione collisioni
@@ -233,23 +233,35 @@ public class GameLoop extends AnimationTimer {
     private void render() {
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
 
-        // Disegna loot (sotto)
+        // 1. Disegna loot (sempre sotto a tutto)
         for (Loot loot : loots) {
             loot.render(gc);
         }
 
-        // Disegna nemici
-        for (Enemy enemy : enemies) {
-            enemy.render(gc);
+        // 2. Unisci nemici e player in una lista temporanea per ordinarli
+        List<Object> entitiesToDraw = new ArrayList<>(enemies);
+        entitiesToDraw.add(player);
+
+        // 3. Ordina per coordinata Y (chi ha Y più alta viene disegnato dopo, quindi sta sopra)
+        entitiesToDraw.sort((e1, e2) -> {
+            double y1 = (e1 instanceof Enemy) ? ((Enemy) e1).getY() : ((Player) e1).getY();
+            double y2 = (e2 instanceof Enemy) ? ((Enemy) e2).getY() : ((Player) e2).getY();
+            return Double.compare(y1, y2);
+        });
+
+        // 4. Disegna entità in ordine di profondità
+        for (Object entity : entitiesToDraw) {
+            if (entity instanceof Enemy) {
+                ((Enemy) entity).render(gc);
+            } else if (entity instanceof Player) {
+                ((Player) entity).render(gc);
+            }
         }
 
-        // Disegna proiettili
+        // 5. Disegna proiettili (sempre sopra a tutti)
         for (Projectile p : projectiles) {
             p.render(gc);
         }
-
-        // Disegna player (sopra)
-        player.render(gc);
     }
 
     // ============================================================
