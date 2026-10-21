@@ -18,6 +18,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.control.Button;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import it.unicam.cs.mpgc.rpg.m131177.model.StatsManager; // Aggiungi l'import in cima
 
 // Controller della schermata di gioco.
 // Gestisce GameLoop, HUD, input tastiera e menu di pausa/game over.
@@ -229,22 +230,19 @@ public class GameController {
     // ============================================================
     // showGameOver(): ferma il gioco e mostra il menu di game over
     // con il punteggio finale
-    public void showGameOver(int finalScore) {
-        // Log di debug: se non appare, il GameLoop non chiama questo metodo
-        // (sostituisce System.out.println di debug)
-        LOGGER.info("METODO showGameOver CHIAMATO! Vita: 0");
-
+    public void showGameOver(int finalScore, int finalWave, int timePlayed, boolean isWin,
+                             int goblins, int zombies, int skeletons) {
         isPaused = true;
         gameLoop.stop();
 
-        // Se lblFinalScore fosse null, qui il programma crasherebbe
-        lblFinalScore.setText("Punti Finali: " + finalScore);
+        String difficulty = (context != null && context.getDifficulty() != null) ? context.getDifficulty() : "Sconosciuta";
 
+        // Salva tutto su file
+        StatsManager.saveRecord(finalScore, finalWave, difficulty, timePlayed, isWin, goblins, zombies, skeletons);
+
+        lblFinalScore.setText("Punti Finali: " + finalScore);
         gameOverMenu.setVisible(true);
         gameOverMenu.setManaged(true);
-
-        // Log di conferma: menu game over reso visibile
-        LOGGER.info("Menu Game Over reso visibile.");
     }
 
     // handleRestart(): ricarica game.fxml per resettare lo stato

@@ -7,6 +7,9 @@ import it.unicam.cs.mpgc.rpg.m131177.game.enemies.WaveManager;
 import it.unicam.cs.mpgc.rpg.m131177.game.loots.Loot;
 import it.unicam.cs.mpgc.rpg.m131177.controller.GameController;
 import it.unicam.cs.mpgc.rpg.m131177.game.enemies.Enemy;
+import it.unicam.cs.mpgc.rpg.m131177.game.enemies.Goblin;
+import it.unicam.cs.mpgc.rpg.m131177.game.enemies.Zombie;
+import it.unicam.cs.mpgc.rpg.m131177.game.enemies.Skeleton;
 import it.unicam.cs.mpgc.rpg.m131177.game.enemies.EnemyFactory;
 import it.unicam.cs.mpgc.rpg.m131177.game.players.Player;
 import it.unicam.cs.mpgc.rpg.m131177.game.players.Projectile;
@@ -54,6 +57,11 @@ public class GameLoop extends AnimationTimer {
     private double spawnRateMult = 1.0;
 
     private double rewardMultiplier = 1.0;
+
+    private int goblinsKilled = 0;
+    private int zombiesKilled = 0;
+    private int skeletonsKilled = 0;
+    private double totalTimePlayed = 0;
 
     // ============================================================
     // STATO DEL LOOP E INPUT
@@ -135,6 +143,8 @@ public class GameLoop extends AnimationTimer {
     // AGGIORNAMENTO LOGICA
     // ============================================================
     private void update(double dt) {
+        totalTimePlayed += dt; // Accumula il tempo
+
         // 1. Muovi il player
         player.update(dt, upPressed, downPressed, leftPressed, rightPressed);
 
@@ -212,6 +222,12 @@ public class GameLoop extends AnimationTimer {
             Enemy enemy = enemyIterator.next();
             if (!enemy.isAlive()) {
                 waveManager.onEnemyKilled();
+
+                // Conta le uccisioni per tipo
+                if (enemy instanceof Goblin) goblinsKilled++;
+                else if (enemy instanceof Zombie) zombiesKilled++;
+                else if (enemy instanceof Skeleton) skeletonsKilled++;
+
                 enemyIterator.remove();
             }
         }
@@ -242,7 +258,10 @@ public class GameLoop extends AnimationTimer {
                 if (isDead) {
                     LOGGER.info("Eseguo showGameOver e stop del loop!");
                     try {
-                        controller.showGameOver(player.getScore());
+                        // Definiamo una "vittoria" se si supera l'ondata 10 (puoi cambiarlo)
+                        boolean isWin = waveManager.getCurrentWave() >= 10;
+                        controller.showGameOver(player.getScore(), waveManager.getCurrentWave(),
+                                (int) totalTimePlayed, isWin, goblinsKilled, zombiesKilled, skeletonsKilled);
                     } catch (Exception e) {
                         LOGGER.log(Level.SEVERE, "Errore critico in showGameOver", e);
                     }

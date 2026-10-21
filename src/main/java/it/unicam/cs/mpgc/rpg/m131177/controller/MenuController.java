@@ -67,9 +67,17 @@ public class MenuController {
     // Statistiche personali: per ora mostra un alert placeholder
     @FXML
     private void handleStatistichePersonali() {
-        LOGGER.info("Apertura statistiche personali...");
-        showAlert(AlertType.INFORMATION, "Statistiche Personali",
-                "La schermata delle statistiche personali verrà implementata in futuro.");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/statistics.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) btnIniziaPartita.getScene().getWindow(); // uso btnIniziaPartita per prendere lo stage
+
+            Scene scene = new Scene(root, 900, 700);
+            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+            stage.setScene(scene);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Errore nel caricamento delle statistiche", e);
+        }
     }
 
     // Statistiche globali: per ora mostra un alert placeholder
