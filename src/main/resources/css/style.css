@@ -2,6 +2,53 @@
     -fx-font-family: 'Press Start 2P';
 }
 
+/* ========== SCHERMATA GAME OVER ========== */
+
+.gameover-container {
+    -fx-background-color: rgba(10, 10, 10, 0.95);
+    -fx-padding: 60;
+    -fx-spacing: 30;
+}
+
+.gameover-title {
+    -fx-font-family: 'Press Start 2P';
+    -fx-font-size: 36px;
+    -fx-text-fill: #ff4444;
+    -fx-effect: dropshadow(gaussian, rgba(255, 68, 68, 0.8), 10, 0, 0, 3);
+}
+
+.stats-box {
+    -fx-background-color: rgba(30, 30, 30, 0.8);
+    -fx-padding: 20 40;
+    -fx-background-radius: 10;
+    -fx-border-color: #c9a961;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+}
+
+.gameover-stat {
+    -fx-font-family: 'Press Start 2P';
+    -fx-font-size: 14px;
+    -fx-text-fill: #f4e8c8;
+}
+
+.gameover-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: #f4e8c8;
+    -fx-font-family: 'Press Start 2P';
+    -fx-font-size: 14px;
+    -fx-padding: 10 30;
+    -fx-cursor: hand;
+    -fx-min-width: 200;
+}
+
+.gameover-button:hover {
+    -fx-text-fill: #ffffff;
+    -fx-border-color: transparent transparent #c9a961 transparent;
+    -fx-border-width: 0 0 3 0;
+}
+
 /* Pause Menu Container */
 .menu-container{
     -fx-background-color: rgba(10, 10, 10, 0.9);
