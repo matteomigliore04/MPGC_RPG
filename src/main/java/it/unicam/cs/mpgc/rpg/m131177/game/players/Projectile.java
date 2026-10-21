@@ -1,57 +1,57 @@
 package it.unicam.cs.mpgc.rpg.m131177.game.players;
 
-// Import delle classi JavaFX necessarie per disegnare il proiettile
-// sul Canvas (GraphicsContext), caricare l'immagine della freccia (Image)
-// e disegnare un rettangolo di fallback (Color)
+// ============================================================
+// IMPORT
+// ============================================================
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 /**
- * Rappresenta un proiettile (freccia) sparato dal giocatore.
- * Si muove in linea retta nella direzione in cui è stato sparato.
- * La direzione è espressa come coppia (directionX, directionY) con valori
- * tipici -1, 0, 1: ad esempio (1, 0) = destra, (0, -1) = su,
- * (1, 1) = diagonale in basso a destra.
+ * Proiettile (freccia) sparato dal giocatore.
+ * Si muove in linea retta nella direzione indicata.
  */
 public class Projectile {
 
-    // --- POSIZIONE E DIMENSIONI ---
-    // x, y: angolo in alto a sinistra del proiettile (in pixel)
-    // width, height: dimensioni del rettangolo/immagine della freccia
-    // speed: velocità in pixel al secondo (più alta del player per renderla visibile)
+    // ============================================================
+    // COSTANTI
+    // ============================================================
+    // Fattore di normalizzazione per il movimento diagonale (1/√2 ≈ 0.7071)
+    private static final double DIAGONAL_FACTOR = 0.70710678118;
+
+    // ============================================================
+    // POSIZIONE, DIMENSIONI, VELOCITÀ
+    // ============================================================
+    // x, y: angolo in alto a sinistra (pixel)
+    // width, height: dimensioni della freccia
+    // speed: velocità in pixel/secondo (più alta del player)
     private double x;
     private double y;
     final double width = 30;
     final double height = 15;
     final double speed = 500; // pixel al secondo (più veloce del player)
 
-    // --- DIREZIONE DI MOVIMENTO ---
+    // ============================================================
+    // DIREZIONE
+    // ============================================================
     // Valori attesi: -1, 0 o 1 per ciascun asse.
     // Sono final perché la direzione non cambia durante la vita del proiettile
     final double directionX; // -1, 0, 1
     final double directionY; // -1, 0, 1
 
-    // --- STATO ---
-    // active: true finché il proiettile è in gioco, false quando esce dallo schermo
-    // arrowImage: sprite della freccia caricato da resources/images/arrow.png
+    // ============================================================
+    // STATO E GRAFICA
+    // ============================================================
+    // active: true finché il proiettile è in gioco
+    // arrowImage: sprite della freccia (null se manca)
     private boolean active = true;
     private Image arrowImage;
 
-    // Fattore di normalizzazione per il movimento diagonale.
-    // 1/√2 ≈ 0.7071: serve a mantenere la stessa velocità percepita
-    // sia in orizzontale/verticale sia in diagonale (altrimenti la diagonale
-    // sarebbe più veloce di √2 volte)
-    private static final double DIAGONAL_FACTOR = 0.70710678118;
-
-    /**
-     * Crea un proiettile alla posizione del player, nella direzione specificata.
-     *
-     * @param startX posizione X iniziale (es. centro del player)
-     * @param startY posizione Y iniziale
-     * @param dirX   componente X della direzione (-1, 0, 1)
-     * @param dirY   componente Y della direzione (-1, 0, 1)
-     */
+    // ============================================================
+    // COSTRUTTORE
+    // ============================================================
+    // Crea un proiettile alla posizione del player, nella direzione specificata.
+    // Carica l'immagine della freccia (con fallback a rettangolo giallo).
     public Projectile(double startX, double startY, double dirX, double dirY) {
         this.x = startX;
         this.y = startY;
@@ -62,22 +62,17 @@ public class Projectile {
         // Se il file non esiste o non è raggiungibile, arrowImage resta null
         // e nel render() verrà disegnato un rettangolo giallo al suo posto
         try {
-            arrowImage = new Image(getClass().getResourceAsStream("/images/arrow.png"));
+            arrowImage = new Image(getClass().getResourceAsStream("/images/player/arrow.png"));
         } catch (Exception e) {
             arrowImage = null; // Useremo il rettangolo di fallback
         }
     }
 
-    /**
-     * Aggiorna la posizione del proiettile in base al tempo trascorso (dt).
-     * Restituisce true se il proiettile è ancora attivo, false se è uscito
-     * dai limiti del canvas (e quindi va rimosso dalla lista dei proiettili).
-     *
-     * @param dt           delta time in secondi (es. 0.016 per 60 FPS)
-     * @param canvasWidth  larghezza del canvas
-     * @param canvasHeight altezza del canvas
-     * @return true se il proiettile è ancora in gioco
-     */
+    // ============================================================
+    // AGGIORNAMENTO POSIZIONE
+    // ============================================================
+    // Sposta il proiettile in base a dt e direzione.
+    // Restituisce true se è ancora attivo, false se è uscito dai bordi.
     public boolean update(double dt, double canvasWidth, double canvasHeight) {
         // Normalizza la velocità per il movimento diagonale:
         // se ci si muove su entrambi gli assi, si moltiplica per ~0.707
@@ -100,11 +95,10 @@ public class Projectile {
         return active;
     }
 
-    /**
-     * Disegna il proiettile sul canvas.
-     * Se l'immagine è disponibile, la ruota in base alla direzione;
-     * altrimenti disegna un rettangolo giallo come fallback.
-     */
+    // ============================================================
+    // RENDERING
+    // ============================================================
+    // Disegna la freccia ruotata; se manca l'immagine, disegna un rettangolo giallo.
     public void render(GraphicsContext gc) {
         if (arrowImage != null) {
             // Calcola l'angolo in radianti e convertilo in gradi.
@@ -137,9 +131,10 @@ public class Projectile {
         }
     }
 
-    // --- GETTER PER COLLISIONI E LOGICA DI GIOCO ---
-    // Usati dal GameController per rilevare collisioni con i mostri
-    // e per rimuovere i proiettili inattivi dalla lista
+    // ============================================================
+    // GETTER
+    // ============================================================
+    // Usati dal GameController per collisioni e per rimuovere i proiettili inattivi
     public double getX() { return x; }
     public double getY() { return y; }
     public double getWidth() { return width; }

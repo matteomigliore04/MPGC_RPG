@@ -1,7 +1,10 @@
 package it.unicam.cs.mpgc.rpg.m131177.game;
+
+// ============================================================
+// IMPORT
+// ============================================================
+import it.unicam.cs.mpgc.rpg.m131177.game.enemies.WaveManager;
 import it.unicam.cs.mpgc.rpg.m131177.game.loots.Loot;
-
-
 import it.unicam.cs.mpgc.rpg.m131177.controller.GameController;
 import it.unicam.cs.mpgc.rpg.m131177.game.enemies.Enemy;
 import it.unicam.cs.mpgc.rpg.m131177.game.enemies.EnemyFactory;
@@ -13,44 +16,51 @@ import javafx.scene.canvas.GraphicsContext;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+// ============================================================
+// GAME LOOP
+// ============================================================
+// Ciclo principale del gioco (eredita da AnimationTimer).
+// Gestisce aggiornamento logico e rendering ad ogni frame.
 public class GameLoop extends AnimationTimer {
 
-    private List<Loot> loots;
+    // ============================================================
+    // LOGGER
+    // ============================================================
+    private static final Logger LOGGER = Logger.getLogger(GameLoop.class.getName());
 
+    // ============================================================
+    // COSTANTI
+    // ============================================================
+    private static final double NANOS_PER_SECOND = 1_000_000_000.0;
+
+    // ============================================================
+    // DIPENDENZE E COLLEZIONI (final)
+    // ============================================================
     private final GraphicsContext gc;
     private final GameController controller;
 
+    private final List<Loot> loots;
+    private final Player player;
+    private final List<Projectile> projectiles;
+    private final List<Enemy> enemies;
+    private final EnemyFactory enemyFactory;
+    private final WaveManager waveManager;
+
+    // ============================================================
+    // STATO DEL LOOP E INPUT
+    // ============================================================
     private long lastTime = 0;
-    private double deltaTime = 0;
-    private static final double NANOS_PER_SECOND = 1_000_000_000.0;
-
-    private Player player;
-    private List<Projectile> projectiles;
-    private List<Enemy> enemies;
-    private EnemyFactory enemyFactory;
-
-    // Aggiungi questa:
-    private WaveManager waveManager;
-
     private boolean upPressed = false;
     private boolean downPressed = false;
     private boolean leftPressed = false;
     private boolean rightPressed = false;
 
-    private static final double HUD_HEIGHT = 70;
-
-    // Confini della mappa (muri)
-    private static final double WALL_THICKNESS = 40;        // Spessore dei muri
-    private static final double OPENING_HEIGHT = 80;         // Altezza delle aperture laterali
-    private static final double OPENING_CENTER_Y = 350;      // Centro delle aperture (metà di 700)
-
-    // Area giocabile (dentro i muri)
-    private static final double PLAYABLE_MIN_X = WALL_THICKNESS;
-    private static final double PLAYABLE_MAX_X = 900 - WALL_THICKNESS - 40; // 40 = larghezza nemico
-    private static final double PLAYABLE_MIN_Y = WALL_THICKNESS;
-    private static final double PLAYABLE_MAX_Y = 700 - WALL_THICKNESS - 40; // 40 = altezza nemico
-
+    // ============================================================
+    // COSTRUTTORE
+    // ============================================================
     public GameLoop(GraphicsContext gc, GameController controller) {
         this.gc = gc;
         this.controller = controller;
@@ -60,14 +70,16 @@ public class GameLoop extends AnimationTimer {
         this.enemyFactory = new EnemyFactory();
         this.waveManager = new WaveManager();
 
-        // ✅ Player inizializzato con i nuovi confini
+        // Inizializza il player con le costanti del canvas
         this.player = new Player(
                 GameConstants.CANVAS_WIDTH,
-                GameConstants.CANVAS_HEIGHT,
-                HUD_HEIGHT
+                GameConstants.CANVAS_HEIGHT
         );
     }
 
+    // ============================================================
+    // HANDLE (loop principale di JavaFX)
+    // ============================================================
     @Override
     public void handle(long now) {
         if (lastTime == 0) {
@@ -75,40 +87,39 @@ public class GameLoop extends AnimationTimer {
             return;
         }
 
-        deltaTime = (now - lastTime) / NANOS_PER_SECOND;
+        // Sostituito il campo 'deltaTime' con una variabile locale
+        double deltaTime = (now - lastTime) / NANOS_PER_SECOND;
         lastTime = now;
 
         update(deltaTime);
         render();
     }
 
+    // ============================================================
+    // AGGIORNAMENTO LOGICA
+    // ============================================================
     private void update(double dt) {
         player.update(dt, upPressed, downPressed, leftPressed, rightPressed);
 
-        // Aggiorna proiettili
-        Iterator<Projectile> projIterator = projectiles.iterator();
-        while (projIterator.hasNext()) {
-            Projectile p = projIterator.next();
-            if (!p.update(dt, gc.getCanvas().getWidth(), gc.getCanvas().getHeight())) {
-                projIterator.remove(); // ✅ Rimuove la freccia se update() restituisce false
-            }
-        }
+        // Aggiorna proiettili (rimuove se update() restituisce false)
+        projectiles.removeIf(p -> !p.update(dt, gc.getCanvas().getWidth(), gc.getCanvas().getHeight()));
 
         // Aggiorna loot
         for (Loot loot : loots) {
             loot.update(dt);
         }
 
+        // Spawn nemici
         if (waveManager.update(dt)) {
             Enemy newEnemy = enemyFactory.createEnemy(waveManager.getCurrentWave());
             enemies.add(newEnemy);
         }
 
-        // ✅ NUOVO: Se c'è un bonus ondata pendente, eroga le frecce
+        // Eroga bonus frecce a fine ondata
         if (waveManager.consumeBonusPending()) {
             int bonus = waveManager.getArrowWaveBonus();
             player.collectArrows(bonus);
-            System.out.println("🎁 Bonus ondata: +" + bonus + " frecce!");
+            LOGGER.info("Bonus ondata: +" + bonus + " frecce!");
         }
 
         // Aggiorna nemici
@@ -116,17 +127,17 @@ public class GameLoop extends AnimationTimer {
             enemy.update(dt, player);
         }
 
-        // Collisioni
+        // Gestione collisioni
         handleProjectileEnemyCollisions();
         handleEnemyPlayerCollisions();
-        handleLootCollection(); // ✅ Nuova collisione
+        handleLootCollection();
 
-        // Rimuovi nemici morti e aggiorna il WaveManager
+        // Rimuovi nemici morti e notifica il WaveManager
         Iterator<Enemy> enemyIterator = enemies.iterator();
         while (enemyIterator.hasNext()) {
             Enemy enemy = enemyIterator.next();
             if (!enemy.isAlive()) {
-                waveManager.onEnemyKilled(); // ✅ Notifica al manager
+                waveManager.onEnemyKilled();
                 enemyIterator.remove();
             }
         }
@@ -143,21 +154,23 @@ public class GameLoop extends AnimationTimer {
         );
     }
 
+    // ============================================================
+    // COLLISIONI — NEMICO vs PLAYER
+    // ============================================================
     private void handleEnemyPlayerCollisions() {
         for (Enemy enemy : enemies) {
             if (enemy.isAlive() && CollisionDetector.isEnemyAttackingPlayer(enemy, player)) {
-                System.out.println("[DEBUG GAMELOOP] Collisione rilevata con: " + enemy.getName());
+                LOGGER.info("Collisione rilevata con: " + enemy.getName());
 
                 boolean isDead = player.takeDamage(enemy.getDamage());
-                System.out.println("[DEBUG GAMELOOP] Risultato di takeDamage: " + isDead);
+                LOGGER.info("Risultato di takeDamage: " + isDead);
 
                 if (isDead) {
-                    System.out.println("[DEBUG GAMELOOP] ESEGUO showGameOver e stop del loop!");
+                    LOGGER.info("Eseguo showGameOver e stop del loop!");
                     try {
                         controller.showGameOver(player.getScore());
                     } catch (Exception e) {
-                        System.out.println("[DEBUG GAMELOOP] ERRORE CRITICO in showGameOver: " + e.getMessage());
-                        e.printStackTrace();
+                        LOGGER.log(Level.SEVERE, "Errore critico in showGameOver", e);
                     }
                     this.stop();
                 }
@@ -166,11 +179,9 @@ public class GameLoop extends AnimationTimer {
         }
     }
 
-    /**
-     * Gestisce le collisioni tra frecce e nemici.
-     * Se una freccia colpisce un nemico: il nemico prende danno, la freccia viene rimossa.
-     * Se il nemico muore: il player guadagna punti e frecce.
-     */
+    // ============================================================
+    // COLLISIONI — PROIETTILE vs NEMICO
+    // ============================================================
     private void handleProjectileEnemyCollisions() {
         Iterator<Projectile> projIterator = projectiles.iterator();
 
@@ -183,7 +194,7 @@ public class GameLoop extends AnimationTimer {
                     Loot droppedLoot = enemy.takeDamage(25); // 25 danni per freccia
 
                     if (droppedLoot != null) {
-                        loots.add(droppedLoot); // ✅ Aggiungi il loot a terra
+                        loots.add(droppedLoot); // Aggiungi il loot a terra
                         player.addScore(enemy.getScoreValue());
                     }
 
@@ -198,7 +209,9 @@ public class GameLoop extends AnimationTimer {
         }
     }
 
-    // Aggiungi questo metodo per la raccolta dei loot:
+    // ============================================================
+    // COLLISIONI — LOOT vs PLAYER
+    // ============================================================
     private void handleLootCollection() {
         Iterator<Loot> lootIterator = loots.iterator();
         while (lootIterator.hasNext()) {
@@ -214,10 +227,13 @@ public class GameLoop extends AnimationTimer {
         }
     }
 
+    // ============================================================
+    // RENDERING
+    // ============================================================
     private void render() {
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
 
-        // Disegna loot (sotto i nemici)
+        // Disegna loot (sotto)
         for (Loot loot : loots) {
             loot.render(gc);
         }
@@ -232,10 +248,13 @@ public class GameLoop extends AnimationTimer {
             p.render(gc);
         }
 
-        // Disegna player
+        // Disegna player (sopra)
         player.render(gc);
     }
 
+    // ============================================================
+    // AZIONI ESTERNE (input e utility)
+    // ============================================================
     public void shoot() {
         Projectile arrow = player.shoot();
         if (arrow != null) {
@@ -243,10 +262,7 @@ public class GameLoop extends AnimationTimer {
         }
     }
 
-    /**
-     * Resetta il timer interno. Da chiamare prima di riprendere il loop dopo una pausa,
-     * per evitare che il deltaTime calcoli tutto il tempo della pausa.
-     */
+    // Resetta il timer interno per evitare deltaTime enormi dopo una pausa
     public void resetDelta() {
         lastTime = 0;
     }

@@ -1,30 +1,36 @@
 package it.unicam.cs.mpgc.rpg.m131177.model;
 
-// Classe che mantiene lo stato condiviso durante la creazione di una partita.
-// Segue il pattern "Context": un unico oggetto passato tra le varie schermate
-// (menu → difficoltà  → gioco) che contiene i dati scelti dall'utente,
-// evitando che i controller si passino informazioni direttamente tra loro.
+// ============================================================
+// GAME CONTEXT
+// ============================================================
+// Mantiene lo stato condiviso durante la creazione di una partita
+// (pattern "Context": evita che i controller si passino dati a vicenda).
 public class GameContext {
 
-    // --- STATO DELLA PARTITA ---
+    // ============================================================
+    // STATO DELLA PARTITA
+    // ============================================================
     // Livello di difficoltà scelto dall'utente
     // (es. "Facile", "Media", "Alta", "Superiore").
-    // Al momento è l'unico dato memorizzato nel contesto.
     private String difficulty;
 
-    // --- GETTER E SETTER PER LA DIFFICOLTÀ ---
-    // Permettono di leggere e impostare il livello di difficoltà
-    // senza accedere direttamente al campo privato.
+    // ============================================================
+    // GETTER E SETTER — DIFFICOLTÀ
+    // ============================================================
+    // Legge e imposta il livello di difficoltà in modo incapsulato.
     public String getDifficulty() {
         return difficulty;
     }
+
     public void setDifficulty(String difficulty) {
         this.difficulty = difficulty;
     }
 
-    // --- RESET DEL CONTESTO ---
-    // Azzera i dati della partita per permettere di iniziarne una nuova
-    // senza che restino tracce della precedente (es. tornando al menu principale).
+    // ============================================================
+    // RESET
+    // ============================================================
+    // Azzera i dati per iniziare una nuova partita pulita
+    // (es. quando si torna al menu principale).
     public void reset() {
         this.difficulty = null;
     }

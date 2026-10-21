@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- Import delle classi JavaFX usate nel file:
-     - Button, Label: controlli base per pulsanti ed etichette
-     - Image, ImageView: per mostrare l'immagine di sfondo
-     - VBox: layout verticale per impilare gli elementi
-     - StackPane: layout a strati (sfondo + contenuto sovrapposto) -->
+<!-- ============================================================
+     IMPORT
+     ============================================================ -->
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
@@ -12,35 +10,42 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.StackPane?>
 
-<!-- StackPane principale: contenitore radice della schermata del menu.
-     Sovrappone l'immagine di sfondo (sotto) e il contenuto (sopra).
-     - fx:controller collega il file al MenuController
-     - styleClass="root-pane" applica lo stile CSS definito in style.css -->
+<!-- ============================================================
+     CONTENITORE RADICE
+     StackPane a strati: sfondo sotto, contenuto sopra.
+     - fx:controller → MenuController
+     - styleClass="root-pane" → stile CSS globale
+     ============================================================ -->
 <StackPane xmlns="http://javafx.com/javafx/21"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="it.unicam.cs.mpgc.rpg.m131177.controller.MenuController"
            styleClass="root-pane">
 
-    <!-- Immagine di sfondo a tutto schermo (900x700),
-         caricata dalla cartella resources/images -->
+    <!-- ========================================================
+         LIVELLO 1 — SFONDO
+         Immagine a tutto schermo (900x700)
+         ======================================================== -->
     <ImageView fitWidth="900" fitHeight="700">
-        <Image url="@/images/wallpaper.jpg"/>
+        <Image url="@/images/background/wallpaper.jpg"/>
     </ImageView>
 
-    <!-- VBox centrale: impila verticalmente titolo, spaziatori e pulsanti,
-         con allineamento centrato e 30px di spazio tra gli elementi -->
+    <!-- ========================================================
+         LIVELLO 2 — CONTENUTO
+         VBox verticale centrata: titolo, spaziatori e pulsanti
+         ======================================================== -->
     <VBox alignment="CENTER" spacing="30">
 
-        <!-- Titolo del gioco, stilizzato tramite la classe CSS "title-label" -->
+        <!-- Titolo del gioco (stile title-label) -->
         <Label text="SOULS ADVENTURE" styleClass="title-label"/>
 
-        <!-- Spaziatore verticale di 40px per distanziare il titolo dai pulsanti -->
+        <!-- Spaziatore 40px: separa titolo e pulsanti -->
         <VBox prefHeight="40"/>
 
-        <!-- Pulsante "Inizia Partita":
-             - fx:id: identificatore per il controller
-             - onAction: collega il click al metodo handleIniziaPartita()
-             - styleClass: applica lo stile "menu-button" del CSS -->
+        <!-- ====================================================
+             PULSANTI DEL MENU
+             ==================================================== -->
+
+        <!-- Inizia Partita → handleIniziaPartita() -->
         <Button fx:id="btnIniziaPartita"
                 text="▶ Inizia Partita"
                 onAction="#handleIniziaPartita"
@@ -48,8 +53,7 @@
                 prefWidth="300"
                 prefHeight="75"/>
 
-        <!-- Pulsante "Le mie Statistiche":
-             apre (o mostrerà in futuro) le statistiche personali del giocatore -->
+        <!-- Statistiche Personali → handleStatistichePersonali() -->
         <Button fx:id="btnStatistichePersonali"
                 text="📊 Le mie Statistiche"
                 onAction="#handleStatistichePersonali"
@@ -57,8 +61,7 @@
                 prefWidth="300"
                 prefHeight="75"/>
 
-        <!-- Pulsante "Classifica Giocatori":
-             aprirà la classifica globale degli altri giocatori -->
+        <!-- Classifica Giocatori → handleStatisticheGlobali() -->
         <Button fx:id="btnStatisticheGlobali"
                 text="🏆 Classifica Giocatori"
                 onAction="#handleStatisticheGlobali"
@@ -66,7 +69,7 @@
                 prefWidth="300"
                 prefHeight="75"/>
 
-        <!-- Spaziatore verticale di 40px per distanziare il titolo dai pulsanti -->
+        <!-- Spaziatore 40px finale per bilanciare il layout -->
         <VBox prefHeight="40"/>
     </VBox>
 </StackPane>

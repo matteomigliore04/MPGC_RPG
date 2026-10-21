@@ -1,14 +1,23 @@
 package it.unicam.cs.mpgc.rpg.m131177.game;
 
+// ============================================================
+// IMPORT
+// ============================================================
 import it.unicam.cs.mpgc.rpg.m131177.game.enemies.Enemy;
 import it.unicam.cs.mpgc.rpg.m131177.game.players.Projectile;
 import it.unicam.cs.mpgc.rpg.m131177.game.players.Player;
 
+// ============================================================
+// COLLISION DETECTOR
+// ============================================================
+// Classe di utilità per rilevare collisioni tra entità di gioco
+// usando metodi statici (non richiede istanziazione).
 public class CollisionDetector {
 
-    /**
-     * Controllo AABB classico: usato per le frecce (devono sovrapporsi fisicamente).
-     */
+    // ============================================================
+    // COLLISIONI PROIETTILE - NEMICO
+    // ============================================================
+    // Controllo AABB classico: usato per le frecce (devono sovrapporsi fisicamente).
     public static boolean isProjectileHitEnemy(Projectile projectile, Enemy enemy) {
         return checkCollision(
                 projectile.getX(), projectile.getY(), projectile.getWidth(), projectile.getHeight(),
@@ -16,10 +25,11 @@ public class CollisionDetector {
         );
     }
 
-    /**
-     * Controllo a distanza: usato per Nemico-Player.
-     * Rileva l'attacco anche se c'è un piccolo spazio vuoto tra i due sprite.
-     */
+    // ============================================================
+    // COLLISIONI NEMICO - PLAYER
+    // ============================================================
+    // Controllo a distanza: usato per Nemico-Player.
+    // Rileva l'attacco anche se c'è un piccolo spazio vuoto tra i due sprite.
     public static boolean isEnemyAttackingPlayer(Enemy enemy, Player player) {
         // Calcola i centri dei due personaggi
         double centerX1 = enemy.getX() + enemy.getWidth() / 2;
@@ -27,6 +37,7 @@ public class CollisionDetector {
         double centerX2 = player.getX() + player.getWidth() / 2;
         double centerY2 = player.getY() + player.getHeight() / 2;
 
+        // Distanza euclidea tra i due centri
         double dx = centerX1 - centerX2;
         double dy = centerY1 - centerY2;
         double distance = Math.sqrt(dx * dx + dy * dy);
@@ -38,9 +49,10 @@ public class CollisionDetector {
         return distance <= reach;
     }
 
-    /**
-     * Metodo helper per il controllo AABB.
-     */
+    // ============================================================
+    // METODO HELPER — AABB
+    // ============================================================
+    // Controllo AABB (Axis-Aligned Bounding Box) per due rettangoli.
     public static boolean checkCollision(
             double x1, double y1, double w1, double h1,
             double x2, double y2, double w2, double h2) {

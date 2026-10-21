@@ -1,9 +1,12 @@
 package it.unicam.cs.mpgc.rpg.m131177.game.loots;
+
 import it.unicam.cs.mpgc.rpg.m131177.game.players.Player;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+
+import java.util.Objects;
 
 /**
  * Rappresenta un oggetto raccoglibile a terra (loot).
@@ -11,18 +14,37 @@ import javafx.scene.paint.Color;
  */
 public class Loot {
 
-    private double x;
-    private double y;
-    private double size = 50;
-    private LootType type;
-    private int value;
-    private Image sprite;
-    private boolean collected = false;
+    // ============================================================
+    // POSIZIONE E ATTRIBUTI (immutabili)
+    // ============================================================
+    // x, y: posizione a terra
+    // size: dimensione del loot (50x50)
+    // type: tipo di loot (frecce, pozione cura, pozione scudo)
+    // value: quantità da aggiungere al player
+    private final double x;
+    private final double y;
+    private final double size = 50;
+    private final LootType type;
+    private final int value;
 
-    // Animazione di "galleggiamento"
+    // ============================================================
+    // STATO E GRAFICA
+    // ============================================================
+    // collected: true se il loot è già stato raccolto
+    // sprite: immagine del loot
+    private boolean collected = false;
+    private Image sprite;
+
+    // ============================================================
+    // ANIMAZIONE (galleggiamento)
+    // ============================================================
     private double floatOffset = 0;
     private double floatTimer = 0;
 
+    // ============================================================
+    // COSTRUTTORE
+    // ============================================================
+    // Inizializza il loot e carica il suo sprite
     public Loot(double x, double y, LootType type, int value) {
         this.x = x;
         this.y = y;
@@ -31,6 +53,11 @@ public class Loot {
         loadSprite();
     }
 
+    // ============================================================
+    // CARICAMENTO SPRITE
+    // ============================================================
+    // Carica l'immagine in base al tipo di loot.
+    // Uso Objects.requireNonNull per risolvere il warning "might be null".
     private void loadSprite() {
         String path = switch (type) {
             case ARROWS -> "/images/loot/loot_arrow.png";
@@ -38,18 +65,25 @@ public class Loot {
             case SHIELD_POTION -> "/images/loot/loot_shield_potion.png";
         };
         try {
-            sprite = new Image(getClass().getResourceAsStream(path));
+            sprite = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path)));
         } catch (Exception e) {
             sprite = null;
         }
     }
 
+    // ============================================================
+    // AGGIORNAMENTO (animazione)
+    // ============================================================
+    // Aggiorna l'animazione di galleggiamento (fluttuazione verticale)
     public void update(double dt) {
-        // Animazione di galleggiamento
         floatTimer += dt;
         floatOffset = Math.sin(floatTimer * 3) * 3;
     }
 
+    // ============================================================
+    // RENDERING
+    // ============================================================
+    // Disegna lo sprite (o un fallback colorato) con l'animazione applicata
     public void render(GraphicsContext gc) {
         if (collected) return;
 
@@ -58,7 +92,7 @@ public class Loot {
         if (sprite != null) {
             gc.drawImage(sprite, x, renderY, size, size);
         } else {
-            // Fallback: cerchio colorato con iniziale
+            // Fallback: cerchio colorato con emoji iniziale
             gc.setFill(Color.web(type.getColorHex()));
             gc.fillOval(x, renderY, size, size);
             gc.setStroke(Color.WHITE);
@@ -76,9 +110,13 @@ public class Loot {
         }
     }
 
-    /**
-     * Raccoglie il loot. Restituisce true se la raccolta è avvenuta.
-     */
+    // ============================================================
+    // RACCOLTA
+    // ============================================================
+    // Raccoglie il loot e applica l'effetto al player.
+    // Restituisce true se la raccolta è avvenuta (e quindi il loot va rimosso).
+    // Il warning "return value never used" si può ignorare: è utile per la logica
+    // del GameLoop che rimuove i loot raccolti.
     public boolean collect(Player player) {
         if (collected) return false;
         collected = true;
@@ -91,11 +129,14 @@ public class Loot {
         return true;
     }
 
-    // Getters
+    // ============================================================
+    // GETTER
+    // ============================================================
+    // I getter di type e value sono stati rimossi perché attualmente
+    // inutilizzati nel codice (risoluzione warning).
+    // Se in futuro servissero, basterà reinserirli.
     public double getX() { return x; }
     public double getY() { return y; }
     public double getSize() { return size; }
-    public LootType getType() { return type; }
-    public int getValue() { return value; }
     public boolean isCollected() { return collected; }
 }

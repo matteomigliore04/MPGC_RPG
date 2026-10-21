@@ -1,127 +1,135 @@
 package it.unicam.cs.mpgc.rpg.m131177.game.players;
 
-// Import delle classi JavaFX necessarie per disegnare il player
-// sul Canvas (GraphicsContext), caricare le immagini (Image)
-// e disegnare il fallback (Color)
+// ============================================================
+// IMPORT
+// ============================================================
 import it.unicam.cs.mpgc.rpg.m131177.game.GameConstants;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-
-// Import per il logging: usiamo java.util.logging (standard di Java)
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Rappresenta il giocatore: posizione, dimensioni, velocità, direzione,
- * munizioni (frecce) e immagini per le 8 direzioni (4 cardinali + 4 diagonali),
- * sia in movimento sia in fase di sparo.
- */
+// Player: posizione, movimento, direzioni, sparo, vita/scudo, pozioni.
 public class Player {
 
-    // Logger dedicato alla classe: registra messaggi al posto delle println,
-    // permettendo una gestione più robusta e filtrabile degli errori
+    // ============================================================
+    // LOGGER
+    // ============================================================
+    // Logger di classe per warning e errori di caricamento
     private static final Logger LOGGER = Logger.getLogger(Player.class.getName());
 
-    // --- POSIZIONE, DIMENSIONI E VELOCITÀ ---
-    // x, y: angolo in alto a sinistra del player (in pixel)
-    // width, height: dimensioni del rettangolo/immagine del player
-    // speed: velocità in pixel al secondo
+    // ============================================================
+    // COSTANTI
+    // ============================================================
+    // Fattore di normalizzazione per il movimento diagonale (1/√2)
+    private static final double DIAGONAL_FACTOR = 0.70710678118;
+    // Durata dell'animazione di sparo (secondi)
+    private static final double SHOOTING_DURATION = 0.15;
+    // Durata dell'invincibilità dopo un danno (secondi)
+    private static final double INVINCIBILITY_DURATION = 1.0;
+    // Limite massimo di pozioni per tipo
+    private static final int MAX_POTIONS = 10;
+
+    // ============================================================
+    // POSIZIONE, DIMENSIONI, VELOCITÀ
+    // ============================================================
+    // x, y: angolo in alto a sinistra (pixel)
+    // width, height: dimensioni del player
+    // speed: velocità in pixel/secondo
     private double x;
     private double y;
     final double width = 60;
     final double height = 50;
     final double speed = 200;
 
-    // --- LIMITI DI MOVIMENTO ---
-    // Valori minimi e massimi per x e y, calcolati in base al canvas,
-    // per evitare che il player esca dallo schermo
+    // Limiti di movimento (calcolati da GameConstants)
     final double minX, maxX, minY, maxY;
 
-    // --- GESTIONE DELLE FRECCE (MUNIZIONI) ---
-    // maxArrows: numero massimo di frecce trasportabili
-    // currentArrows: frecce attualmente disponibili
+    // ============================================================
+    // FRECCE (MUNIZIONI)
+    // ============================================================
+    // maxArrows: massimo trasportabile
+    // currentArrows: frecce disponibili
     final int maxArrows = 150; // Da 100 a 150
     private int currentArrows = 150;
 
-    // Fattore di normalizzazione per il movimento diagonale (1/√2 ≈ 0.7071):
-    // serve a mantenere la stessa velocità percepita sia in orizzontale/verticale
-    // sia in diagonale (altrimenti la diagonale sarebbe √2 volte più veloce)
-    private static final double DIAGONAL_FACTOR = 0.70710678118;
-
-    // --- IMMAGINI DI MOVIMENTO ---
-    // 4 cardinali + 4 diagonali, caricate da resources/images
+    // ============================================================
+    // IMMAGINI — MOVIMENTO
+    // ============================================================
+    // 4 cardinali + 4 diagonali
     private Image imgUp, imgDown, imgLeft, imgRight;
     private Image imgUpLeft, imgUpRight, imgDownLeft, imgDownRight;
 
-    // --- IMMAGINI DI SPARO ---
-    // 4 cardinali + 4 diagonali, mostrate brevemente dopo lo sparo
+    // ============================================================
+    // IMMAGINI — SPARO
+    // ============================================================
+    // 4 cardinali + 4 diagonali
     private Image imgShootUp, imgShootDown, imgShootLeft, imgShootRight;
     private Image imgShootUpLeft, imgShootUpRight, imgShootDownLeft, imgShootDownRight;
 
-    // --- STATO CORRENTE ---
+    // ============================================================
+    // STATO CORRENTE
+    // ============================================================
     // currentImg: sprite attualmente disegnato
-    // currentDirection: direzione attuale (per capire quale sprite usare dopo lo sparo)
+    // currentDirection: direzione attuale
     // shootingTimer: tempo rimanente dell'animazione di sparo
     private Image currentImg;
     private Direction currentDirection = Direction.DOWN;
-
     private double shootingTimer = 0;
-    private static final double SHOOTING_DURATION = 0.15;
 
-    // --- NUOVI CAMPI ---
-    private int maxHealth = 100;
-    private int currentHealth = 100;
+    // ============================================================
+    // VITA, SCUDO, PUNTEGGIO
+    // ============================================================
+    // maxHealth e maxShield sono costanti, quindi 'final'
+    private final int maxHealth = 100;
+    private int currentHealth;
+    private final int maxShield = 50;
+    private int currentShield = 0;
     private int score = 0;
 
-    // Timer per l'invincibilità dopo aver subito un danno
-    // ✅ Il timer DEVE partire da 0, altrimenti il giocatore nasce già invincibile!
+    // Timer di invincibilità (parte da 0: non si nasce invincibili)
     private double invincibilityTimer = 0;
-    private static final double INVINCIBILITY_DURATION = 1.0; // 1 secondo
 
-    // Aggiungi queste variabili in cima alla classe Player
-    private static final int MAX_POTIONS = 10;
+    // ============================================================
+    // POZIONI
+    // ============================================================
     private int healthPotions = 0;
     private int shieldPotions = 0;
-    private int currentShield = 0;
-    private int maxShield = 50;
 
-    // Enumerazione delle 8 direzioni possibili
+    // ============================================================
+    // ENUM DIREZIONI
+    // ============================================================
     public enum Direction {
         UP, DOWN, LEFT, RIGHT,
         UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT
     }
 
-    /**
-     * Crea un player al centro del canvas.
-     * @param canvasWidth  larghezza del canvas
-     * @param canvasHeight altezza del canvas
-         * @param hudHeight    altezza dell'HUD (per ora non usata, ma utile in futuro
-     *                     per limitare il movimento sotto l'HUD)
-     */
-    public Player(double canvasWidth, double canvasHeight, double hudHeight) {
+    // ============================================================
+    // COSTRUTTORE
+    // ============================================================
+    // Posiziona il player al centro e imposta i limiti di movimento
+    public Player(double canvasWidth, double canvasHeight) {
         // Posiziona il player al centro del canvas
         this.x = canvasWidth / 2 - width / 2;
         this.y = canvasHeight / 2 - height / 2;
 
-        // ✅ NUOVI LIMITI: il player non può attraversare i muri
+        // Limiti: il player non può attraversare i muri
         this.minX = GameConstants.PLAYABLE_MIN_X;
         this.maxX = GameConstants.PLAYABLE_MAX_X;
         this.minY = GameConstants.PLAYABLE_MIN_Y;
         this.maxY = GameConstants.PLAYABLE_MAX_Y;
-
-        this.currentHealth = maxHealth;
 
         // Carica le immagini e imposta lo sprite iniziale (rivolto verso il basso)
         loadImages();
         this.currentImg = imgDown;
     }
 
-    /**
-     * Carica tutte le immagini del player da resources/images.
-     * Se una risorsa manca, loadImage() logga un warning e restituisce null:
-     * in quel caso, il render() userà un fallback disegnato a mano.
-     */
+    // ============================================================
+    // CARICAMENTO IMMAGINI
+    // ============================================================
+    // Carica tutte le immagini (cardinali, diagonali, sparo)
     private void loadImages() {
         // Cardinali
         imgUp = loadImage("/images/weed_up.png");
@@ -148,30 +156,26 @@ public class Player {
         imgShootDownRight = loadImage("/images/weed_shoot_down_right.png");
     }
 
-    /**
-     * Carica una singola immagine.
-     * Se la risorsa non esiste o non è raggiungibile, logga un warning
-     * (invece di stampare su console con System.out.println) e restituisce null.
-     */
+    // Carica una singola immagine; se manca, logga warning e restituisce null.
+    // Uso Objects.requireNonNull per evitare il warning "might be null"
     private Image loadImage(String path) {
         try {
-            return new Image(getClass().getResourceAsStream(path));
+            return new Image(Objects.requireNonNull(getClass().getResourceAsStream(path)));
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Immagine non trovata: " + path, e);
             return null;
         }
     }
 
-    /**
-     * Aggiorna la posizione del player in base ai tasti premuti e al tempo trascorso.
-     * Gestisce anche l'animazione di sparo: durante lo sparo il player può muoversi,
-     * ma lo sprite resta quello di sparo finché il timer non scade.
-     */
+    // ============================================================
+    // AGGIORNAMENTO (movimento + timer)
+    // ============================================================
+    // Aggiorna posizione, sprite e timer di invincibilità.
+    // Durante lo sparo: movimento consentito, sprite bloccato.
     public void update(double dt, boolean upPressed, boolean downPressed,
                        boolean leftPressed, boolean rightPressed) {
 
-        // Calcola il fattore di velocità (normalizzazione diagonale):
-        // se si muove su entrambi gli assi, riduce la velocità di √2
+        // Normalizzazione diagonale: se si muove su 2 assi, velocità × √2/2
         double speedMultiplier = 1.0;
         int axesPressed = 0;
         if ((upPressed || downPressed)) axesPressed++;
@@ -183,7 +187,7 @@ public class Player {
         double movement = speed * dt * speedMultiplier;
 
         if (shootingTimer > 0) {
-            // Durante l'animazione di sparo, consenti il movimento ma non cambiare sprite
+            // Durante l'animazione di sparo: muoviti ma non cambiare sprite
             if (upPressed) y -= movement;
             if (downPressed) y += movement;
             if (leftPressed) x -= movement;
@@ -202,31 +206,31 @@ public class Player {
             if (leftPressed) { x -= movement; moved = true; }
             if (rightPressed) { x += movement; moved = true; }
 
-            // Aggiorna la direzione e lo sprite in base alla combinazione di tasti
+            // Aggiorna direzione e sprite
             if (moved) {
                 updateDirection(upPressed, downPressed, leftPressed, rightPressed);
             }
         }
 
-        // Clamp bordi: impedisce al player di uscire dal canvas
-        x = Math.max(minX, Math.min(x, maxX));
-        y = Math.max(minY, Math.min(y, maxY));
+        // Sostituito Math.max/min con Math.clamp per pulizia del codice
+        x = Math.clamp(x, minX, maxX);
+        y = Math.clamp(y, minY, maxY);
 
-        // ✅ FONDAMENTALE: Decrementa il timer di invincibilità ALLA FINE del metodo
+        // Decrementa il timer di invincibilità alla fine dell'update
         if (invincibilityTimer > 0) {
             invincibilityTimer -= dt;
 
-            // Protezione: evita che il timer diventi negativo per errori di arrotondamento
+            // Protezione: evita valori negativi per errori di arrotondamento
             if (invincibilityTimer < 0) {
                 invincibilityTimer = 0;
             }
         }
     }
 
-    /**
-     * Determina la direzione in base alla combinazione di tasti premuti.
-     * La priorità è data alle diagonali, poi ai singoli assi.
-     */
+    // ============================================================
+    // DIREZIONE E SPRITE
+    // ============================================================
+    // Determina la direzione in base ai tasti premuti (priorità alle diagonali)
     private void updateDirection(boolean up, boolean down, boolean left, boolean right) {
         if (up && left) {
             currentDirection = Direction.UP_LEFT;
@@ -255,10 +259,7 @@ public class Player {
         }
     }
 
-    /**
-     * Ripristina lo sprite di movimento normale in base alla direzione corrente.
-     * Chiamato quando l'animazione di sparo termina.
-     */
+    // Ripristina lo sprite di movimento normale in base alla direzione corrente
     private void revertToNormalSprite() {
         switch (currentDirection) {
             case UP: currentImg = imgUp; break;
@@ -272,11 +273,10 @@ public class Player {
         }
     }
 
-    /**
-     * Metodo per raccogliere frecce (da usare quando i nemici verranno uccisi).
-     * @param amount Numero di frecce da aggiungere
-     * @return Numero effettivo di frecce aggiunte (potrebbe essere meno se si supera il massimo)
-     */
+    // ============================================================
+    // FRECCE — GETTER E RACCOLTA
+    // ============================================================
+    // Raccoglie frecce rispettando il massimo; restituisce quante ne ha aggiunte
     public int collectArrows(int amount) {
         int spaceLeft = maxArrows - currentArrows;
         int arrowsAdded = Math.min(amount, spaceLeft);
@@ -284,21 +284,15 @@ public class Player {
         return arrowsAdded;
     }
 
-    /** Getter per il numero attuale di frecce. */
     public int getCurrentArrows() {
         return currentArrows;
     }
 
-    /** Getter per il numero massimo di frecce. */
-    public int getMaxArrows() {
-        return maxArrows;
-    }
-
-    /**
-     * Crea e restituisce un proiettile nella direzione corrente.
-     * Se non ci sono frecce disponibili, restituisce null (nessuno sparo).
-     * Consuma una freccia e imposta l'animazione di sparo.
-     */
+    // ============================================================
+    // SPARO
+    // ============================================================
+    // Crea un proiettile nella direzione corrente.
+    // Se non ci sono frecce, restituisce null.
     public Projectile shoot() {
         // Controllo munizioni
         if (currentArrows <= 0) {
@@ -316,11 +310,7 @@ public class Player {
         // Attiva l'animazione di sparo
         shootingTimer = SHOOTING_DURATION;
 
-        // In base alla direzione corrente, imposta:
-        // - dirX, dirY: vettore direzione del proiettile
-        // - startX, startY: posizione di partenza ottimale (per evitare che la freccia
-        //   parta dentro il player)
-        // - currentImg: sprite di sparo corrispondente
+        // Imposta direzione, posizione di partenza e sprite di sparo
         switch (currentDirection) {
             case UP:
                 dirY = -1;
@@ -367,16 +357,15 @@ public class Player {
         return new Projectile(startX, startY, dirX, dirY);
     }
 
-    /**
-     * Disegna il player sul canvas.
-     * Se l'immagine corrente è disponibile, la disegna;
-     * altrimenti disegna un fallback stilizzato (cerchio verde con occhi).
-     */
+    // ============================================================
+    // RENDERING
+    // ============================================================
+    // Disegna lo sprite corrente; se manca, disegna un fallback verde
     public void render(GraphicsContext gc) {
         if (currentImg != null) {
             gc.drawImage(currentImg, x, y, width, height);
         } else {
-            // FALLBACK: cerchio verde con occhi neri, se l'immagine non è disponibile
+            // FALLBACK: cerchio verde con occhi neri
             gc.setFill(Color.LIMEGREEN);
             gc.fillOval(x, y, width, height);
             gc.setStroke(Color.DARKGREEN);
@@ -388,10 +377,11 @@ public class Player {
         }
     }
 
-    /**
-     * Infligge danno al player.
-     * @return true se il player è morto
-     */
+    // ============================================================
+    // VITA E DANNO
+    // ============================================================
+    // Infligge danno: lo scudo assorbe per primo, poi la vita.
+    // Imposta invincibilità. Restituisce true se il player è morto.
     public boolean takeDamage(int damage) {
         if (invincibilityTimer > 0) {
             return false;
@@ -418,30 +408,28 @@ public class Player {
         return false;
     }
 
-    /**
-     * Aggiunge punti al punteggio del player.
-     */
+    // ============================================================
+    // PUNTEGGIO
+    // ============================================================
+    // Aggiunge punti al punteggio
     public void addScore(int points) {
         score += points;
     }
 
-    /**
-     * Aggiunge pozioni di cura all'inventario, rispettando il limite massimo.
-     */
+    // ============================================================
+    // POZIONI
+    // ============================================================
+    // Aggiunge pozioni di cura (max MAX_POTIONS)
     public void addHealthPotion(int amount) {
-        // Math.min sceglie il valore più basso tra (somma attuale) e (limite massimo)
         this.healthPotions = Math.min(this.healthPotions + amount, MAX_POTIONS);
     }
 
-    /**
-     * Aggiunge pozioni di scudo all'inventario, rispettando il limite massimo.
-     */
+    // Aggiunge pozioni di scudo (max MAX_POTIONS)
     public void addShieldPotion(int amount) {
         this.shieldPotions = Math.min(this.shieldPotions + amount, MAX_POTIONS);
     }
-    /**
-     * Usa una pozione di cura. Restituisce true se usata.
-     */
+
+    // Usa una pozione di cura: +30 vita, solo se ne hai e non sei full
     public boolean useHealthPotion() {
         if (healthPotions > 0 && currentHealth < maxHealth) {
             healthPotions--;
@@ -451,9 +439,7 @@ public class Player {
         return false;
     }
 
-    /**
-     * Usa una pozione di scudo. Restituisce true se usata.
-     */
+    // Usa una pozione di scudo: +25 scudo, solo se ne hai e non sei full
     public boolean useShieldPotion() {
         if (shieldPotions > 0 && currentShield < maxShield) {
             shieldPotions--;
@@ -463,8 +449,9 @@ public class Player {
         return false;
     }
 
-    // --- GETTER PER POSIZIONE E DIMENSIONI ---
-    // Usati dal GameController per collisioni e logica di gioco
+    // ============================================================
+    // GETTER
+    // ============================================================
     public double getX() { return x; }
     public double getY() { return y; }
     public double getWidth() { return width; }
@@ -473,7 +460,6 @@ public class Player {
     public int getCurrentHealth() { return currentHealth; }
     public int getMaxHealth() { return maxHealth; }
     public int getScore() { return score; }
-    // Nuovi getters
     public int getHealthPotions() { return healthPotions; }
     public int getShieldPotions() { return shieldPotions; }
     public int getCurrentShield() { return currentShield; }

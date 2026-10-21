@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- Import delle classi JavaFX usate nel file:
-     - Insets: margini interni (padding) e margini degli elementi
-     - Button, Label: controlli base per pulsanti ed etichette
-     - VBox, HBox: layout verticale e orizzontale
-     - StackPane: layout a strati (sfondo + contenuto sovrapposto)
-     - Image, ImageView: per mostrare l'immagine di sfondo -->
+<!-- ============================================================
+     IMPORT
+     ============================================================ -->
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -15,58 +12,59 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 
-<!-- StackPane principale: contenitore radice della schermata di scelta difficoltà.
-     Sovrappone l'immagine di sfondo (sotto) e il contenuto (sopra).
-     - fx:controller collega il file al DifficultyController
-     - styleClass="root-pane" applica lo stile CSS definito in style.css -->
+<!-- ============================================================
+     CONTENITORE RADICE
+     StackPane a strati: sfondo sotto, contenuto sopra.
+     - fx:controller → DifficultyController
+     - styleClass="root-pane" → stile CSS globale
+     ============================================================ -->
 <StackPane xmlns="http://javafx.com/javafx/21"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="it.unicam.cs.mpgc.rpg.m131177.controller.DifficultyController"
            styleClass="root-pane">
 
-    <!-- LIVELLO 1 — SFONDO -->
-    <!-- Immagine di sfondo a tutto schermo (900x700),
-         caricata dalla cartella resources/images -->
+    <!-- ========================================================
+         LIVELLO 1 — SFONDO
+         Immagine a tutto schermo (900x700)
+         ======================================================== -->
     <ImageView fitWidth="900" fitHeight="700">
-        <Image url="@/images/wallpaper.jpg"/>
+        <Image url="@/images/background/wallpaper.jpg"/>
     </ImageView>
 
-    <!-- LIVELLO 2 — CONTENUTO -->
-    <!-- VBox principale: dispone verticalmente titolo, sottotitolo,
-         griglia di pulsanti e pulsante "Indietro", centrati in alto -->
+    <!-- ========================================================
+         LIVELLO 2 — CONTENUTO
+         VBox verticale centrata in alto
+         ======================================================== -->
     <VBox alignment="TOP_CENTER" spacing="30">
 
-        <!-- Titolo della schermata, con margine superiore extra di 30px
-             per staccarlo dal bordo e stile "title-label" dal CSS -->
+        <!-- Titolo con margine superiore extra di 30px -->
         <Label text="SCEGLI LA DIFFICOLTA" styleClass="title-label">
             <VBox.margin>
                 <Insets top="30"/>
             </VBox.margin>
         </Label>
 
-        <!-- Sottotitolo esplicativo: spiega che la difficoltà
-             influenzerà forza e astuzia dei nemici -->
+        <!-- Sottotitolo esplicativo -->
         <Label text="Ogni difficoltà cambierà la forza e l'astuzia dei nemici"
                styleClass="subtitle-label"/>
 
-        <!-- Spaziatore verticale di 20px tra sottotitolo e griglia -->
+        <!-- Spaziatore 20px tra sottotitolo e griglia -->
         <VBox prefHeight="20"/>
 
-        <!-- Contenitore della griglia dei pulsanti di difficoltà:
-             due righe (HBox) con due pulsanti ciascuna -->
+        <!-- ====================================================
+             GRIGLIA PULSANTI DIFFICOLTÀ (2x2)
+             ==================================================== -->
         <VBox spacing="15" alignment="CENTER">
 
-            <!-- Prima riga: EASY e MEDIUM -->
+            <!-- Riga 1: EASY e MEDIUM -->
             <HBox spacing="20" alignment="CENTER">
-                <!-- Pulsante EASY: testo su più righe grazie a \n (&#10;),
-                     azione collegata a handleFacile() nel controller.
-                     styleClass multipla: "button" (base) + "difficulty" (specifica) -->
+                <!-- EASY → handleFacile(). Classi: button + difficulty -->
                 <Button text="EASY&#10;&#10;Per iniziare a giocare"
                         onAction="#handleFacile"
                         styleClass="button, difficulty"
                         prefWidth="250" prefHeight="80"
                         wrapText="true"/>
-                <!-- Pulsante MEDIUM: sfida bilanciata, azione handleMedia() -->
+                <!-- MEDIUM → handleMedia(). Classi: button + difficulty -->
                 <Button text="MEDIUM&#10;&#10;Per una sfida bilanciata"
                         onAction="#handleMedia"
                         styleClass="button, difficulty"
@@ -74,17 +72,15 @@
                         wrapText="true"/>
             </HBox>
 
-            <!-- Seconda riga: HARD e EXTREME -->
+            <!-- Riga 2: HARD e EXTREME -->
             <HBox spacing="20" alignment="CENTER">
-                <!-- Pulsante HARD: per veterani, azione handleAlta() -->
+                <!-- HARD → handleAlta(). Classi: button + difficulty -->
                 <Button text="HARD&#10;&#10;Solo per i veterani"
                         onAction="#handleAlta"
                         styleClass="button, difficulty"
                         prefWidth="250" prefHeight="80"
                         wrapText="true"/>
-                <!-- Pulsante EXTREME: la sfida più dura.
-                     Applica tre classi CSS ("button" + "difficulty" + "difficulty-extreme")
-                     per evidenziarlo rispetto agli altri livelli -->
+                <!-- EXTREME → handleSuperiore(). Classi: button + difficulty + difficulty-extreme -->
                 <Button text="EXTREME&#10;&#10;Solo per i più coraggiosi"
                         onAction="#handleSuperiore"
                         styleClass="button, difficulty, difficulty-extreme"
@@ -93,11 +89,10 @@
             </HBox>
         </VBox>
 
-        <!-- Spaziatore verticale di 30px prima del pulsante "Indietro" -->
+        <!-- Spaziatore 30px prima del pulsante Indietro -->
         <VBox prefHeight="30"/>
 
-        <!-- Pulsante "Torna al Menu": riporta l'utente al menu principale
-             tramite handleIndietro() nel controller, con stile "back-button" -->
+        <!-- Pulsante "Torna al Menu" → handleIndietro(). Classe: back-button -->
         <Button text="← Torna al Menu"
                 onAction="#handleIndietro"
                 styleClass="back-button"
