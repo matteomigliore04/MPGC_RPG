@@ -80,36 +80,7 @@ public class GameController {
         // Inizializza e avvia il Game Loop
         GraphicsContext gc = gameCanvas.getGraphicsContext2D();
         gameLoop = new GameLoop(gc, this);
-
-        gameLoop.setOnGameOver(() -> {
-            showGameOverScreen();
-        });
-
         gameLoop.start();
-    }
-
-    private void showGameOverScreen() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/gameover.fxml"));
-            Parent root = loader.load();
-
-            GameOverController controller = loader.getController();
-            controller.setGameData(
-                    gameLoop.getScore(),
-                    gameLoop.getCurrentWave(),
-                    gameLoop.getEnemiesKilled(),
-                    context,
-                    stage
-            );
-
-            Scene scene = new Scene(root, 900, 700);
-            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-
-            stage.setScene(scene);
-            stage.setTitle(" Game Over");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     // --- GESTIONE INPUT DA TASTIERA ---
@@ -214,6 +185,14 @@ public class GameController {
     public void pauseGame() {
         isPaused = true;
         gameLoop.stop(); // Ferma il motore di gioco
+
+        // ✅ FIX: Resetta tutti i flag di movimento per evitare il "ghost input"
+        // In questo modo, quando il gioco riprende, nessun tasto risulta premuto
+        gameLoop.setUpPressed(false);
+        gameLoop.setDownPressed(false);
+        gameLoop.setLeftPressed(false);
+        gameLoop.setRightPressed(false);
+
         pauseMenu.setVisible(true);
         pauseMenu.setManaged(true); // Lo rende cliccabile
     }
