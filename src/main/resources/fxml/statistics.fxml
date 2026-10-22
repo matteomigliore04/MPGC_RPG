@@ -21,39 +21,53 @@
     </ImageView>
 
     <VBox alignment="CENTER" spacing="20">
+        <!-- TITOLO -->
         <Label text="STATISTICHE GIOCATORE" styleClass="title-label" style="-fx-padding: 20 0 0 0;" />
 
+        <!-- SPazio extra tra titolo e statistiche -->
+        <VBox prefHeight="20"/>
+
         <!-- SEZIONE STATISTICHE GENERALI -->
-        <HBox spacing="30" alignment="CENTER">
-            <VBox styleClass="stats-box" spacing="10">
+        <HBox spacing="50" alignment="CENTER" maxWidth="800">
+
+            <!-- Box Tempo -->
+            <VBox styleClass="stats-box" spacing="10" prefWidth="200" alignment="CENTER">
                 <Label text="Tempo Totale:" styleClass="hud-label" />
-                <Label fx:id="lblTotalTime" text="0h 0m" styleClass="gameover-stat" />
+                <Label fx:id="lblTotalTime" text="0h 0m" styleClass="stat-value" />
             </VBox>
 
-            <VBox styleClass="stats-box" spacing="10">
-                <Label text="Vittorie:" styleClass="hud-label" />
-                <Label fx:id="lblWinRate" text="0%" styleClass="gameover-stat" />
-            </VBox>
-
-            <VBox styleClass="stats-box" spacing="10">
+            <!-- Box Nemici -->
+            <VBox styleClass="stats-box" spacing="10" prefWidth="450" alignment="CENTER">
                 <Label text="Nemici Uccisi:" styleClass="hud-label" />
-                <Label fx:id="lblGoblins" text="Goblin: 0" styleClass="gameover-stat" />
-                <Label fx:id="lblZombies" text="Zombie: 0" styleClass="gameover-stat" />
-                <Label fx:id="lblSkeletons" text="Scheletri: 0" styleClass="gameover-stat" />
+                <HBox spacing="25" alignment="CENTER">
+                    <Label fx:id="lblGoblins" text="Goblin: 0" styleClass="stat-value" />
+                    <Label fx:id="lblZombies" text="Zombie: 0" styleClass="stat-value" />
+                    <Label fx:id="lblSkeletons" text="Scheletri: 0" styleClass="stat-value" />
+                </HBox>
             </VBox>
+
         </HBox>
+
+        <!-- Spazio extra tra statistiche e tabella -->
+        <VBox prefHeight="30"/>
 
         <!-- CLASSIFICA TOP 5 -->
         <Label text="TOP 5 PUNTEGGI" styleClass="subtitle-label" style="-fx-font-size: 14px; -fx-text-fill: #AEEEEE;"/>
 
-        <TableView fx:id="statsTable" prefWidth="700" prefHeight="250" style="-fx-background-color: rgba(20, 20, 20, 0.85); -fx-text-fill: white;">
-            <columns>
-                <TableColumn fx:id="colDate" text="Data" prefWidth="180" />
-                <TableColumn fx:id="colScore" text="Punti" prefWidth="100" />
-                <TableColumn fx:id="colWave" text="Ondata" prefWidth="100" />
-                <TableColumn fx:id="colDifficulty" text="Difficoltà" prefWidth="150" />
-            </columns>
-        </TableView>
+        <!-- Sfondo semi-trasparente con la tabella -->
+        <VBox alignment="CENTER" styleClass="stats-table-container" maxWidth="800">
+            <TableView fx:id="statsTable" prefWidth="750" prefHeight="290" styleClass="stats-table">
+                <columns>
+                    <TableColumn fx:id="colDate" text="Data" prefWidth="200" />
+                    <TableColumn fx:id="colScore" text="Punti" prefWidth="100" />
+                    <TableColumn fx:id="colWave" text="Ondata" prefWidth="100" />
+                    <TableColumn fx:id="colDifficulty" text="Difficoltà" prefWidth="150" />
+                </columns>
+            </TableView>
+        </VBox>
+
+        <!-- Spazio extra prima del pulsante -->
+        <VBox prefHeight="10"/>
 
         <Button text="← Torna al Menu" onAction="#handleIndietro" styleClass="back-button" prefWidth="300" prefHeight="40"/>
     </VBox>

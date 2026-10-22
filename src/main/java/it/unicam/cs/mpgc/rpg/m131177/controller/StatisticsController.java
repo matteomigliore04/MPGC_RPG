@@ -32,6 +32,9 @@ public class StatisticsController {
 
     @FXML
     public void initialize() {
+        // Imposta le colonne in modo che occupino tutta la larghezza
+        statsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
+
         List<GameRecord> allRecords = StatsManager.loadRecords();
 
         // 1. Calcola Statistiche Generali
@@ -56,29 +59,29 @@ public class StatisticsController {
         return r.scoreProperty().get();
     }
 
+    // Rimuovi questa riga:
+    // @FXML private Label lblWinRate;
+
     private void calculateGlobalStats(List<GameRecord> records) {
         if (records.isEmpty()) return;
 
         int totalTimeSeconds = 0;
-        int totalWins = 0;
         int totalGoblins = 0, totalZombies = 0, totalSkeletons = 0;
 
         for (GameRecord r : records) {
             totalTimeSeconds += r.getTimePlayed();
-            if (r.isWin()) totalWins++;
+            // Rimuovi il conteggio delle vittorie
             totalGoblins += r.getGoblinsKilled();
             totalZombies += r.getZombiesKilled();
             totalSkeletons += r.getSkeletonsKilled();
         }
 
-        // Formatta il tempo (Ore e Minuti)
+        // Formatta il tempo
         int hours = totalTimeSeconds / 3600;
         int minutes = (totalTimeSeconds % 3600) / 60;
         lblTotalTime.setText(hours + "h " + minutes + "m");
 
-        // Percentuale Vittorie
-        int winRate = (int) (((double) totalWins / records.size()) * 100);
-        lblWinRate.setText(winRate + "%");
+        // Rimuovi il calcolo di winRate e lblWinRate.setText(...)
 
         // Uccisioni
         lblGoblins.setText("Goblin: " + totalGoblins);

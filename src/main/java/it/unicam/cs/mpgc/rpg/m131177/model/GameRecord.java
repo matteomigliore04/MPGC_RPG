@@ -1,6 +1,5 @@
 package it.unicam.cs.mpgc.rpg.m131177.model;
 
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
@@ -12,7 +11,6 @@ public class GameRecord {
 
     // Nuovi campi per le statistiche
     private final SimpleIntegerProperty timePlayed;
-    private final SimpleBooleanProperty isWin;
     private final SimpleIntegerProperty goblinsKilled;
     private final SimpleIntegerProperty zombiesKilled;
     private final SimpleIntegerProperty skeletonsKilled;
@@ -25,7 +23,6 @@ public class GameRecord {
         this.wave = new SimpleIntegerProperty(wave);
         this.difficulty = new SimpleStringProperty(difficulty);
         this.timePlayed = new SimpleIntegerProperty(timePlayed);
-        this.isWin = new SimpleBooleanProperty(isWin);
         this.goblinsKilled = new SimpleIntegerProperty(goblinsKilled);
         this.zombiesKilled = new SimpleIntegerProperty(zombiesKilled);
         this.skeletonsKilled = new SimpleIntegerProperty(skeletonsKilled);
@@ -39,7 +36,6 @@ public class GameRecord {
 
     // Getter standard per i calcoli
     public int getTimePlayed() { return timePlayed.get(); }
-    public boolean isWin() { return isWin.get(); }
     public int getGoblinsKilled() { return goblinsKilled.get(); }
     public int getZombiesKilled() { return zombiesKilled.get(); }
     public int getSkeletonsKilled() { return skeletonsKilled.get(); }

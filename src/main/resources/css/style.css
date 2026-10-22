@@ -5,6 +5,81 @@
     -fx-font-family: 'Press Start 2P';
 }
 
+/* =========================================
+   TABELLA STATISTICHE (TableView)
+   ========================================= */
+
+/* Contenitore per lo sfondo semi-trasparente e lo spazio ai lati */
+.stats-table-container {
+    -fx-background-color: rgba(10, 10, 10, 0.85); /* Sfondo scuro trasparente */
+    -fx-padding: 20; /* Spazio interno tra tabella e bordo */
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-border-color: #AEEEEE; /* Bordo azzurro come il menu di pausa */
+    -fx-border-width: 3;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 1), 20, 0, 0, 10);
+}
+
+/* La tabella ora è trasparente, così si vede lo sfondo del contenitore */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+/* Sfondo dell'area della tabella trasparente */
+.table-view .virtual-flow .clipped-container .sheet .table-row-cell {
+    -fx-background-color: transparent;
+}
+
+/* Intestazione della tabella (Data, Punti, ecc.) */
+.table-view .column-header-background {
+    -fx-background-color: rgba(30, 30, 30, 0.8);
+    -fx-border-color: transparent transparent #c9a961 transparent; /* Linea oro sotto l'intestazione */
+    -fx-border-width: 0 0 2 0;
+    -fx-background-radius: 10 10 0 0;
+}
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-size: 50px; /* Altezza intestazione */
+}
+.table-view .column-header .label {
+    -fx-text-fill: #c9a961;
+    -fx-font-family: 'Press Start 2P';
+    -fx-font-size: 10px;
+}
+
+/* Singole righe e celle */
+.table-row-cell {
+    -fx-background-color: rgba(20, 20, 20, 0.5);
+    -fx-border-color: transparent transparent rgba(201, 169, 97, 0.2) transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-cell-size: 45px;
+}
+
+/* Testo delle celle */
+.table-cell {
+    -fx-text-fill: #f4e8c8;
+    -fx-font-family: 'Press Start 2P';
+    -fx-font-size: 10px;
+    -fx-alignment: CENTER;
+    -fx-border-color: transparent;
+}
+
+/* Rimuove i bordi di default degli angoli */
+.table-view .corner, .table-view .filler {
+    -fx-background-color: transparent;
+}
+
+/* Testo dei valori nelle statistiche generali */
+.stat-value {
+    -fx-font-family: 'Press Start 2P';
+    -fx-font-size: 9px;
+    -fx-text-fill: #AEEEEE; /* Colore azzurro chiaro (identico al titolo) */
+    -fx-alignment: center;  /* Centra il testo orizzontalmente */
+    -fx-text-alignment: center;
+}
+
 /* ============================================================
    HUD
    ============================================================ */
