@@ -16,6 +16,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import it.unicam.cs.mpgc.rpg.m131177.audio.AudioManager;
+
 public class StatisticsController {
 
     @FXML private TableView<GameRecord> statsTable;
@@ -32,6 +34,8 @@ public class StatisticsController {
 
     @FXML
     public void initialize() {
+        AudioManager.getInstance().playMenuMusic();
+
         // Imposta le colonne in modo che occupino tutta la larghezza
         statsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
 

@@ -3,6 +3,7 @@ package it.unicam.cs.mpgc.rpg.m131177.controller;
 // ============================================================
 // IMPORT
 // ============================================================
+import it.unicam.cs.mpgc.rpg.m131177.audio.AudioManager;
 import it.unicam.cs.mpgc.rpg.m131177.model.GameContext;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,6 +13,8 @@ import javafx.stage.Stage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.Button;
+import it.unicam.cs.mpgc.rpg.m131177.audio.AudioManager;
+
 
 // Controller della schermata di scelta difficoltà.
 // Mantiene GameContext (stato partita) e Stage (finestra corrente).
@@ -48,6 +51,11 @@ public class DifficultyController {
     @FXML private Button btnAlta;
     @FXML private Button btnSuperiore;
     @FXML private Button btnIndietro;
+
+    @FXML
+    public void initialize() {
+        AudioManager.getInstance().playMenuMusic();
+    }
 
     // ============================================================
     // GESTORI PULSANTI DIFFICOLTÀ

@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Alert.AlertType;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import it.unicam.cs.mpgc.rpg.m131177.audio.AudioManager;
 
 // Controller del menu principale: gestisce i tre pulsanti
 // (Inizia Partita, Statistiche Personali, Statistiche Globali)
@@ -27,6 +28,11 @@ public class MenuController {
     @FXML private Button btnIniziaPartita;
     @FXML private Button btnStatistichePersonali;
     @FXML private Button btnStatisticheGlobali;
+
+    @FXML
+    public void initialize() {
+        AudioManager.getInstance().playMenuMusic();
+    }
 
     // ============================================================
     // GESTIONE AVVIO PARTITA

@@ -14,8 +14,8 @@ java {
 }
 
 javafx {
-    version = "21.0.2"
-    modules = [ 'javafx.controls', 'javafx.fxml' ]
+    version = "21.0.2" // o la versione che stai usando
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.media' ] // AGGIUNGI 'javafx.media'
 }
 
 application {
@@ -29,4 +29,5 @@ repositories {
 dependencies {
     // MySQL Connector per il database
     implementation 'com.mysql:mysql-connector-j:8.3.0'
+    implementation 'org.openjfx:javafx-media:21.0.2'
 }

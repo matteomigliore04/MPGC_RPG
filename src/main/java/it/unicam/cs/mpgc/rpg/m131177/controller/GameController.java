@@ -19,6 +19,7 @@ import javafx.scene.control.Button;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import it.unicam.cs.mpgc.rpg.m131177.model.StatsManager; // Aggiungi l'import in cima
+import it.unicam.cs.mpgc.rpg.m131177.audio.AudioManager;
 
 // Controller della schermata di gioco.
 // Gestisce GameLoop, HUD, input tastiera e menu di pausa/game over.
@@ -85,7 +86,9 @@ public class GameController {
     // INIZIALIZZAZIONE
     // ============================================================
     @FXML
-    public void initialize() {}
+    public void initialize() {
+        AudioManager.getInstance().stopMusic();
+    }
 
     // ============================================================
     // INPUT DA TASTIERA
