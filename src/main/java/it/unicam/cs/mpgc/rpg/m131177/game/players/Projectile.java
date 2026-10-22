@@ -6,6 +6,7 @@ package it.unicam.cs.mpgc.rpg.m131177.game.players;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import it.unicam.cs.mpgc.rpg.m131177.game.GameConstants;
 
 /**
  * Proiettile (freccia) sparato dal giocatore.
@@ -74,20 +75,37 @@ public class Projectile {
     // Sposta il proiettile in base a dt e direzione.
     // Restituisce true se è ancora attivo, false se è uscito dai bordi.
     public boolean update(double dt, double canvasWidth, double canvasHeight) {
-        // Normalizza la velocità per il movimento diagonale:
-        // se ci si muove su entrambi gli assi, si moltiplica per ~0.707
-        // così la velocità risultante resta uguale a quella orizzontale/verticale
+        // Normalizza la velocità per il movimento diagonale
         double speedMultiplier = 1.0;
         if (directionX != 0 && directionY != 0) {
-            speedMultiplier = DIAGONAL_FACTOR; // ≈ 0.707
+            speedMultiplier = DIAGONAL_FACTOR;
         }
 
-        // Sposta il proiettile: spazio = velocità × tempo × fattore diagonale
+        // Sposta il proiettile
         x += directionX * speed * dt * speedMultiplier;
         y += directionY * speed * dt * speedMultiplier;
 
-        // Se esce completamente dai bordi del canvas (considerando anche
-        // le dimensioni del proiettile), lo marchiamo come inattivo
+        // --- CONTROLLO COLLISIONE CON I MURI ---
+
+        // 1. Muri orizzontali (Sopra e Sotto - completi)
+        boolean hitTopBottomWall = (y <= GameConstants.PLAYABLE_MIN_Y) ||
+                (y + height >= GameConstants.PLAYABLE_MAX_Y);
+
+        // 2. Muri laterali (Sinistra e Destra - parziali)
+        // Colpisce se supera il limite X E non si trova nel "buco" centrale
+        boolean hitLeftWall = (x <= GameConstants.PLAYABLE_MIN_X) &&
+                (y < GameConstants.SPAWN_OPENING_MIN_Y || y > GameConstants.SPAWN_OPENING_MAX_Y);
+
+        boolean hitRightWall = (x + width >= GameConstants.PLAYABLE_MAX_X) &&
+                (y < GameConstants.SPAWN_OPENING_MIN_Y || y > GameConstants.SPAWN_OPENING_MAX_Y);
+
+        // Se colpisce uno dei muri, la freccia si disattiva
+        if (hitTopBottomWall || hitLeftWall || hitRightWall) {
+            active = false;
+        }
+
+        // 3. Fuori dallo schermo (nel caso sia passato dalle aperture laterali)
+        // Questo evita che le frecce rimangano attive all'infinito fuori dalla vista
         if (x < -width || x > canvasWidth || y < -height || y > canvasHeight) {
             active = false;
         }

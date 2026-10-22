@@ -96,10 +96,8 @@ public abstract class Enemy {
         }
 
         // 3. Riporta il nemico nell'area giocabile
-        x = Math.clamp(x, GameConstants.PLAYABLE_MIN_X, GameConstants.PLAYABLE_MAX_X);
-        y = Math.clamp(y, GameConstants.PLAYABLE_MIN_Y, GameConstants.PLAYABLE_MAX_Y);
-
-        // (Il vecchio punto 4 è stato rimosso!)
+        x = Math.clamp(x, GameConstants.PLAYABLE_MIN_X, GameConstants.PLAYABLE_MAX_X - width);
+        y = Math.clamp(y, GameConstants.PLAYABLE_MIN_Y, GameConstants.PLAYABLE_MAX_Y - height);
     }
 
     // ============================================================

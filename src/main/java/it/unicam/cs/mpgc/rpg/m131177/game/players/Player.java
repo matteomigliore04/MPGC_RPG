@@ -216,8 +216,8 @@ public class Player {
         }
 
         // Sostituito Math.max/min con Math.clamp per pulizia del codice
-        x = Math.clamp(x, minX, maxX);
-        y = Math.clamp(y, minY, maxY);
+        x = Math.clamp(x, GameConstants.PLAYABLE_MIN_X, GameConstants.PLAYABLE_MAX_X - width);
+        y = Math.clamp(y, GameConstants.PLAYABLE_MIN_Y, GameConstants.PLAYABLE_MAX_Y - height);
 
         // Decrementa il timer di invincibilità alla fine dell'update
         if (invincibilityTimer > 0) {

@@ -17,10 +17,10 @@ public final class GameConstants {
     // CONFINI DELLA MAPPA (muri)
     // ============================================================
     // Margini che delimitano l'area di gioco
-    public static final double BORDER_LEFT = 20;   // Muro sinistro
-    public static final double BORDER_RIGHT = 820; // Muro destro
-    public static final double BORDER_TOP = 50;    // Muro in alto
-    public static final double BORDER_BOTTOM = 600; // Muro in basso
+    public static final double BORDER_LEFT = 20;
+    public static final double BORDER_RIGHT = 880;
+    public static final double BORDER_TOP = 50;
+    public static final double BORDER_BOTTOM = 650;
 
     // ============================================================
     // AREA GIOCABILE
