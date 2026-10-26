@@ -87,7 +87,8 @@ public class GameController {
     // ============================================================
     @FXML
     public void initialize() {
-        AudioManager.getInstance().stopMusic();
+        // Avvia la musica della partita
+        AudioManager.getInstance().playGameMusic();
     }
 
     // ============================================================
@@ -237,6 +238,10 @@ public class GameController {
                              int goblins, int zombies, int skeletons) {
         isPaused = true;
         gameLoop.stop();
+
+        // Ferma la musica di gioco al Game Over (o potresti metterne una di game over)
+        AudioManager.getInstance().stopMusic();
+        AudioManager.getInstance().playGameOver();
 
         String difficulty = (context != null && context.getDifficulty() != null) ? context.getDifficulty() : "Sconosciuta";
 
