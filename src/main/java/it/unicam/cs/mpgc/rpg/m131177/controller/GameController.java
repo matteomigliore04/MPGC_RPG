@@ -3,27 +3,29 @@ package it.unicam.cs.mpgc.rpg.m131177.controller;
 // ============================================================
 // IMPORT
 // ============================================================
+import it.unicam.cs.mpgc.rpg.m131177.audio.AudioManager;
 import it.unicam.cs.mpgc.rpg.m131177.game.GameLoop;
+import it.unicam.cs.mpgc.rpg.m131177.game.GameLoopObserver;
 import it.unicam.cs.mpgc.rpg.m131177.model.GameContext;
+import it.unicam.cs.mpgc.rpg.m131177.model.StatsManager;
+import it.unicam.cs.mpgc.rpg.m131177.ui.SceneFactory;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import javafx.scene.input.KeyCode;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Button;
+import javafx.stage.Stage;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import it.unicam.cs.mpgc.rpg.m131177.model.StatsManager; // Aggiungi l'import in cima
-import it.unicam.cs.mpgc.rpg.m131177.audio.AudioManager;
 
 // Controller della schermata di gioco.
 // Gestisce GameLoop, HUD, input tastiera e menu di pausa/game over.
-public class GameController {
+public class GameController implements GameLoopObserver {
 
     // ============================================================
     // LOGGER
@@ -165,6 +167,7 @@ public class GameController {
     // AGGIORNAMENTO HUD
     // ============================================================
     // Chiamato dal GameLoop ad ogni frame per aggiornare le etichette
+    @Override
     public void updateHUD(int health, int shield, int wave, int score,
                           int arrows, int healthPotions, int shieldPotions) {
         lblHealth.setText("Vita: " + health + "/100");
@@ -234,6 +237,7 @@ public class GameController {
     // ============================================================
     // showGameOver(): ferma il gioco e mostra il menu di game over
     // con il punteggio finale
+    @Override
     public void showGameOver(int finalScore, int finalWave, int timePlayed, boolean isWin,
                              int goblins, int zombies, int skeletons) {
         isPaused = true;
@@ -264,10 +268,7 @@ public class GameController {
             GameController newController = loader.getController();
             Stage currentStage = (Stage) btnMainMenu.getScene().getWindow();
 
-            Scene scene = new Scene(root, 900, 700);
-            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-
-            currentStage.setScene(scene);
+            currentStage.setScene(SceneFactory.create(root));
 
             // Inizializza il nuovo controller con il context esistente
             newController.setContext(this.context, currentStage);
@@ -290,10 +291,7 @@ public class GameController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/menu.fxml"));
             Parent root = loader.load();
 
-            Scene scene = new Scene(root, 900, 700);
-            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-
-            stage.setScene(scene);
+            stage.setScene(SceneFactory.create(root));
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Errore nel ritorno al menu principale", e);
         }
@@ -308,10 +306,7 @@ public class GameController {
             Parent root = loader.load();
 
             Stage currentStage = (Stage) btnMainMenu.getScene().getWindow();
-            Scene scene = new Scene(root, 900, 700);
-            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-
-            currentStage.setScene(scene);
+            currentStage.setScene(SceneFactory.create(root));
         } catch (Exception e) {
             // Logging robusto invece di printStackTrace()
             LOGGER.log(Level.SEVERE, "Errore nel ritorno al menu principale", e);

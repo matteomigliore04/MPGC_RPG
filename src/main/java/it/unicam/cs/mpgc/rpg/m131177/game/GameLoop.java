@@ -3,16 +3,16 @@ package it.unicam.cs.mpgc.rpg.m131177.game;
 // ============================================================
 // IMPORT
 // ============================================================
-import it.unicam.cs.mpgc.rpg.m131177.game.enemies.WaveManager;
-import it.unicam.cs.mpgc.rpg.m131177.game.loots.Loot;
-import it.unicam.cs.mpgc.rpg.m131177.controller.GameController;
 import it.unicam.cs.mpgc.rpg.m131177.game.enemies.Enemy;
-import it.unicam.cs.mpgc.rpg.m131177.game.enemies.Goblin;
-import it.unicam.cs.mpgc.rpg.m131177.game.enemies.Zombie;
-import it.unicam.cs.mpgc.rpg.m131177.game.enemies.Skeleton;
 import it.unicam.cs.mpgc.rpg.m131177.game.enemies.EnemyFactory;
+import it.unicam.cs.mpgc.rpg.m131177.game.enemies.Goblin;
+import it.unicam.cs.mpgc.rpg.m131177.game.enemies.Skeleton;
+import it.unicam.cs.mpgc.rpg.m131177.game.enemies.WaveManager;
+import it.unicam.cs.mpgc.rpg.m131177.game.enemies.Zombie;
+import it.unicam.cs.mpgc.rpg.m131177.game.loots.Loot;
 import it.unicam.cs.mpgc.rpg.m131177.game.players.Player;
 import it.unicam.cs.mpgc.rpg.m131177.game.players.Projectile;
+import it.unicam.cs.mpgc.rpg.m131177.model.GameContext;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -43,7 +43,7 @@ public class GameLoop extends AnimationTimer {
     // DIPENDENZE E COLLEZIONI (final)
     // ============================================================
     private final GraphicsContext gc;
-    private final GameController controller;
+    private final GameLoopObserver observer;
 
     private final List<Loot> loots;
     private final Player player;
@@ -51,12 +51,7 @@ public class GameLoop extends AnimationTimer {
     private final List<Enemy> enemies;
     private final EnemyFactory enemyFactory;
     private final WaveManager waveManager;
-
-    private double enemyHealthMult = 1.0;
-    private double enemySpeedMult = 1.0;
-    private double spawnRateMult = 1.0;
-
-    private double rewardMultiplier = 1.0;
+    private final DifficultySettings difficultySettings;
 
     private int goblinsKilled = 0;
     private int zombiesKilled = 0;
@@ -75,50 +70,19 @@ public class GameLoop extends AnimationTimer {
     // ============================================================
     // COSTRUTTORE
     // ============================================================
-    public GameLoop(GraphicsContext gc, GameController controller, it.unicam.cs.mpgc.rpg.m131177.model.GameContext context) {
+    public GameLoop(GraphicsContext gc, GameLoopObserver observer,
+                    GameContext context) {
         this.gc = gc;
-        this.controller = controller;
+        this.observer = observer;
         this.projectiles = new ArrayList<>();
         this.enemies = new ArrayList<>();
         this.loots = new ArrayList<>();
         this.enemyFactory = new EnemyFactory();
 
-        // Calcola la difficoltà prima di creare il WaveManager
-        applyDifficulty(context.getDifficulty());
-
-        // Ora passa il moltiplicatore al WaveManager
-        this.waveManager = new WaveManager(spawnRateMult);
+        this.difficultySettings = DifficultySettings.from(context.getDifficulty());
+        this.waveManager = new WaveManager(difficultySettings.spawnRateMultiplier());
 
         this.player = new Player(GameConstants.CANVAS_WIDTH, GameConstants.CANVAS_HEIGHT);
-    }
-
-    private void applyDifficulty(String difficulty) {
-        if (difficulty == null) return;
-
-        switch (difficulty) {
-            case "Easy":
-                enemyHealthMult = 0.8;
-                enemySpeedMult = 0.8;
-                spawnRateMult = 0.8;
-                rewardMultiplier = 0.8; // Meno punti e loot
-                break;
-            case "Hard":
-                enemyHealthMult = 1.3;
-                enemySpeedMult = 1.2;
-                spawnRateMult = 1.3;
-                rewardMultiplier = 1.5; // +50% punti e loot
-                break;
-            case "Extreme":
-                enemyHealthMult = 1.6;
-                enemySpeedMult = 1.5;
-                spawnRateMult = 1.6;
-                rewardMultiplier = 2.0; // Raddoppia punti e loot
-                break;
-            case "Medium":
-            default:
-                rewardMultiplier = 1.0;
-                break;
-        }
     }
 
     // ============================================================
@@ -195,7 +159,12 @@ public class GameLoop extends AnimationTimer {
 
         // 4. SPAWN DEI NEMICI (se mancava, ecco perché non apparivano!)
         if (waveManager.update(dt)) {
-            Enemy newEnemy = enemyFactory.createEnemy(waveManager.getCurrentWave(), enemyHealthMult, enemySpeedMult, rewardMultiplier);
+            Enemy newEnemy = enemyFactory.createEnemy(
+                    waveManager.getCurrentWave(),
+                    difficultySettings.enemyHealthMultiplier(),
+                    difficultySettings.enemySpeedMultiplier(),
+                    difficultySettings.rewardMultiplier()
+            );
             enemies.add(newEnemy);
         }
 
@@ -233,7 +202,7 @@ public class GameLoop extends AnimationTimer {
         }
 
         // 9. AGGIORNA HUD
-        controller.updateHUD(
+        observer.updateHUD(
                 player.getCurrentHealth(),
                 player.getCurrentShield(),
                 waveManager.getCurrentWave(),
@@ -260,7 +229,7 @@ public class GameLoop extends AnimationTimer {
                     try {
                         // Definiamo una "vittoria" se si supera l'ondata 10 (puoi cambiarlo)
                         boolean isWin = waveManager.getCurrentWave() >= 10;
-                        controller.showGameOver(player.getScore(), waveManager.getCurrentWave(),
+                        observer.showGameOver(player.getScore(), waveManager.getCurrentWave(),
                                 (int) totalTimePlayed, isWin, goblinsKilled, zombiesKilled, skeletonsKilled);
                     } catch (Exception e) {
                         LOGGER.log(Level.SEVERE, "Errore critico in showGameOver", e);

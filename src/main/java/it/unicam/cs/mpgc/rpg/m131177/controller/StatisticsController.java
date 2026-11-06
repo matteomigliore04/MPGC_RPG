@@ -1,24 +1,28 @@
 package it.unicam.cs.mpgc.rpg.m131177.controller;
 
+import it.unicam.cs.mpgc.rpg.m131177.audio.AudioManager;
 import it.unicam.cs.mpgc.rpg.m131177.model.GameRecord;
 import it.unicam.cs.mpgc.rpg.m131177.model.StatsManager;
+import it.unicam.cs.mpgc.rpg.m131177.ui.SceneFactory;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import it.unicam.cs.mpgc.rpg.m131177.audio.AudioManager;
-
 public class StatisticsController {
+
+    private static final Logger LOGGER = Logger.getLogger(StatisticsController.class.getName());
 
     @FXML private TableView<GameRecord> statsTable;
     @FXML private TableColumn<GameRecord, String> colDate;
@@ -46,7 +50,7 @@ public class StatisticsController {
 
         // 2. Popola la Top 5 (ordinata per punteggio decrescente)
         List<GameRecord> top5 = allRecords.stream()
-                .sorted(Comparator.comparingInt(r -> -getScore(r))) // Ordine decrescente
+                .sorted(Comparator.comparingInt(this::getScore).reversed())
                 .limit(5)
                 .collect(Collectors.toList());
 
@@ -100,11 +104,9 @@ public class StatisticsController {
             Parent root = loader.load();
             Stage stage = (Stage) statsTable.getScene().getWindow();
 
-            Scene scene = new Scene(root, 900, 700);
-            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-            stage.setScene(scene);
+            stage.setScene(SceneFactory.create(root));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Errore nel ritorno al menu principale", e);
         }
     }
 }

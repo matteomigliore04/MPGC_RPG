@@ -1,18 +1,18 @@
 package it.unicam.cs.mpgc.rpg.m131177.controller;
 
-// --- IMPORT ---
+import it.unicam.cs.mpgc.rpg.m131177.audio.AudioManager;
 import it.unicam.cs.mpgc.rpg.m131177.model.GameContext;
+import it.unicam.cs.mpgc.rpg.m131177.ui.SceneFactory;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.stage.Stage;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import it.unicam.cs.mpgc.rpg.m131177.audio.AudioManager;
 
 // Controller del menu principale: gestisce i tre pulsanti
 // (Inizia Partita, Statistiche Personali, Statistiche Globali)
@@ -56,10 +56,7 @@ public class MenuController {
             controller.setContext(context, stage);
 
             // Crea la nuova scena, applica il CSS e cambia schermata
-            Scene scene = new Scene(root, 900, 700);
-            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-
-            stage.setScene(scene);
+            stage.setScene(SceneFactory.create(root));
         } catch (Exception e) {
             // Log dell'errore a livello SEVERE con stack trace
             LOGGER.log(Level.SEVERE, "Errore durante l'avvio della partita", e);
@@ -78,9 +75,7 @@ public class MenuController {
             Parent root = loader.load();
             Stage stage = (Stage) btnIniziaPartita.getScene().getWindow(); // uso btnIniziaPartita per prendere lo stage
 
-            Scene scene = new Scene(root, 900, 700);
-            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-            stage.setScene(scene);
+            stage.setScene(SceneFactory.create(root));
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Errore nel caricamento delle statistiche", e);
         }

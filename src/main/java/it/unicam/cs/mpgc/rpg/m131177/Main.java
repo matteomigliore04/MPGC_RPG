@@ -3,11 +3,11 @@ package it.unicam.cs.mpgc.rpg.m131177;
 // ============================================================
 // IMPORT
 // ============================================================
+import it.unicam.cs.mpgc.rpg.m131177.ui.SceneFactory;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -37,11 +37,7 @@ public class Main extends Application {
         // Costruisce l'albero dei nodi grafici a partire dall'FXML
         Parent root = loader.load();
 
-        // Crea la scena con dimensioni fisse (900x700)
-        Scene scene = new Scene(root, 900, 700);
-
-        // Applica il foglio di stile CSS per colori, font e layout
-        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+        Scene scene = SceneFactory.create(root);
 
         // 4. CONFIGURAZIONE FINESTRA
         // Imposta la scena, blocca il ridimensionamento e mostra la finestra

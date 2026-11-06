@@ -5,16 +5,14 @@ package it.unicam.cs.mpgc.rpg.m131177.controller;
 // ============================================================
 import it.unicam.cs.mpgc.rpg.m131177.audio.AudioManager;
 import it.unicam.cs.mpgc.rpg.m131177.model.GameContext;
+import it.unicam.cs.mpgc.rpg.m131177.ui.SceneFactory;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.control.Button;
-import it.unicam.cs.mpgc.rpg.m131177.audio.AudioManager;
-
 
 // Controller della schermata di scelta difficoltà.
 // Mantiene GameContext (stato partita) e Stage (finestra corrente).
@@ -39,18 +37,6 @@ public class DifficultyController {
         this.context = context;
         this.stage = stage;
     }
-
-    // ============================================================
-    // CAMPI FXML
-    // ============================================================
-    // Pulsanti dichiarati ma non letti nel codice: funzionano via onAction.
-    // Possono essere rimossi (evita warning "unused field").
-    // Servono solo se in futuro vorrai disabilitarli/cambiarne il testo.
-    @FXML private Button btnFacile;
-    @FXML private Button btnMedia;
-    @FXML private Button btnAlta;
-    @FXML private Button btnSuperiore;
-    @FXML private Button btnIndietro;
 
     @FXML
     public void initialize() {
@@ -83,7 +69,7 @@ public class DifficultyController {
     @FXML
     private void handleIndietro() {
         try {
-            navigateTo("/fxml/menu.fxml", "Menu Principale");
+            navigateTo("/fxml/menu.fxml");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Errore nel ritorno al menu principale", e);
         }
@@ -112,10 +98,7 @@ public class DifficultyController {
             controller.setContext(context, stage); // <--- Qui impostiamo il context e aggiorniamo l'HUD
 
             // Crea la nuova scena, applica il CSS e cambia schermata
-            Scene scene = new Scene(root, 900, 700);
-            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-
-            stage.setScene(scene);
+            stage.setScene(SceneFactory.create(root));
 
             // Collega gli eventi di tastiera DOPO stage.setScene(scene)
             // (gameCanvas.getScene() esiste solo dopo aver impostato la scena)
@@ -132,10 +115,7 @@ public class DifficultyController {
     // ============================================================
     // Carica l'FXML indicato, applica il CSS e lo imposta sullo stage.
     // Se la destinazione è il menu, resetta il GameContext.
-    //
-    // Nota: il parametro "title" non è usato.
-    // Potresti usarlo per stage.setTitle(title) o rimuoverlo.
-    private void navigateTo(String fxmlPath, String title) throws Exception {
+    private void navigateTo(String fxmlPath) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
         Parent root = loader.load();
 
@@ -145,9 +125,6 @@ public class DifficultyController {
         }
 
         // Crea la nuova scena, applica il CSS e cambia schermata
-        Scene scene = new Scene(root, 900, 700);
-        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-
-        stage.setScene(scene);
+        stage.setScene(SceneFactory.create(root));
     }
 }

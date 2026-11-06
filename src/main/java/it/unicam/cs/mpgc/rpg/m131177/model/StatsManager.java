@@ -14,11 +14,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class StatsManager {
+
+    private static final Logger LOGGER = Logger.getLogger(StatsManager.class.getName());
     private static final Path FILE_PATH = Path.of("stats.json");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Type RECORD_LIST_TYPE = new TypeToken<List<RecordData>>() {}.getType();
+
+    private StatsManager() {
+    }
 
     public static void saveRecord(int score, int wave, String difficulty,
                                   int timePlayed, boolean isWin,
@@ -30,7 +37,7 @@ public class StatsManager {
                     isWin, goblins, zombies, skeletons));
             Files.writeString(FILE_PATH, GSON.toJson(records));
         } catch (IOException | JsonParseException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Impossibile salvare le statistiche della partita", e);
         }
     }
 
@@ -51,7 +58,7 @@ public class StatsManager {
                 ));
             }
         } catch (IOException | JsonParseException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Impossibile caricare le statistiche delle partite", e);
         }
         records.sort(Comparator.comparingInt(GameRecord::getTimePlayed).reversed());
         return records;
