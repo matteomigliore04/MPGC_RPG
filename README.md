@@ -49,7 +49,7 @@ Durante lo sviluppo del progetto, sono stati utilizzati strumenti di AI come ass
 - Nemici: 3 tipi (Goblin, Skeleton, Zombie) con IA d'inseguimento e anti-accavallamento.
 - Collisioni: AABB per proiettili, Push-Out per spingere i nemici, Y-Sorting per la profondità visiva.
 - Sistema ondate: Infinito, con scaling progressivo e bonus frecce.
-- Statistiche: Salvataggio partite su CSV, schermata con Top 5 punteggi e dati generali.
+- Statistiche: Salvataggio partite su JSON, schermata con Top 5 punteggi e dati generali.
 - Audio: Musica per menu/gioco e suono dedicato al Game Over.
 ---
 
