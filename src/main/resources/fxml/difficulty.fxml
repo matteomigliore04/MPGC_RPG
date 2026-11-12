@@ -1,43 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- ============================================================
-     IMPORT
-     ============================================================ -->
+<!-- Import JavaFX (ordinati per package) -->
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<!-- ============================================================
-     CONTENITORE RADICE
-     StackPane a strati: sfondo sotto, contenuto sopra.
-     - fx:controller → DifficultyController
-     - styleClass="root-pane" → stile CSS globale
-     ============================================================ -->
+<!-- Contenitore radice: StackPane a strati (sfondo sotto, contenuto sopra) -->
 <StackPane xmlns="http://javafx.com/javafx/21"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="it.unicam.cs.mpgc.rpg.m131177.controller.DifficultyController"
            styleClass="root-pane">
 
-    <!-- ========================================================
-         LIVELLO 1 — SFONDO
-         Immagine a tutto schermo (900x700)
-         ======================================================== -->
+    <!-- Sfondo a tutto schermo -->
     <ImageView fitWidth="900" fitHeight="700">
         <Image url="@/images/background/wallpaper.jpg"/>
     </ImageView>
 
-    <!-- ========================================================
-         LIVELLO 2 — CONTENUTO
-         VBox verticale centrata in alto
-         ======================================================== -->
+    <!-- Contenuto centrato in alto: titolo, sottotitolo, griglia e pulsante indietro -->
     <VBox alignment="TOP_CENTER" spacing="30">
 
-        <!-- Titolo con margine superiore extra di 30px -->
+        <!-- Titolo con margine superiore extra -->
         <Label text="SCEGLI LA DIFFICOLTA" styleClass="title-label">
             <VBox.margin>
                 <Insets top="30"/>
@@ -48,23 +35,21 @@
         <Label text="Ogni difficoltà cambierà la forza e l'astuzia dei nemici"
                styleClass="subtitle-label"/>
 
-        <!-- Spaziatore 20px tra sottotitolo e griglia -->
+        <!-- Spaziatore tra sottotitolo e griglia -->
         <VBox prefHeight="20"/>
 
-        <!-- ====================================================
-             GRIGLIA PULSANTI DIFFICOLTÀ (2x2)
-             ==================================================== -->
+        <!-- Griglia pulsanti difficoltà (2x2) -->
         <VBox spacing="15" alignment="CENTER">
 
             <!-- Riga 1: EASY e MEDIUM -->
             <HBox spacing="20" alignment="CENTER">
-                <!-- EASY → handleFacile(). Classi: button + difficulty -->
+                <!-- EASY → handleFacile() -->
                 <Button text="EASY&#10;&#10;Per iniziare a giocare"
                         onAction="#handleFacile"
                         styleClass="button, difficulty"
                         prefWidth="250" prefHeight="80"
                         wrapText="true"/>
-                <!-- MEDIUM → handleMedia(). Classi: button + difficulty -->
+                <!-- MEDIUM → handleMedia() -->
                 <Button text="MEDIUM&#10;&#10;Per una sfida bilanciata"
                         onAction="#handleMedia"
                         styleClass="button, difficulty"
@@ -74,13 +59,13 @@
 
             <!-- Riga 2: HARD e EXTREME -->
             <HBox spacing="20" alignment="CENTER">
-                <!-- HARD → handleAlta(). Classi: button + difficulty -->
+                <!-- HARD → handleAlta() -->
                 <Button text="HARD&#10;&#10;Solo per i veterani"
                         onAction="#handleAlta"
                         styleClass="button, difficulty"
                         prefWidth="250" prefHeight="80"
                         wrapText="true"/>
-                <!-- EXTREME → handleSuperiore(). Classi: button + difficulty + difficulty-extreme -->
+                <!-- EXTREME → handleSuperiore() -->
                 <Button text="EXTREME&#10;&#10;Solo per i più coraggiosi"
                         onAction="#handleSuperiore"
                         styleClass="button, difficulty, difficulty-extreme"
@@ -89,10 +74,10 @@
             </HBox>
         </VBox>
 
-        <!-- Spaziatore 30px prima del pulsante Indietro -->
+        <!-- Spaziatore prima del pulsante Indietro -->
         <VBox prefHeight="30"/>
 
-        <!-- Pulsante "Torna al Menu" → handleIndietro(). Classe: back-button -->
+        <!-- Pulsante Torna al Menu → handleIndietro() -->
         <Button text="← Torna al Menu"
                 onAction="#handleIndietro"
                 styleClass="back-button"

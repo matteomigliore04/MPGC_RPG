@@ -1,23 +1,28 @@
 package it.unicam.cs.mpgc.rpg.m131177.model;
 
+// Import JavaFX per le property osservabili
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
+/**
+ * Record di una partita, esposto tramite JavaFX Properties per la TableView.
+ */
 public class GameRecord {
+
+    // Campi base della partita
     private final SimpleStringProperty date;
     private final SimpleIntegerProperty score;
     private final SimpleIntegerProperty wave;
     private final SimpleStringProperty difficulty;
 
-    // Nuovi campi per le statistiche
+    // Campi statistici della partita
     private final SimpleIntegerProperty timePlayed;
     private final SimpleIntegerProperty goblinsKilled;
     private final SimpleIntegerProperty zombiesKilled;
     private final SimpleIntegerProperty skeletonsKilled;
 
     public GameRecord(String date, int score, int wave, String difficulty,
-                      int timePlayed, boolean isWin,
-                      int goblinsKilled, int zombiesKilled, int skeletonsKilled) {
+                      int timePlayed, int goblinsKilled, int zombiesKilled, int skeletonsKilled) {
         this.date = new SimpleStringProperty(date);
         this.score = new SimpleIntegerProperty(score);
         this.wave = new SimpleIntegerProperty(wave);
@@ -28,7 +33,7 @@ public class GameRecord {
         this.skeletonsKilled = new SimpleIntegerProperty(skeletonsKilled);
     }
 
-    // Property per la TableView
+    // Property esposte alla TableView
     public SimpleStringProperty dateProperty() { return date; }
     public SimpleIntegerProperty scoreProperty() { return score; }
     public SimpleIntegerProperty waveProperty() { return wave; }

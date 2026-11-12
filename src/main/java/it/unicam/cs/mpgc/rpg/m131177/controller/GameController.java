@@ -1,44 +1,40 @@
 package it.unicam.cs.mpgc.rpg.m131177.controller;
 
-// ============================================================
-// IMPORT
-// ============================================================
+// Import di progetto
 import it.unicam.cs.mpgc.rpg.m131177.audio.AudioManager;
 import it.unicam.cs.mpgc.rpg.m131177.game.GameLoop;
 import it.unicam.cs.mpgc.rpg.m131177.game.GameLoopObserver;
 import it.unicam.cs.mpgc.rpg.m131177.model.GameContext;
 import it.unicam.cs.mpgc.rpg.m131177.model.StatsManager;
 import it.unicam.cs.mpgc.rpg.m131177.ui.SceneFactory;
+
+// Import JavaFX
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
-import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
+// Import Java standard
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-// Controller della schermata di gioco.
-// Gestisce GameLoop, HUD, input tastiera e menu di pausa/game over.
+/**
+ * Controller della schermata di gioco.
+ * Gestisce GameLoop, HUD, input tastiera e menu di pausa/game over.
+ */
 public class GameController implements GameLoopObserver {
 
-    // ============================================================
-    // LOGGER
-    // ============================================================
-    // Logger di classe per errori, info e tracciamento eventi
+    // Logger di classe
     private static final Logger LOGGER = Logger.getLogger(GameController.class.getName());
 
-    // ============================================================
-    // RIFERIMENTI FXML — GIOCO E HUD
-    // ============================================================
-    // Canvas su cui il GameLoop disegna player, mostri e proiettili
+    // --- Riferimenti FXML: gioco e HUD ---
     @FXML private Canvas gameCanvas;
-    // Etichette dell'HUD
     @FXML private Label lblHealth;
     @FXML private Label lblWave;
     @FXML private Label lblScore;
@@ -47,61 +43,46 @@ public class GameController implements GameLoopObserver {
     @FXML private Label lblHealthPotions;
     @FXML private Label lblShieldPotions;
 
-    // ============================================================
-    // RIFERIMENTI FXML — MENU DI PAUSA E GAME OVER
-    // ============================================================
-    // Menu di pausa (btnResume/btnQuit funzionano via onAction, non servono campi)
+    // --- Riferimenti FXML: menu pausa e game over ---
     @FXML private VBox pauseMenu;
-    // Menu di game over
     @FXML private VBox gameOverMenu;
     @FXML private Label lblFinalScore;
     @FXML private Button btnRestart;
     @FXML private Button btnMainMenu;
 
-    // ============================================================
-    // STATO DEL CONTROLLER
-    // ============================================================
-    // isPaused: true quando il menu di pausa è aperto
-    // context: stato condiviso della partita
-    // stage: finestra principale per la navigazione
-    // gameLoop: motore di gioco (AnimationTimer)
+    // --- Stato del controller ---
     private boolean isPaused = false;
     private GameContext context;
     private Stage stage;
     private GameLoop gameLoop;
 
-    // ============================================================
-    // INIEZIONE CONTESTO E STAGE
-    // ============================================================
-    // Chiamato dal DifficultyController dopo il caricamento FXML
+    /**
+     * Inizializza il controller avviando la musica di gioco.
+     */
+    @FXML
+    public void initialize() {
+        AudioManager.getInstance().playGameMusic();
+    }
+
+    /**
+     * Inietta contesto e stage, crea e avvia il GameLoop.
+     */
     public void setContext(GameContext context, Stage stage) {
         this.context = context;
         this.stage = stage;
 
-        // Crea e avvia il Game Loop passando il contesto (che contiene la difficoltà)
         GraphicsContext gc = gameCanvas.getGraphicsContext2D();
         gameLoop = new GameLoop(gc, this, context);
         gameLoop.start();
     }
 
-    // ============================================================
-    // INIZIALIZZAZIONE
-    // ============================================================
-    @FXML
-    public void initialize() {
-        // Avvia la musica della partita
-        AudioManager.getInstance().playGameMusic();
-    }
+    // --- Input da tastiera ---
 
-    // ============================================================
-    // INPUT DA TASTIERA
-    // ============================================================
-    // Collega i gestori di eventi alla scena.
-    // - In pausa: solo ESC accettato
-    // - Q/E: pozioni cura/scudo
-    // - WASD/frecce: movimento
-    // - SPAZIO: sparo
-    // - ESC: pausa
+    /**
+     * Collega i gestori di eventi alla scena.
+     * In pausa: solo ESC. Altrimenti: Q/E pozioni, WASD/frecce movimento,
+     * SPAZIO sparo, ESC pausa.
+     */
     public void setupKeyboardInput() {
         gameCanvas.getScene().setOnKeyPressed(event -> {
             // Se in pausa, solo ESC riprende il gioco
@@ -117,7 +98,6 @@ public class GameController implements GameLoopObserver {
             // Pozione cura con Q
             if (key == KeyCode.Q) {
                 if (gameLoop.getPlayer().useHealthPotion()) {
-                    // Log dell'uso della pozione cura (sostituisce System.out.println)
                     LOGGER.info("❤️ Pozione cura usata!");
                 }
             }
@@ -125,7 +105,6 @@ public class GameController implements GameLoopObserver {
             // Pozione scudo con E
             if (key == KeyCode.E) {
                 if (gameLoop.getPlayer().useShieldPotion()) {
-                    // Log dell'uso della pozione scudo (sostituisce System.out.println)
                     LOGGER.info("🛡️ Pozione scudo usata!");
                 }
             }
@@ -150,7 +129,7 @@ public class GameController implements GameLoopObserver {
 
         // Rilascio tasti: reset dei flag di movimento (ignorato se in pausa)
         gameCanvas.getScene().setOnKeyReleased(event -> {
-            if (isPaused) return; // Ignora rilascio tasti se in pausa
+            if (isPaused) return;
 
             KeyCode key = event.getCode();
             if (key == KeyCode.W || key == KeyCode.UP)    gameLoop.setUpPressed(false);
@@ -163,10 +142,11 @@ public class GameController implements GameLoopObserver {
         gameCanvas.requestFocus();
     }
 
-    // ============================================================
-    // AGGIORNAMENTO HUD
-    // ============================================================
-    // Chiamato dal GameLoop ad ogni frame per aggiornare le etichette
+    // --- Aggiornamento HUD ---
+
+    /**
+     * Aggiorna le etichette dell'HUD (chiamato dal GameLoop ad ogni frame).
+     */
     @Override
     public void updateHUD(int health, int shield, int wave, int score,
                           int arrows, int healthPotions, int shieldPotions) {
@@ -179,17 +159,16 @@ public class GameController implements GameLoopObserver {
         lblShieldPotions.setText("Scudi: " + shieldPotions + "/10");
     }
 
-    // ============================================================
-    // GESTIONE DEL GIOCO
-    // ============================================================
-    // stopGame(): ferma il GameLoop (con check null)
+    // --- Gestione del gioco ---
+
+    /** Ferma il GameLoop (con check null). */
     public void stopGame() {
         if (gameLoop != null) {
             gameLoop.stop();
         }
     }
 
-    // togglePause(): alterna pausa/ripresa
+    /** Alterna pausa e ripresa. */
     private void togglePause() {
         if (isPaused) {
             resumeGame();
@@ -198,13 +177,14 @@ public class GameController implements GameLoopObserver {
         }
     }
 
-    // pauseGame(): ferma il loop, resetta i flag di movimento
-    // (per evitare il "ghost input") e mostra il menu di pausa
+    /**
+     * Mette in pausa: ferma il loop, resetta i flag di movimento
+     * (per evitare ghost input) e mostra il menu di pausa.
+     */
     public void pauseGame() {
         isPaused = true;
         gameLoop.stop();
 
-        // Reset flag di movimento per evitare "ghost input" alla ripresa
         gameLoop.setUpPressed(false);
         gameLoop.setDownPressed(false);
         gameLoop.setLeftPressed(false);
@@ -214,14 +194,16 @@ public class GameController implements GameLoopObserver {
         pauseMenu.setManaged(true);
     }
 
-    // handleResume(): invocato dal pulsante "Riprendi partita"
+    /** Invocato dal pulsante "Riprendi partita". */
     @FXML
     private void handleResume() {
         resumeGame();
     }
 
-    // resumeGame(): chiude il menu, resetta il delta timer
-    // e riavvia il GameLoop
+    /**
+     * Riprende il gioco: chiude il menu, resetta il delta timer
+     * e riavvia il GameLoop.
+     */
     public void resumeGame() {
         isPaused = false;
         pauseMenu.setVisible(false);
@@ -232,18 +214,19 @@ public class GameController implements GameLoopObserver {
         gameCanvas.requestFocus();
     }
 
-    // ============================================================
-    // GESTIONE GAME OVER
-    // ============================================================
-    // showGameOver(): ferma il gioco e mostra il menu di game over
-    // con il punteggio finale
+    // --- Gestione game over ---
+
+    /**
+     * Ferma il gioco, salva il record e mostra il menu di game over
+     * con il punteggio finale.
+     */
     @Override
     public void showGameOver(int finalScore, int finalWave, int timePlayed, boolean isWin,
                              int goblins, int zombies, int skeletons) {
         isPaused = true;
         gameLoop.stop();
 
-        // Ferma la musica di gioco al Game Over (o potresti metterne una di game over)
+        // Ferma la musica di gioco al Game Over
         AudioManager.getInstance().stopMusic();
         AudioManager.getInstance().playGameOver();
 
@@ -257,8 +240,9 @@ public class GameController implements GameLoopObserver {
         gameOverMenu.setManaged(true);
     }
 
-    // handleRestart(): ricarica game.fxml per resettare lo stato
-    // e reinizializza il nuovo controller con il context esistente
+    /**
+     * Ricarica game.fxml per resettare lo stato e reinizializza il nuovo controller.
+     */
     @FXML
     private void handleRestart() {
         try {
@@ -275,18 +259,16 @@ public class GameController implements GameLoopObserver {
             newController.setupKeyboardInput();
 
         } catch (Exception e) {
-            // Logging robusto invece di printStackTrace()
             LOGGER.log(Level.SEVERE, "Errore durante il restart della partita", e);
         }
     }
 
-    // ============================================================
-    // GESTIONE RITORNO AL MENU
-    // ============================================================
-    // handleQuit(): ferma il gioco e torna al menu principale
+    // --- Gestione ritorno al menu ---
+
+    /** Ferma il gioco e torna al menu principale (pulsante Quit). */
     @FXML
     private void handleQuit() {
-        stopGame(); // Ferma il motore di gioco (con check null)
+        stopGame();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/menu.fxml"));
             Parent root = loader.load();
@@ -297,10 +279,10 @@ public class GameController implements GameLoopObserver {
         }
     }
 
-    // handleMainMenu(): ferma il gioco e torna al menu principale
+    /** Ferma il gioco e torna al menu principale (pulsante Main Menu). */
     @FXML
     private void handleMainMenu() {
-        stopGame(); // Ferma il motore di gioco (con check null)
+        stopGame();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/menu.fxml"));
             Parent root = loader.load();
@@ -308,7 +290,6 @@ public class GameController implements GameLoopObserver {
             Stage currentStage = (Stage) btnMainMenu.getScene().getWindow();
             currentStage.setScene(SceneFactory.create(root));
         } catch (Exception e) {
-            // Logging robusto invece di printStackTrace()
             LOGGER.log(Level.SEVERE, "Errore nel ritorno al menu principale", e);
         }
     }

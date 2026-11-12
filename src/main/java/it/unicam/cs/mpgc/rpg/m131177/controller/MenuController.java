@@ -1,8 +1,11 @@
 package it.unicam.cs.mpgc.rpg.m131177.controller;
 
+// Import di progetto
 import it.unicam.cs.mpgc.rpg.m131177.audio.AudioManager;
 import it.unicam.cs.mpgc.rpg.m131177.model.GameContext;
 import it.unicam.cs.mpgc.rpg.m131177.ui.SceneFactory;
+
+// Import JavaFX
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,35 +14,39 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
+// Import Java standard
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-// Controller del menu principale: gestisce i tre pulsanti
-// (Inizia Partita, Statistiche Personali, Statistiche Globali)
-// e la navigazione verso la schermata di scelta difficoltà.
+/**
+ * Controller del menu principale: gestisce i tre pulsanti
+ * (Inizia Partita, Statistiche Personali, Statistiche Globali)
+ * e la navigazione verso la schermata di scelta difficoltà.
+ */
 public class MenuController {
 
-    // --- LOGGER ---
-    // Logger di classe per errori e tracciamento azioni utente
+    // Logger di classe
     private static final Logger LOGGER = Logger.getLogger(MenuController.class.getName());
 
-    // --- CAMPI FXML ---
-    // Pulsanti del menu, iniettati da JavaFX tramite fx:id
+    // Pulsanti iniettati da JavaFX
     @FXML private Button btnIniziaPartita;
     @FXML private Button btnStatistichePersonali;
     @FXML private Button btnStatisticheGlobali;
 
+    /**
+     * Inizializza il menu avviando la musica.
+     */
     @FXML
     public void initialize() {
         AudioManager.getInstance().playMenuMusic();
     }
 
-    // ============================================================
-    // GESTIONE AVVIO PARTITA
-    // ============================================================
+    // --- Gestione avvio partita ---
 
-    // Crea un nuovo GameContext, carica difficulty.fxml
-    // e inietta contesto + stage nel DifficultyController
+    /**
+     * Crea un nuovo GameContext, carica difficulty.fxml
+     * e inietta contesto + stage nel DifficultyController.
+     */
     @FXML
     private void handleIniziaPartita() {
         try {
@@ -58,16 +65,15 @@ public class MenuController {
             // Crea la nuova scena, applica il CSS e cambia schermata
             stage.setScene(SceneFactory.create(root));
         } catch (Exception e) {
-            // Log dell'errore a livello SEVERE con stack trace
             LOGGER.log(Level.SEVERE, "Errore durante l'avvio della partita", e);
         }
     }
 
-    // ============================================================
-    // GESTIONE STATISTICHE
-    // ============================================================
+    // --- Gestione statistiche ---
 
-    // Statistiche personali: per ora mostra un alert placeholder
+    /**
+     * Apre la schermata delle statistiche personali.
+     */
     @FXML
     private void handleStatistichePersonali() {
         try {
@@ -81,7 +87,9 @@ public class MenuController {
         }
     }
 
-    // Statistiche globali: per ora mostra un alert placeholder
+    /**
+     * Mostra un alert placeholder per le statistiche globali.
+     */
     @FXML
     private void handleStatisticheGlobali() {
         LOGGER.info("Apertura statistiche globali...");
@@ -89,11 +97,11 @@ public class MenuController {
                 "La classifica degli altri giocatori verrà implementata in futuro.");
     }
 
-    // ============================================================
-    // METODI DI SUPPORTO
-    // ============================================================
+    // --- Metodi di supporto ---
 
-    // Crea e mostra un Alert del tipo indicato; attende la chiusura
+    /**
+     * Crea e mostra un Alert del tipo indicato; attende la chiusura.
+     */
     private void showAlert(AlertType type, String title, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);

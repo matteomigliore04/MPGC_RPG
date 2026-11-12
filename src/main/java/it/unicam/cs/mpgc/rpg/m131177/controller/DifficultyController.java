@@ -1,53 +1,51 @@
 package it.unicam.cs.mpgc.rpg.m131177.controller;
 
-// ============================================================
-// IMPORT
-// ============================================================
+// Import di progetto
 import it.unicam.cs.mpgc.rpg.m131177.audio.AudioManager;
 import it.unicam.cs.mpgc.rpg.m131177.model.GameContext;
 import it.unicam.cs.mpgc.rpg.m131177.ui.SceneFactory;
+
+// Import JavaFX
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
 
+// Import Java standard
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-// Controller della schermata di scelta difficoltà.
-// Mantiene GameContext (stato partita) e Stage (finestra corrente).
+/**
+ * Controller della schermata di scelta difficoltà.
+ * Mantiene GameContext (stato partita) e Stage (finestra corrente).
+ */
 public class DifficultyController {
 
-    // ============================================================
-    // LOGGER
-    // ============================================================
-    // Logger di classe per errori e stack trace
+    // Logger di classe
     private static final Logger LOGGER = Logger.getLogger(DifficultyController.class.getName());
 
-    // ============================================================
-    // STATO CONDIVISO
-    // ============================================================
-    // - context: dati della partita in corso
-    // - stage: finestra principale per cambiare scena
-    private GameContext context;
-    private Stage stage;
+    // Stato condiviso
+    private GameContext context; // Dati della partita in corso
+    private Stage stage;         // Finestra principale per cambiare scena
 
-    // Inietta contesto e stage (chiamato dal MenuController dopo il load FXML)
-    public void setContext(GameContext context, Stage stage) {
-        this.context = context;
-        this.stage = stage;
-    }
-
+    /**
+     * Inizializza il controller avviando la musica del menu.
+     */
     @FXML
     public void initialize() {
         AudioManager.getInstance().playMenuMusic();
     }
 
-    // ============================================================
-    // GESTORI PULSANTI DIFFICOLTÀ
-    // ============================================================
-    // Ogni metodo chiama selectDifficulty() con la stringa del livello.
-    // Ricevono ActionEvent per ricavare lo stage dal pulsante sorgente.
+    /**
+     * Inietta contesto e stage (chiamato dal MenuController dopo il load FXML).
+     */
+    public void setContext(GameContext context, Stage stage) {
+        this.context = context;
+        this.stage = stage;
+    }
+
+    // --- Gestori pulsanti difficoltà ---
+
     @FXML private void handleFacile(javafx.event.ActionEvent event) {
         selectDifficulty("Easy", event);
     }
@@ -61,11 +59,10 @@ public class DifficultyController {
         selectDifficulty("Extreme", event);
     }
 
-    // ============================================================
-    // GESTIONE PULSANTE "INDIETRO"
-    // ============================================================
-    // Torna al menu principale tramite navigateTo().
-    // In caso di errore: log SEVERE con stack trace.
+    /**
+     * Torna al menu principale tramite navigateTo().
+     * In caso di errore: log SEVERE con stack trace.
+     */
     @FXML
     private void handleIndietro() {
         try {
@@ -75,27 +72,27 @@ public class DifficultyController {
         }
     }
 
-    // ============================================================
-    // SELEZIONE DIFFICOLTÀ E AVVIO PARTITA
-    // ============================================================
-    // Salva la difficoltà, carica game.fxml, inietta contesto+stage
-    // nel GameController, imposta la scena e attiva la tastiera.
-    //
-    // Nota: loader.load() chiama initialize() del GameController
-    // PRIMA di setContext(): initialize() non deve usare context/stage.
+    // --- Metodi di supporto ---
+
+    /**
+     * Salva la difficoltà, carica game.fxml, inietta contesto+stage
+     * nel GameController, imposta la scena e attiva la tastiera.
+     * Nota: loader.load() chiama initialize() del GameController
+     * PRIMA di setContext(): initialize() non deve usare context/stage.
+     */
     private void selectDifficulty(String difficulty, javafx.event.ActionEvent event) {
         context.setDifficulty(difficulty);
         try {
             // Carica la schermata di gioco (initialize() viene chiamato qui)
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/game.fxml"));
-            Parent root = loader.load(); // <--- Qui viene chiamato initialize() (context è ancora null, ma non lo usiamo più)
+            Parent root = loader.load(); // initialize() chiamato qui (context ancora null, ma non usato)
 
             // Ottiene il controller e ricava lo stage dal pulsante sorgente
             GameController controller = loader.getController();
             Stage stage = (Stage) ((javafx.scene.control.Button) event.getSource()).getScene().getWindow();
 
             // Inietta contesto e stage nel GameController (aggiorna HUD)
-            controller.setContext(context, stage); // <--- Qui impostiamo il context e aggiorniamo l'HUD
+            controller.setContext(context, stage);
 
             // Crea la nuova scena, applica il CSS e cambia schermata
             stage.setScene(SceneFactory.create(root));
@@ -104,17 +101,15 @@ public class DifficultyController {
             // (gameCanvas.getScene() esiste solo dopo aver impostato la scena)
             controller.setupKeyboardInput();
         } catch (Exception e) {
-            // Log SEVERE con difficoltà scelta e stack trace completo
             LOGGER.log(Level.SEVERE,
                     "Errore nel caricamento della schermata di gioco (difficoltà: " + difficulty + ")", e);
         }
     }
 
-    // ============================================================
-    // NAVIGAZIONE GENERICA TRA SCHERMATE
-    // ============================================================
-    // Carica l'FXML indicato, applica il CSS e lo imposta sullo stage.
-    // Se la destinazione è il menu, resetta il GameContext.
+    /**
+     * Carica l'FXML indicato, applica il CSS e lo imposta sullo stage.
+     * Se la destinazione è il menu, resetta il GameContext.
+     */
     private void navigateTo(String fxmlPath) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
         Parent root = loader.load();

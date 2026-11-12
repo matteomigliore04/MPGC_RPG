@@ -1,23 +1,19 @@
 package it.unicam.cs.mpgc.rpg.m131177.game.enemies;
 
-// ============================================================
-// IMPORT
-// ============================================================
+// Import JavaFX
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
-// ============================================================
-// GOBLIN (Nemico)
-// ============================================================
-// Nemico base: veloce, con pochi punti vita e danni contenuti.
+/**
+ * Goblin: nemico base veloce, con pochi punti vita e danni contenuti.
+ */
 public class Goblin extends Enemy {
 
-    // ============================================================
-    // COSTRUTTORE
-    // ============================================================
-    // Inizializza le statistiche specifiche del Goblin.
-    // (Nota: maxHealth viene impostato DOPO super(), quindi currentHealth
-    // nel costruttore della superclasse sarà 0 finché non viene aggiornato qui).
+    /**
+     * Inizializza le statistiche specifiche del Goblin.
+     * Nota: maxHealth è impostato dopo super(), quindi currentHealth
+     * nella superclasse resta 0 finché non viene aggiornato qui.
+     */
     public Goblin(double x, double y) {
         super(x, y);
         this.maxHealth = 30;
@@ -27,10 +23,9 @@ public class Goblin extends Enemy {
         this.arrowDrop = 2;     // Droppa 2 frecce
     }
 
-    // ============================================================
-    // GRAFICA
-    // ============================================================
-    // Carica lo sprite del Goblin; se manca, restituisce null (fallback).
+    /**
+     * Carica lo sprite del Goblin; se manca, sprite resta null (fallback).
+     */
     @Override
     protected void loadSprite() {
         try {
@@ -40,16 +35,17 @@ public class Goblin extends Enemy {
         }
     }
 
-    // ============================================================
-    // IDENTIFICAZIONE E FALLBACK
-    // ============================================================
-    // Restituisce il nome visualizzato/loggato del nemico.
+    /**
+     * Restituisce il nome visualizzato/loggato del nemico.
+     */
     @Override
     public String getName() {
         return "Goblin";
     }
 
-    // Colore di fallback se lo sprite non è disponibile (Verde).
+    /**
+     * Colore di fallback se lo sprite non è disponibile (verde).
+     */
     @Override
     protected Color getFallbackColor() {
         return Color.LIMEGREEN;

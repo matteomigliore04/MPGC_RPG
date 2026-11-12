@@ -1,29 +1,24 @@
 package it.unicam.cs.mpgc.rpg.m131177.game.enemies;
 
-// ============================================================
-// IMPORT
-// ============================================================
+// Import di progetto
 import it.unicam.cs.mpgc.rpg.m131177.game.GameConstants;
+
+// Import Java standard
 import java.util.Random;
 
-// ============================================================
-// ENEMY FACTORY
-// ============================================================
-// Factory per la creazione di nemici.
-// Permette di aggiungere nuovi tipi senza modificare il GameLoop.
+/**
+ * Factory per la creazione di nemici.
+ * Permette di aggiungere nuovi tipi senza modificare il GameLoop.
+ */
 public class EnemyFactory {
 
-    // ============================================================
-    // STATO
-    // ============================================================
     // Generatore di numeri casuali per spawn e scelta del tipo
     private final Random random = new Random();
 
-    // ============================================================
-    // CREAZIONE NEMICO
-    // ============================================================
-    // Istanzia un nemico casuale, lo posiziona a sinistra o a destra
-    // e ne scala le statistiche in base all'ondata corrente.
+    /**
+     * Crea un nemico casuale, lo posiziona a sinistra o a destra
+     * e ne scala le statistiche in base all'ondata e alla difficoltà.
+     */
     public Enemy createEnemy(int wave, double diffHealthMult, double diffSpeedMult, double diffRewardMult) {
         int type = random.nextInt(getNumberOfTypes(wave));
 
@@ -58,10 +53,9 @@ public class EnemyFactory {
         return enemy;
     }
 
-    // ============================================================
-    // CONFIGURAZIONE TIPI PER ONDATA
-    // ============================================================
-    // Restituisce quanti tipi di nemici possono spawnare in base all'ondata
+    /**
+     * Restituisce quanti tipi di nemici possono spawnare in base all'ondata.
+     */
     private int getNumberOfTypes(int wave) {
         return switch (wave) {
             case 1 -> 1;          // Solo goblin

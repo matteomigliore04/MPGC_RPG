@@ -1,21 +1,17 @@
 package it.unicam.cs.mpgc.rpg.m131177.game.enemies;
 
-// ============================================================
-// IMPORT
-// ============================================================
+// Import JavaFX
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
-// ============================================================
-// SKELETON (Nemico)
-// ============================================================
-// Nemico intermedio: statistiche bilanciate (velocità e danno medi).
+/**
+ * Skeleton: nemico intermedio con statistiche bilanciate (velocità e danno medi).
+ */
 public class Skeleton extends Enemy {
 
-    // ============================================================
-    // COSTRUTTORE
-    // ============================================================
-    // Inizializza le statistiche specifiche dello Skeleton.
+    /**
+     * Inizializza le statistiche specifiche dello Skeleton.
+     */
     public Skeleton(double x, double y) {
         super(x, y);
         this.maxHealth = 50;
@@ -25,10 +21,9 @@ public class Skeleton extends Enemy {
         this.arrowDrop = 3;     // Droppa 3 frecce
     }
 
-    // ============================================================
-    // GRAFICA
-    // ============================================================
-    // Carica lo sprite dello Skeleton; se manca, restituisce null (fallback).
+    /**
+     * Carica lo sprite dello Skeleton; se manca, sprite resta null (fallback).
+     */
     @Override
     protected void loadSprite() {
         try {
@@ -38,16 +33,17 @@ public class Skeleton extends Enemy {
         }
     }
 
-    // ============================================================
-    // IDENTIFICAZIONE E FALLBACK
-    // ============================================================
-    // Restituisce il nome visualizzato/loggato del nemico.
+    /**
+     * Restituisce il nome visualizzato/loggato del nemico.
+     */
     @Override
     public String getName() {
         return "Skeleton";
     }
 
-    // Colore di fallback se lo sprite non è disponibile (Grigio chiaro).
+    /**
+     * Colore di fallback se lo sprite non è disponibile (grigio chiaro).
+     */
     @Override
     protected Color getFallbackColor() {
         return Color.LIGHTGRAY;

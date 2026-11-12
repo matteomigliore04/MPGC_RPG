@@ -1,12 +1,12 @@
 package it.unicam.cs.mpgc.rpg.m131177.game.players;
 
-// ============================================================
-// IMPORT
-// ============================================================
+// Import di progetto
+import it.unicam.cs.mpgc.rpg.m131177.game.GameConstants;
+
+// Import JavaFX
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import it.unicam.cs.mpgc.rpg.m131177.game.GameConstants;
 
 /**
  * Proiettile (freccia) sparato dal giocatore.
@@ -14,66 +14,45 @@ import it.unicam.cs.mpgc.rpg.m131177.game.GameConstants;
  */
 public class Projectile {
 
-    // ============================================================
-    // COSTANTI
-    // ============================================================
-    // Fattore di normalizzazione per il movimento diagonale (1/√2 ≈ 0.7071)
+    // Fattore di normalizzazione per il movimento diagonale (1/√2)
     private static final double DIAGONAL_FACTOR = 0.70710678118;
 
-    // ============================================================
-    // POSIZIONE, DIMENSIONI, VELOCITÀ
-    // ============================================================
-    // x, y: angolo in alto a sinistra (pixel)
-    // width, height: dimensioni della freccia
-    // speed: velocità in pixel/secondo (più alta del player)
+    // Posizione (angolo in alto a sinistra), dimensioni e velocità
     private double x;
     private double y;
     final double width = 30;
     final double height = 15;
     final double speed = 500; // pixel al secondo (più veloce del player)
 
-    // ============================================================
-    // DIREZIONE
-    // ============================================================
-    // Valori attesi: -1, 0 o 1 per ciascun asse.
-    // Sono final perché la direzione non cambia durante la vita del proiettile
-    final double directionX; // -1, 0, 1
-    final double directionY; // -1, 0, 1
+    // Direzione: -1, 0 o 1 per ciascun asse (fissa per tutta la vita del proiettile)
+    final double directionX;
+    final double directionY;
 
-    // ============================================================
-    // STATO E GRAFICA
-    // ============================================================
-    // active: true finché il proiettile è in gioco
-    // arrowImage: sprite della freccia (null se manca)
+    // Stato e grafica
     private boolean active = true;
     private Image arrowImage;
 
-    // ============================================================
-    // COSTRUTTORE
-    // ============================================================
-    // Crea un proiettile alla posizione del player, nella direzione specificata.
-    // Carica l'immagine della freccia (con fallback a rettangolo giallo).
+    /**
+     * Crea un proiettile alla posizione indicata, nella direzione specificata.
+     * Se l'immagine non è disponibile, arrowImage resta null (fallback nel render).
+     */
     public Projectile(double startX, double startY, double dirX, double dirY) {
         this.x = startX;
         this.y = startY;
         this.directionX = dirX;
         this.directionY = dirY;
 
-        // Carica l'immagine della freccia (con fallback).
-        // Se il file non esiste o non è raggiungibile, arrowImage resta null
-        // e nel render() verrà disegnato un rettangolo giallo al suo posto
         try {
             arrowImage = new Image(getClass().getResourceAsStream("/images/player/arrow.png"));
         } catch (Exception e) {
-            arrowImage = null; // Useremo il rettangolo di fallback
+            arrowImage = null; // Verrà usato il rettangolo di fallback
         }
     }
 
-    // ============================================================
-    // AGGIORNAMENTO POSIZIONE
-    // ============================================================
-    // Sposta il proiettile in base a dt e direzione.
-    // Restituisce true se è ancora attivo, false se è uscito dai bordi.
+    /**
+     * Aggiorna la posizione del proiettile.
+     * Restituisce true se è ancora attivo, false se è uscito dai bordi o ha colpito un muro.
+     */
     public boolean update(double dt, double canvasWidth, double canvasHeight) {
         // Normalizza la velocità per il movimento diagonale
         double speedMultiplier = 1.0;
@@ -85,27 +64,23 @@ public class Projectile {
         x += directionX * speed * dt * speedMultiplier;
         y += directionY * speed * dt * speedMultiplier;
 
-        // --- CONTROLLO COLLISIONE CON I MURI ---
-
-        // 1. Muri orizzontali (Sopra e Sotto - completi)
+        // Muri orizzontali (sopra e sotto, completi)
         boolean hitTopBottomWall = (y <= GameConstants.PLAYABLE_MIN_Y) ||
                 (y + height >= GameConstants.PLAYABLE_MAX_Y);
 
-        // 2. Muri laterali (Sinistra e Destra - parziali)
-        // Colpisce se supera il limite X E non si trova nel "buco" centrale
+        // Muri laterali (sinistra e destra, con apertura centrale)
         boolean hitLeftWall = (x <= GameConstants.PLAYABLE_MIN_X) &&
                 (y < GameConstants.SPAWN_OPENING_MIN_Y || y > GameConstants.SPAWN_OPENING_MAX_Y);
 
         boolean hitRightWall = (x + width >= GameConstants.PLAYABLE_MAX_X) &&
                 (y < GameConstants.SPAWN_OPENING_MIN_Y || y > GameConstants.SPAWN_OPENING_MAX_Y);
 
-        // Se colpisce uno dei muri, la freccia si disattiva
+        // Disattiva la freccia se ha colpito un muro
         if (hitTopBottomWall || hitLeftWall || hitRightWall) {
             active = false;
         }
 
-        // 3. Fuori dallo schermo (nel caso sia passato dalle aperture laterali)
-        // Questo evita che le frecce rimangano attive all'infinito fuori dalla vista
+        // Fuori dallo schermo (es. passato dalle aperture laterali)
         if (x < -width || x > canvasWidth || y < -height || y > canvasHeight) {
             active = false;
         }
@@ -113,49 +88,38 @@ public class Projectile {
         return active;
     }
 
-    // ============================================================
-    // RENDERING
-    // ============================================================
-    // Disegna la freccia ruotata; se manca l'immagine, disegna un rettangolo giallo.
+    /**
+     * Disegna la freccia ruotata; se manca l'immagine, disegna un rettangolo giallo.
+     */
     public void render(GraphicsContext gc) {
         if (arrowImage != null) {
-            // Calcola l'angolo in radianti e convertilo in gradi.
-            // Math.atan2(y, x) restituisce l'angolo del vettore (x, y)
-            // rispetto all'asse X positivo, in radianti
+            // Angolo in gradi del vettore direzione
             double angle = Math.toDegrees(Math.atan2(directionY, directionX));
 
-            // Salva lo stato attuale del canvas (trasformazioni, stili, ecc.)
+            // Salva lo stato del canvas
             gc.save();
 
-            // Sposta il punto di origine al centro della freccia:
-            // così la rotazione avviene attorno al centro dell'immagine
+            // Sposta l'origine al centro della freccia (rotazione attorno al centro)
             gc.translate(x + width / 2, y + height / 2);
 
-            // Ruota il canvas dell'angolo calcolato
+            // Ruota il canvas
             gc.rotate(angle);
 
-            // Disegna l'immagine centrata sul nuovo punto di origine:
-            // -width/2, -height/2 perché il centro è ora in (0, 0)
+            // Disegna l'immagine centrata sull'origine
             gc.drawImage(arrowImage, -width / 2, -height / 2, width, height);
 
-            // Ripristina lo stato del canvas (annulla rotazione e traslazione),
-            // fondamentale per non influenzare i disegni successivi
+            // Ripristina lo stato del canvas
             gc.restore();
         } else {
-            // FALLBACK: Rettangolo giallo se l'immagine non viene trovata.
-            // Utile in fase di sviluppo o se la risorsa manca
+            // Fallback: rettangolo giallo se l'immagine manca
             gc.setFill(Color.GOLD);
             gc.fillRect(x, y, width, height);
         }
     }
 
-    // ============================================================
-    // GETTER
-    // ============================================================
-    // Usati dal GameController per collisioni e per rimuovere i proiettili inattivi
+    // Getter usati dal GameLoop per collisioni e rimozione dei proiettili inattivi
     public double getX() { return x; }
     public double getY() { return y; }
     public double getWidth() { return width; }
     public double getHeight() { return height; }
-    public boolean isActive() { return active; }
 }

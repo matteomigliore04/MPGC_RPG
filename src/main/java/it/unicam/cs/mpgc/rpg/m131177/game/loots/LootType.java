@@ -1,43 +1,31 @@
 package it.unicam.cs.mpgc.rpg.m131177.game.loots;
 
-// ============================================================
-// ENUM DEI TIPI DI LOOT
-// ============================================================
-// Definisce i possibili oggetti raccoglibili nel gioco,
-// associando a ciascuno un nome visualizzabile e un colore (esadecimale).
+/**
+ * Tipi di loot raccoglibili nel gioco.
+ * Ogni costante ha un nome visualizzabile e un colore esadecimale (per fallback grafici).
+ */
 public enum LootType {
 
-    // ============================================================
-    // COSTANTI
-    // ============================================================
-    // Formato: NOME("displayName", "#colorHex")
+    // Costanti: NOME("displayName", "#colorHex")
     ARROWS("Frecce", "#8BC34A"),
     HEALTH_POTION("Pozione Cura", "#ff4444"),
     SHIELD_POTION("Pozione Scudo", "#44aaff");
 
-    // ============================================================
-    // CAMPI
-    // ============================================================
-    // displayName: nome leggibile da mostrare nella UI
-    // colorHex: colore associato al loot (per fallback grafici)
-    private final String displayName;
-    private final String colorHex;
+    // Campi
+    private final String displayName; // Nome leggibile per la UI
+    private final String colorHex;    // Colore associato al loot
 
-    // ============================================================
-    // COSTRUTTORE
-    // ============================================================
-    // Inizializza i campi di ogni costante enum
+    // Costruttore: inizializza i campi di ogni costante
     LootType(String displayName, String colorHex) {
         this.displayName = displayName;
         this.colorHex = colorHex;
     }
 
-    // ============================================================
-    // GETTER
-    // ============================================================
-    // Restituisce il nome visualizzabile del loot
+    // Getter
+
+    /** Restituisce il nome visualizzabile del loot. */
     public String getDisplayName() { return displayName; }
 
-    // Restituisce il colore esadecimale associato al loot
+    /** Restituisce il colore esadecimale associato al loot. */
     public String getColorHex() { return colorHex; }
 }

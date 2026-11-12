@@ -9,42 +9,29 @@ import javafx.scene.paint.Color;
 import java.util.Objects;
 
 /**
- * Rappresenta un oggetto raccoglibile a terra (loot).
+ * Oggetto raccoglibile a terra (loot).
  * Ogni loot ha un tipo, un valore e una posizione.
  */
 public class Loot {
 
-    // ============================================================
-    // POSIZIONE E ATTRIBUTI (immutabili)
-    // ============================================================
-    // x, y: posizione a terra
-    // size: dimensione del loot (50x50)
-    // type: tipo di loot (frecce, pozione cura, pozione scudo)
-    // value: quantità da aggiungere al player
+    // --- Attributi immutabili ---
     private final double x;
     private final double y;
     private final double size = 50;
     private final LootType type;
     private final int value;
 
-    // ============================================================
-    // STATO E GRAFICA
-    // ============================================================
-    // collected: true se il loot è già stato raccolto
-    // sprite: immagine del loot
+    // --- Stato e grafica ---
     private boolean collected = false;
     private Image sprite;
 
-    // ============================================================
-    // ANIMAZIONE (galleggiamento)
-    // ============================================================
+    // --- Animazione di galleggiamento ---
     private double floatOffset = 0;
     private double floatTimer = 0;
 
-    // ============================================================
-    // COSTRUTTORE
-    // ============================================================
-    // Inizializza il loot e carica il suo sprite
+    /**
+     * Crea un loot alla posizione indicata e carica il suo sprite.
+     */
     public Loot(double x, double y, LootType type, int value) {
         this.x = x;
         this.y = y;
@@ -53,11 +40,7 @@ public class Loot {
         loadSprite();
     }
 
-    // ============================================================
-    // CARICAMENTO SPRITE
-    // ============================================================
-    // Carica l'immagine in base al tipo di loot.
-    // Uso Objects.requireNonNull per risolvere il warning "might be null".
+    /** Carica lo sprite in base al tipo di loot; se manca, sprite resta null. */
     private void loadSprite() {
         String path = switch (type) {
             case ARROWS -> "/images/loot/loot_arrow.png";
@@ -71,19 +54,13 @@ public class Loot {
         }
     }
 
-    // ============================================================
-    // AGGIORNAMENTO (animazione)
-    // ============================================================
-    // Aggiorna l'animazione di galleggiamento (fluttuazione verticale)
+    /** Aggiorna l'animazione di galleggiamento (fluttuazione verticale). */
     public void update(double dt) {
         floatTimer += dt;
         floatOffset = Math.sin(floatTimer * 3) * 3;
     }
 
-    // ============================================================
-    // RENDERING
-    // ============================================================
-    // Disegna lo sprite (o un fallback colorato) con l'animazione applicata
+    /** Disegna lo sprite (o un fallback colorato) con l'animazione applicata. */
     public void render(GraphicsContext gc) {
         if (collected) return;
 
@@ -110,13 +87,10 @@ public class Loot {
         }
     }
 
-    // ============================================================
-    // RACCOLTA
-    // ============================================================
-    // Raccoglie il loot e applica l'effetto al player.
-    // Restituisce true se la raccolta è avvenuta (e quindi il loot va rimosso).
-    // Il warning "return value never used" si può ignorare: è utile per la logica
-    // del GameLoop che rimuove i loot raccolti.
+    /**
+     * Raccoglie il loot e applica l'effetto al player.
+     * Restituisce true se la raccolta è avvenuta (il loot va rimosso).
+     */
     public boolean collect(Player player) {
         if (collected) return false;
         collected = true;
@@ -129,12 +103,7 @@ public class Loot {
         return true;
     }
 
-    // ============================================================
-    // GETTER
-    // ============================================================
-    // I getter di type e value sono stati rimossi perché attualmente
-    // inutilizzati nel codice (risoluzione warning).
-    // Se in futuro servissero, basterà reinserirli.
+    // --- Getter ---
     public double getX() { return x; }
     public double getY() { return y; }
     public double getSize() { return size; }

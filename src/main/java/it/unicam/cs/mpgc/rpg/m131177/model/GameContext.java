@@ -1,23 +1,15 @@
 package it.unicam.cs.mpgc.rpg.m131177.model;
 
-// ============================================================
-// GAME CONTEXT
-// ============================================================
-// Mantiene lo stato condiviso durante la creazione di una partita
-// (pattern "Context": evita che i controller si passino dati a vicenda).
+/**
+ * Contesto di gioco: mantiene lo stato condiviso durante la creazione di una partita.
+ * Evita che i controller si scambino dati direttamente (pattern Context).
+ */
 public class GameContext {
 
-    // ============================================================
-    // STATO DELLA PARTITA
-    // ============================================================
-    // Livello di difficoltà scelto dall'utente
-    // (es. "Facile", "Media", "Alta", "Superiore").
+    // Livello di difficoltà scelto dall'utente (es. "Facile", "Media", "Alta", "Superiore")
     private String difficulty;
 
-    // ============================================================
-    // GETTER E SETTER — DIFFICOLTÀ
-    // ============================================================
-    // Legge e imposta il livello di difficoltà in modo incapsulato.
+    // Getter e setter per la difficoltà
     public String getDifficulty() {
         return difficulty;
     }
@@ -26,11 +18,7 @@ public class GameContext {
         this.difficulty = difficulty;
     }
 
-    // ============================================================
-    // RESET
-    // ============================================================
     // Azzera i dati per iniziare una nuova partita pulita
-    // (es. quando si torna al menu principale).
     public void reset() {
         this.difficulty = null;
     }
