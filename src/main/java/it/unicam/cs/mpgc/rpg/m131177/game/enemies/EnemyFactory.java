@@ -49,6 +49,7 @@ public class EnemyFactory {
 
         // Applica lo scaling delle ricompense (punti e loot)
         enemy.scaleRewards(diffRewardMult);
+        enemy.scaleArrowLootByWave(wave);
 
         return enemy;
     }

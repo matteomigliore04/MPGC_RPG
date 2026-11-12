@@ -134,6 +134,12 @@ public abstract class Enemy {
         this.speed = this.speed * speedMultiplier;
     }
 
+    private double arrowWaveMultiplier = 1.0;
+
+    public void scaleArrowLootByWave(int wave) {
+        this.arrowWaveMultiplier = 1.0 + ((wave - 1) * 0.10);
+    }
+
     /** Aumenta punti e moltiplicatore loot. */
     public void scaleRewards(double multiplier) {
         this.scoreValue = (int) (this.scoreValue * multiplier);
@@ -165,7 +171,7 @@ public abstract class Enemy {
         if (random < 0.70) {
             type = LootType.ARROWS;
             int baseArrows = arrowDrop + (int)(Math.random() * 3) + 1;
-            value = Math.max(1, (int)(baseArrows * lootMultiplier));
+            value = Math.max(1, (int)(baseArrows * lootMultiplier * arrowWaveMultiplier));
         } else if (random < 0.90) {
             type = LootType.HEALTH_POTION;
             value = Math.max(1, (int)(1 * lootMultiplier));
