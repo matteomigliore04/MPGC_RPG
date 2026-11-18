@@ -9,7 +9,7 @@ personale, tracciando progressi, punteggi e performance nel tempo.
 ## 🚀 Come eseguire il progetto
 
 ### Prerequisiti
-- Java 21 (LTS)
+- Java 25 (LTS)
 - Gradle
 
 ### Istruzioni

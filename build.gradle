@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'application'
+    // Aggiornato: la 0.1.0 è vecchia e potrebbe avere problemi con le JDK più recenti
     id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
@@ -9,13 +10,15 @@ version = '1.0-SNAPSHOT'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25) // Perfetto, lasciato invariato
     }
 }
 
 javafx {
-    version = "21.0.2" // o la versione che stai usando
-    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.media' ] // AGGIUNGI 'javafx.media'
+    // ⚠️ CAMBIATO: JavaFX deve seguire la versione della JDK.
+    // La 21.0.2 non funzionerà bene (o per nulla) compilando con Java 25.
+    version = "25"
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.media' ]
 }
 
 application {
@@ -27,8 +30,7 @@ repositories {
 }
 
 dependencies {
-    // MySQL Connector per il database
+    // MySQL e Gson vanno benissimo così
     implementation 'com.mysql:mysql-connector-j:8.3.0'
-    implementation 'org.openjfx:javafx-media:21.0.2'
     implementation 'com.google.code.gson:gson:2.11.0'
 }
